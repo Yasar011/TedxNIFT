@@ -132,6 +132,15 @@
             text-decoration: underline;
         }
 
+        /* Adjust Developer Details for Mobile */
+        @media (max-width: 768px) {
+            .developer-details {
+                font-size: 0.7rem; /* Smaller text on mobile */
+                bottom: 10px; /* Move it slightly up */
+                left: 10px; /* Align it better */
+            }
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .content h1 {
@@ -188,7 +197,7 @@
     <div class="overlay">
         <div class="content">
             <!-- Club Logo -->
-            <img src="adventure and photography club logo-Recovered@0.5x.png" alt="Club Logo" class="club-logo">
+            <img src="club-logo.jpg" alt="Club Logo" class="club-logo">
 
             <h1>Welcome to Movie Night!</h1>
             <p>Join us for an unforgettable cinematic experience.</p>
