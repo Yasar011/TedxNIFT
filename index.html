@@ -45,7 +45,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.6); /* Semi-transparent black */
+            background: rgba(0, 0, 0, 0.6);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -85,15 +85,17 @@
             font-size: 1.2rem;
             cursor: pointer;
             transition: background-color 0.3s ease;
+            opacity: 0.6;
+            pointer-events: none;
         }
 
         .book-now-button:hover {
             background-color: #0056b3;
         }
 
-        .book-now-button:disabled {
-            background-color: #444;
-            cursor: not-allowed;
+        .book-now-button.enabled {
+            opacity: 1;
+            pointer-events: auto;
         }
 
         .admin-login-button {
@@ -107,79 +109,10 @@
             border-radius: 5px;
             font-size: 1rem;
             cursor: pointer;
-            transition: background-color 0.3s ease;
         }
 
         .admin-login-button:hover {
             background-color: #e64a19;
-        }
-
-        /* Developer Details */
-        .developer-details {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            font-size: 0.9rem;
-            color: white;
-        }
-
-        .developer-details a {
-            color: #ffcc00;
-            text-decoration: none;
-        }
-
-        .developer-details a:hover {
-            text-decoration: underline;
-        }
-
-        /* Adjust Developer Details for Mobile */
-        @media (max-width: 768px) {
-            .developer-details {
-                font-size: 0.7rem; /* Smaller text on mobile */
-                bottom: 10px; /* Move it slightly up */
-                left: 10px; /* Align it better */
-            }
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .content h1 {
-                font-size: 2rem;
-            }
-
-            .content p {
-                font-size: 1.2rem;
-            }
-
-            .club-logo {
-                width: 100px;
-                height: 100px;
-            }
-
-            .book-now-button, .admin-login-button {
-                padding: 10px 20px;
-                font-size: 1rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .content h1 {
-                font-size: 1.5rem;
-            }
-
-            .content p {
-                font-size: 1rem;
-            }
-
-            .club-logo {
-                width: 80px;
-                height: 80px;
-            }
-
-            .book-now-button, .admin-login-button {
-                padding: 8px 16px;
-                font-size: 0.9rem;
-            }
         }
     </style>
 </head>
@@ -196,31 +129,20 @@
     <!-- Full-Screen Overlay -->
     <div class="overlay">
         <div class="content">
-            <!-- Club Logo -->
-            <img src="club-logo.jpg" alt="Club Logo" class="club-logo">
-
+            <img src="adventure and photography club logo-Recovered@0.5x.png" alt="Club Logo" class="club-logo">
             <h1>Welcome to Movie Night!</h1>
             <p>Join us for an unforgettable cinematic experience.</p>
-
-            <!-- Movie Name -->
             <p><strong>Movie:</strong> Border</p>
 
-            <!-- Book Now Button (Disabled Initially) -->
-            <button class="book-now-button" id="bookNowButton" disabled>Book Now</button>
+            <!-- Book Now Button -->
+            <button class="book-now-button" id="bookNowButton">Book Now</button>
         </div>
     </div>
 
     <!-- Admin Login Button -->
     <button class="admin-login-button" onclick="window.location.href='login.html'">Admin Login</button>
 
-    <!-- Developer Details -->
-    <div class="developer-details">
-        <p>Developed by: <strong>Yasar C H</strong></p>
-        <p>Email: <a href="mailto:Yasar.h@nift.ac.in">Yasar.h@nift.ac.in</a></p>
-        <p>Instagram: <a href="https://www.instagram.com/y_asar?igsh=MWwza3R5d2R5Mm5qaA==" target="_blank">@y_asar</a></p>
-    </div>
-
-    <!-- JavaScript for Slideshow & Button Delay -->
+    <!-- JavaScript -->
     <script>
         const images = document.querySelectorAll('.background-slideshow img');
         let currentIndex = 0;
@@ -231,11 +153,21 @@
             images[currentIndex].classList.add('active');
         }
 
-        setInterval(changeSlide, 3000); // Change image every 3 seconds
+        setInterval(changeSlide, 3000);
 
         // Enable "Book Now" button after 5 seconds
         setTimeout(() => {
-            document.getElementById('bookNowButton').disabled = false;
+            let bookNowButton = document.getElementById('bookNowButton');
+            bookNowButton.classList.add('enabled');
+            bookNowButton.style.pointerEvents = "auto";
+            bookNowButton.style.opacity = "1";
+
+            // Add click event to "Book Now" button
+            bookNowButton.addEventListener('click', () => {
+                alert('Booking system coming soon!');
+                // You can replace the alert with `window.location.href = 'booking.html';` to navigate to a booking page
+            });
+
         }, 5000);
     </script>
 
