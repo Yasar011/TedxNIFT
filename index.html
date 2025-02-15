@@ -11,9 +11,9 @@
             height: 100%;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             overflow: hidden;
-            background-color: #1a1a1a; /* Fallback background color */
         }
 
+        /* Background Slideshow */
         .background-slideshow {
             position: absolute;
             top: 0;
@@ -21,7 +21,6 @@
             width: 100%;
             height: 100%;
             z-index: -1;
-            animation: slide 20s infinite; /* 4 images * 5s each */
         }
 
         .background-slideshow img {
@@ -32,58 +31,46 @@
             top: 0;
             left: 0;
             opacity: 0;
-            transition: opacity 1s ease-in-out;
+            transition: opacity 1.5s ease-in-out;
         }
 
-        @keyframes slide {
-            0%, 100% { opacity: 0; }
-            25% { opacity: 1; }
-            50% { opacity: 0; }
-            75% { opacity: 1; }
+        .background-slideshow img.active {
+            opacity: 1;
         }
 
-        .background-slideshow img:nth-child(1) {
-            animation-delay: 0s;
-        }
-
-        .background-slideshow img:nth-child(2) {
-            animation-delay: 5s;
-        }
-
-        .background-slideshow img:nth-child(3) {
-            animation-delay: 10s;
-        }
-
-        .background-slideshow img:nth-child(4) {
-            animation-delay: 15s;
+        /* Full-Screen Overlay */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6); /* Semi-transparent black */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
         }
 
         .content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            z-index: 1;
+            color: #fff;
+            padding: 20px;
+            max-width: 600px;
         }
 
         .content h1 {
             font-size: 3rem;
             margin-bottom: 20px;
-            color: #fff; /* White text for better contrast */
-            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
         }
 
         .content p {
             font-size: 1.5rem;
             margin-bottom: 10px;
-            color: #fff; /* White text for better contrast */
-            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
         }
 
         .club-logo {
-            width: 100px;
-            height: 100px;
+            width: 120px;
+            height: 120px;
             margin-bottom: 20px;
             border-radius: 50%;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
@@ -104,22 +91,9 @@
             background-color: #0056b3;
         }
 
-        .developer-details {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            color: #fff; /* White text for better contrast */
-            font-size: 0.9rem;
-            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
-        }
-
-        .developer-details a {
-            color: #007bff;
-            text-decoration: none;
-        }
-
-        .developer-details a:hover {
-            text-decoration: underline;
+        .book-now-button:disabled {
+            background-color: #444;
+            cursor: not-allowed;
         }
 
         .admin-login-button {
@@ -140,6 +114,24 @@
             background-color: #e64a19;
         }
 
+        /* Developer Details */
+        .developer-details {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            font-size: 0.9rem;
+            color: white;
+        }
+
+        .developer-details a {
+            color: #ffcc00;
+            text-decoration: none;
+        }
+
+        .developer-details a:hover {
+            text-decoration: underline;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .content h1 {
@@ -151,8 +143,8 @@
             }
 
             .club-logo {
-                width: 80px;
-                height: 80px;
+                width: 100px;
+                height: 100px;
             }
 
             .book-now-button, .admin-login-button {
@@ -171,8 +163,8 @@
             }
 
             .club-logo {
-                width: 60px;
-                height: 60px;
+                width: 80px;
+                height: 80px;
             }
 
             .book-now-button, .admin-login-button {
@@ -183,31 +175,34 @@
     </style>
 </head>
 <body>
+
     <!-- Background Slideshow -->
     <div class="background-slideshow">
-        <img src="300648.jpg" alt="Movie 1">
-        <img src="R (1).jpeg" alt="Movie 2">
-        <img src="MV5BYmJkMjM3NTktYThjZS00YzQyLTlkMDMtZWU2Y2U1Mjc0ZWExL2ltYWdlXkEyXkFqcGdeQXVyNzE4NDc2Mjc@._V1_.jpg" alt="Movie 3">
-        <img src="R.jpeg" alt="Movie 4">
+        <img src="https://th.bing.com/th/id/R.590449b6eb15ff9b4bf9f91dc4230afa?rik=Uhm4lqeUqQTEDQ&riu=http%3a%2f%2fgetwallpapers.com%2fwallpaper%2ffull%2fa%2fc%2f3%2f20008.jpg&ehk=5Ib1kGVNfH0TaU%2bEAzxelxW5BTWFzmG3nZxmAZ3n6UE%3d&risl=&pid=ImgRaw&r=0" class="active" alt="Slide 1">
+        <img src="https://wallpaperaccess.com/full/300648.jpg" alt="Slide 2">
+        <img src="https://www.xtrafondos.com/wallpapers/astronauta-de-interstellar-7529.jpg" alt="Slide 3">
+        <img src="https://m.media-amazon.com/images/M/MV5BYmJkMjM3NTktYThjZS00YzQyLTlkMDMtZWU2Y2U1Mjc0ZWExL2ltYWdlXkEyXkFqcGdeQXVyNzE4NDc2Mjc@._V1_.jpg" alt="Slide 4">
+    </div>
+
+    <!-- Full-Screen Overlay -->
+    <div class="overlay">
+        <div class="content">
+            <!-- Club Logo -->
+            <img src="adventure and photography club logo-Recovered@0.5x.png" alt="Club Logo" class="club-logo">
+
+            <h1>Welcome to Movie Night!</h1>
+            <p>Join us for an unforgettable cinematic experience.</p>
+
+            <!-- Movie Name -->
+            <p><strong>Movie:</strong> Border</p>
+
+            <!-- Book Now Button (Disabled Initially) -->
+            <button class="book-now-button" id="bookNowButton" disabled>Book Now</button>
+        </div>
     </div>
 
     <!-- Admin Login Button -->
     <button class="admin-login-button" onclick="window.location.href='login.html'">Admin Login</button>
-
-    <!-- Content -->
-    <div class="content">
-        <!-- Club Logo -->
-        <img src="club-logo.jpg" alt="Club Logo" class="club-logo">
-
-        <h1>Welcome to Movie Night!</h1>
-        <p>Join us for an unforgettable cinematic experience.</p>
-
-        <!-- Movie Name -->
-        <p><strong>Movie:</strong> Border</p>
-
-        <!-- Book Now Button -->
-        <button class="book-now-button" onclick="window.location.href='booking.html'">Book Now</button>
-    </div>
 
     <!-- Developer Details -->
     <div class="developer-details">
@@ -215,5 +210,25 @@
         <p>Email: <a href="mailto:Yasar.h@nift.ac.in">Yasar.h@nift.ac.in</a></p>
         <p>Instagram: <a href="https://www.instagram.com/y_asar?igsh=MWwza3R5d2R5Mm5qaA==" target="_blank">@y_asar</a></p>
     </div>
+
+    <!-- JavaScript for Slideshow & Button Delay -->
+    <script>
+        const images = document.querySelectorAll('.background-slideshow img');
+        let currentIndex = 0;
+
+        function changeSlide() {
+            images[currentIndex].classList.remove('active');
+            currentIndex = (currentIndex + 1) % images.length;
+            images[currentIndex].classList.add('active');
+        }
+
+        setInterval(changeSlide, 3000); // Change image every 3 seconds
+
+        // Enable "Book Now" button after 5 seconds
+        setTimeout(() => {
+            document.getElementById('bookNowButton').disabled = false;
+        }, 5000);
+    </script>
+
 </body>
 </html>
