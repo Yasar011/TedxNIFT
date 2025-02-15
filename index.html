@@ -114,6 +114,74 @@
         .admin-login-button:hover {
             background-color: #e64a19;
         }
+
+        /* Developer Details */
+        .developer-details {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            font-size: 1rem;
+            color: white;
+            text-align: left;
+        }
+
+        .developer-details a {
+            color: #ffcc00;
+            text-decoration: none;
+        }
+
+        .developer-details a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .content h1 {
+                font-size: 2rem;
+            }
+
+            .content p {
+                font-size: 1.2rem;
+            }
+
+            .club-logo {
+                width: 100px;
+                height: 100px;
+            }
+
+            .book-now-button, .admin-login-button {
+                padding: 10px 20px;
+                font-size: 1rem;
+            }
+
+            .developer-details {
+                font-size: 0.8rem; /* Smaller text on phones */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .content h1 {
+                font-size: 1.5rem;
+            }
+
+            .content p {
+                font-size: 1rem;
+            }
+
+            .club-logo {
+                width: 80px;
+                height: 80px;
+            }
+
+            .book-now-button, .admin-login-button {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+            }
+
+            .developer-details {
+                font-size: 0.7rem; /* Even smaller on small screens */
+            }
+        }
     </style>
 </head>
 <body>
@@ -142,6 +210,13 @@
     <!-- Admin Login Button -->
     <button class="admin-login-button" onclick="window.location.href='login.html'">Admin Login</button>
 
+    <!-- Developer Details -->
+    <div class="developer-details">
+        <p>Developed by: <strong>Yasar C H</strong></p>
+        <p>Email: <a href="mailto:Yasar.h@nift.ac.in">Yasar.h@nift.ac.in</a></p>
+        <p>Instagram: <a href="https://www.instagram.com/y_asar" target="_blank">@y_asar</a></p>
+    </div>
+
     <!-- JavaScript -->
     <script>
         const images = document.querySelectorAll('.background-slideshow img');
@@ -161,13 +236,9 @@
             bookNowButton.classList.add('enabled');
             bookNowButton.style.pointerEvents = "auto";
             bookNowButton.style.opacity = "1";
-
-            // Add click event to "Book Now" button
             bookNowButton.addEventListener('click', () => {
                 alert('Booking system coming soon!');
-                // You can replace the alert with `window.location.href = 'booking.html';` to navigate to a booking page
             });
-
         }, 5000);
     </script>
 
