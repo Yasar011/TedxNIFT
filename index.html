@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movie Night</title>
     <style>
+        :root {
+            --primary-color: #007bff;
+            --hover-color: #0056b3;
+            --accent-color: #ff5722;
+            --text-color: #fff;
+            --overlay-color: rgba(0, 0, 0, 0.6);
+        }
+
         body, html {
             margin: 0;
             padding: 0;
@@ -13,7 +21,6 @@
             overflow: hidden;
         }
 
-        /* Background Slideshow */
         .background-slideshow {
             position: absolute;
             top: 0;
@@ -38,14 +45,13 @@
             opacity: 1;
         }
 
-        /* Full-Screen Overlay */
         .overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.6);
+            background: var(--overlay-color);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -53,7 +59,7 @@
         }
 
         .content {
-            color: #fff;
+            color: var(--text-color);
             padding: 20px;
             max-width: 600px;
         }
@@ -77,20 +83,20 @@
         }
 
         .book-now-button {
-            background-color: #007bff;
-            color: white;
+            background-color: var(--primary-color);
+            color: var(--text-color);
             padding: 15px 30px;
             border: none;
             border-radius: 5px;
             font-size: 1.2rem;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, opacity 0.3s ease;
             opacity: 0.6;
             pointer-events: none;
         }
 
         .book-now-button:hover {
-            background-color: #0056b3;
+            background-color: var(--hover-color);
         }
 
         .book-now-button.enabled {
@@ -102,8 +108,8 @@
             position: absolute;
             top: 20px;
             right: 20px;
-            background-color: #ff5722;
-            color: white;
+            background-color: var(--accent-color);
+            color: var(--text-color);
             padding: 10px 20px;
             border: none;
             border-radius: 5px;
@@ -115,13 +121,12 @@
             background-color: #e64a19;
         }
 
-        /* Developer Details */
         .developer-details {
             position: absolute;
             bottom: 10px;
             left: 10px;
             font-size: 1rem;
-            color: white;
+            color: var(--text-color);
             text-align: left;
         }
 
@@ -134,7 +139,6 @@
             text-decoration: underline;
         }
 
-        /* Responsive Design */
         @media (max-width: 768px) {
             .content h1 {
                 font-size: 2rem;
@@ -155,7 +159,7 @@
             }
 
             .developer-details {
-                font-size: 0.8rem; /* Smaller text on phones */
+                font-size: 0.8rem;
             }
         }
 
@@ -179,7 +183,7 @@
             }
 
             .developer-details {
-                font-size: 0.7rem; /* Even smaller on small screens */
+                font-size: 0.7rem;
             }
         }
     </style>
@@ -188,22 +192,22 @@
 
     <!-- Background Slideshow -->
     <div class="background-slideshow">
-        <img src="https://th.bing.com/th/id/R.590449b6eb15ff9b4bf9f91dc4230afa?rik=Uhm4lqeUqQTEDQ&riu=http%3a%2f%2fgetwallpapers.com%2fwallpaper%2ffull%2fa%2fc%2f3%2f20008.jpg&ehk=5Ib1kGVNfH0TaU%2bEAzxelxW5BTWFzmG3nZxmAZ3n6UE%3d&risl=&pid=ImgRaw&r=0" class="active" alt="Slide 1">
-        <img src="https://wallpaperaccess.com/full/300648.jpg" alt="Slide 2">
-        <img src="https://cdn.lifehack.org/wp-content/uploads/2014/12/Interstellar-2014-Poster-Wallpaper.jpg" alt="Slide 3">
-        <img src="https://m.media-amazon.com/images/M/MV5BYmJkMjM3NTktYThjZS00YzQyLTlkMDMtZWU2Y2U1Mjc0ZWExL2ltYWdlXkEyXkFqcGdeQXVyNzE4NDc2Mjc@._V1_.jpg" alt="Slide 4">
+        <img src="https://th.bing.com/th/id/R.590449b6eb15ff9b4bf9f91dc4230afa?rik=Uhm4lqeUqQTEDQ&riu=http%3a%2f%2fgetwallpapers.com%2fwallpaper%2ffull%2fa%2fc%2f3%2f20008.jpg&ehk=5Ib1kGVNfH0TaU%2bEAzxelxW5BTWFzmG3nZxmAZ3n6UE%3d&risl=&pid=ImgRaw&r=0" class="active" alt="Slide 1: Movie Night Background">
+        <img src="https://wallpaperaccess.com/full/300648.jpg" alt="Slide 2: Movie Night Background">
+        <img src="https://cdn.lifehack.org/wp-content/uploads/2014/12/Interstellar-2014-Poster-Wallpaper.jpg" alt="Slide 3: Interstellar Movie Poster">
+        <img src="https://m.media-amazon.com/images/M/MV5BYmJkMjM3NTktYThjZS00YzQyLTlkMDMtZWU2Y2U1Mjc0ZWExL2ltYWdlXkEyXkFqcGdeQXVyNzE4NDc2Mjc@._V1_.jpg" alt="Slide 4: Movie Night Background">
     </div>
 
     <!-- Full-Screen Overlay -->
     <div class="overlay">
         <div class="content">
-            <img src="adventure and photography club logo-Recovered@0.5x.png" alt="Club Logo" class="club-logo">
+            <img src="adventure-and-photography-club-logo.png" alt="Adventure and Photography Club Logo" class="club-logo">
             <h1>Welcome to Movie Night!</h1>
             <p>Join us for an unforgettable cinematic experience.</p>
-            <p><strong>Movie:</strong>Interstellar</p>
+            <p><strong>Movie:</strong> Interstellar</p>
 
             <!-- Book Now Button -->
-            <button class="book-now-button" id="bookNowButton">COMING SOON</button>
+            <button class="book-now-button" id="bookNowButton" aria-label="Book Now">weight</button>
         </div>
     </div>
 
@@ -212,7 +216,7 @@
 
     <!-- Developer Details -->
     <div class="developer-details">
-        <p>Developed by:  <a href="https://www.instagram.com/_y_asar_" target="_blank">YASAR C H</a></p>
+        <p>Developed by: <a href="https://www.instagram.com/_y_asar_" target="_blank" rel="noopener noreferrer">YASAR C H</a></p>
         <p>Email: <a href="mailto:Yasar.h@nift.ac.in">Yasar.h@nift.ac.in</a></p>
     </div>
 
@@ -231,12 +235,12 @@
 
         // Enable "Book Now" button after 5 seconds
         setTimeout(() => {
-            let bookNowButton = document.getElementById('bookNowButton');
+            const bookNowButton = document.getElementById('bookNowButton');
             bookNowButton.classList.add('enabled');
-            bookNowButton.style.pointerEvents = "auto";
-            bookNowButton.style.opacity = "1";
+            bookNowButton.textContent = 'Book Now';
             bookNowButton.addEventListener('click', () => {
-                alert('Booking system coming soon!');
+                // Redirect to booking page
+                window.location.href = 'booking.html';
             });
         }, 5000);
     </script>
