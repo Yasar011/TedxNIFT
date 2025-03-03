@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Early Access</title>
+    <style>
+        /* CSS Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #fff;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Slideshow Background */
+        .background-slideshow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .background-slideshow img {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .background-slideshow img.active {
+            opacity: 1;
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            width: 350px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            width: 100px;
+            margin-bottom: 15px;
+        }
+
+        .login-form h2 {
+            margin-bottom: 20px;
+        }
+
+        .login-form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .login-form button {
+            width: 100%;
+            padding: 10px;
+            background: #2575fc;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .login-form button:hover {
+            background: #1a5bbf;
+        }
+
+        .error-message {
+            color: #ff4d4d;
+            font-size: 14px;
+            margin-bottom: 15px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-slideshow">
+        <img src="https://th.bing.com/th/id/R.590449b6eb15ff9b4bf9f91dc4230afa?rik=Uhm4lqeUqQTEDQ&riu=http%3a%2f%2fgetwallpapers.com%2fwallpaper%2ffull%2fa%2fc%2f3%2f20008.jpg&ehk=5Ib1kGVNfH0TaU%2bEAzxelxW5BTWFzmG3nZxmAZ3n6UE%3d&risl=&pid=ImgRaw&r=0" class="active" alt="Slide 1">
+        <img src="https://wallpaperaccess.com/full/300648.jpg" alt="Slide 2">
+        <img src="https://cdn.lifehack.org/wp-content/uploads/2014/12/Interstellar-2014-Poster-Wallpaper.jpg" alt="Slide 3">
+        <img src="https://m.media-amazon.com/images/M/MV5BYmJkMjM3NTktYThjZS00YzQyLTlkMDMtZWU2Y2U1Mjc0ZWExL2ltYWdlXkEyXkFqcGdeQXVyNzE4NDc2Mjc@._V1_.jpg" alt="Slide 4">
+    </div>
+
+    <div class="container">
+        <img src="your-logo-url.png" alt="Logo" class="logo"> <!-- Replace with your logo URL -->
+        <form id="loginForm" class="login-form">
+            <h2>Early Access</h2>
+            <div class="error-message" id="errorMessage">Invalid username or password!</div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" placeholder="Enter your username" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <script>
+        // Background Slideshow Logic
+        let slides = document.querySelectorAll('.background-slideshow img');
+        let currentSlide = 0;
+
+        function changeSlide() {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }
+
+        setInterval(changeSlide, 3000); // Change every 3 seconds
+
+        // Login Logic
+        const users = {
+            "Nishi Gupta": "Nishi@3543",
+            "Kavyangana Sharma": "Kavyangana@2606",
+            "Dhanishtha Dewangan": "Dhanishtha@0819",
+            "Aaliya Khan": "Aaliya@0019",
+            "Kanika Jain": "Kanika@9956",
+            "Kanishtha Parihar": "Kanishtha@4176",
+            "Shivika Choudhary": "Shivika@9671",
+            "Srushti Jadhav": "Srushti@6959",
+            "Diya Sharma": "Diya@5327",
+            "Iris Acha Danny": "Iris@4630",
+            "Pratistha Goyal": "Pratistha@3300",
+            "Sanika Horahatti": "Sanika@1228",
+            "Anchal Dave Sinha": "Anchal@0410",
+            "Yasar C H": "Yasar@2004",
+            "Director": "director@123",
+            "Faculty": "faculty@123"
+        };
+
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form submission
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const errorMessage = document.getElementById('errorMessage');
+
+            if (users[username] && users[username] === password) {
+                window.location.href = 'https://nift-movie-apc.vercel.app/';
+            } else {
+                errorMessage.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
