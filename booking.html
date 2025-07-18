@@ -14,6 +14,12 @@
       --seat-available: #6c757d;
       --seat-selected: #28a745;
       --seat-occupied: #dc3545;
+      
+      /* Dynamic touch target sizing based on screen width */
+      --base-touch-size: max(24px, 2.5vw); /* Never smaller than 24px, scales with viewport */
+      --touch-spacing: max(4px, 0.5vw);
+      --button-height: max(44px, 4vw);
+      --input-height: max(44px, 3.5vw);
     }
 
     * {
@@ -63,8 +69,12 @@
       font-weight: bold;
       border-radius: 5px;
       cursor: pointer;
-      font-size: 12px;
-      min-width: 100px;
+      font-size: max(12px, 1.2vw);
+      min-width: max(80px, 8vw);
+      min-height: var(--button-height);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .accessibility-btn:hover {
@@ -79,18 +89,18 @@
     .header {
       text-align: center;
       margin-bottom: 1.5rem;
-      padding-top: 3rem;
+      padding-top: 4rem;
     }
 
     .header h1 {
-      font-size: 1.8rem;
+      font-size: clamp(1.5rem, 4vw, 2.5rem);
       margin-bottom: 0.5rem;
       font-weight: 600;
     }
 
     .header p {
       margin: 3px;
-      font-size: 0.9rem;
+      font-size: clamp(0.8rem, 2vw, 1rem);
       color: #bbb;
     }
 
@@ -108,14 +118,14 @@
 
     .movie-details h2 {
       color: var(--primary-color);
-      font-size: 1.3rem;
+      font-size: clamp(1.1rem, 3vw, 1.5rem);
       margin: 0;
     }
 
     .legend {
       display: flex;
       justify-content: center;
-      gap: 15px;
+      gap: max(10px, 1.5vw);
       margin: 1.5rem 0;
       flex-wrap: wrap;
     }
@@ -124,10 +134,11 @@
       display: flex;
       gap: 0.5rem;
       align-items: center;
-      font-size: 0.85rem;
-      padding: 5px 10px;
+      font-size: clamp(0.8rem, 2vw, 1rem);
+      padding: max(5px, 0.8vw) max(10px, 1.2vw);
       background: rgba(255,255,255,0.1);
       border-radius: 15px;
+      min-height: var(--base-touch-size);
     }
 
     body.light-mode .legend div {
@@ -135,8 +146,8 @@
     }
 
     .legend .box {
-      width: 16px;
-      height: 16px;
+      width: max(16px, 1.5vw);
+      height: max(16px, 1.5vw);
       border-radius: 3px;
     }
 
@@ -161,7 +172,7 @@
       width: 85%;
       border-radius: 8px;
       font-weight: bold;
-      font-size: 1rem;
+      font-size: clamp(0.9rem, 2.5vw, 1.2rem);
       box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     }
 
@@ -173,34 +184,42 @@
     #seatingChart {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: var(--touch-spacing);
       align-items: center;
       margin: 1.5rem 0;
     }
 
     .row {
       display: flex;
-      gap: 6px;
+      gap: var(--touch-spacing);
     }
 
     .gap-row {
-      height: 15px;
+      height: calc(var(--base-touch-size) / 2);
     }
 
+    /* Responsive seat sizing based on screen width */
     .seat {
-      width: 32px;
-      height: 32px;
-      font-size: 11px;
+      width: var(--base-touch-size);
+      height: var(--base-touch-size);
+      font-size: clamp(8px, 1.5vw, 12px);
       background: var(--seat-available);
       color: var(--text-light);
-      border-radius: 6px;
-      line-height: 32px;
+      border-radius: clamp(4px, 0.5vw, 8px);
+      line-height: 1;
       text-align: center;
       cursor: pointer;
       transition: all 0.2s;
       position: relative;
       font-weight: 500;
       border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      /* Ensure minimum touch target size */
+      min-width: 24px;
+      min-height: 24px;
     }
 
     .seat:active {
@@ -225,9 +244,11 @@
     }
 
     .gap-seat {
-      width: 32px;
-      height: 32px;
+      width: var(--base-touch-size);
+      height: var(--base-touch-size);
       background: transparent;
+      min-width: 24px;
+      min-height: 24px;
     }
 
     /* Screen reader announcements */
@@ -272,20 +293,21 @@
       color: var(--primary-color);
       margin-bottom: 1.5rem;
       text-align: center;
-      font-size: 1.3rem;
+      font-size: clamp(1.2rem, 3vw, 1.5rem);
       font-weight: 600;
     }
 
     #bookingForm input,
     #bookingForm select {
       width: 100%;
-      padding: 14px;
+      padding: max(12px, 1.5vw);
       border: none;
       margin-bottom: 1rem;
       border-radius: 6px;
       background: #222;
       color: #fff;
-      font-size: 16px;
+      font-size: clamp(14px, 2vw, 16px);
+      min-height: var(--input-height);
     }
 
     body.light-mode #bookingForm input,
@@ -296,15 +318,16 @@
 
     #bookingForm button {
       width: 100%;
-      padding: 16px;
+      padding: max(16px, 2vw);
       background-color: var(--primary-color);
       border: none;
       border-radius: 8px;
       color: #000;
-      font-size: 1.1rem;
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s;
+      min-height: var(--button-height);
     }
 
     #bookingForm button:hover {
@@ -324,6 +347,7 @@
       margin-top: 1.5rem;
       border-radius: 8px;
       font-weight: 500;
+      font-size: clamp(0.9rem, 2vw, 1.1rem);
     }
 
     #successMessage {
@@ -350,117 +374,84 @@
       border-radius: 8px;
     }
 
-    /* Enhanced Mobile Styles */
-    @media (max-width: 768px) {
-      .container {
-        padding: 0.5rem;
+    /* Enhanced responsive breakpoints for different screen sizes */
+    @media (max-width: 320px) {
+      :root {
+        --base-touch-size: max(28px, 3vw);
+        --touch-spacing: max(6px, 0.8vw);
       }
-
-      .header {
-        padding-top: 4rem;
-      }
-
-      .header h1 {
-        font-size: 1.6rem;
-      }
-
-      .movie-details h2 {
-        font-size: 1.1rem;
-      }
-
+      
       .seat {
-        width: 35px;
-        height: 35px;
-        font-size: 10px;
-        line-height: 35px;
-      }
-
-      .gap-seat {
-        width: 35px;
-        height: 35px;
-      }
-
-      .row {
-        gap: 8px;
-      }
-
-      #seatingChart {
-        gap: 10px;
-      }
-
-      .legend {
-        gap: 10px;
-        font-size: 0.8rem;
-      }
-
-      #bookingForm {
-        padding: 1.2rem;
-        margin: 1.5rem 0.5rem;
-      }
-
-      #bookingForm input,
-      #bookingForm select {
-        padding: 16px;
-        font-size: 16px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .seat {
-        width: 30px;
-        height: 30px;
-        font-size: 9px;
-        line-height: 30px;
-      }
-
-      .gap-seat {
-        width: 30px;
-        height: 30px;
-      }
-
-      .row {
-        gap: 5px;
-      }
-
-      .screen {
-        width: 90%;
-        font-size: 0.9rem;
-      }
-
-      .accessibility-btn {
-        padding: 8px 10px;
-        font-size: 11px;
-        min-width: 80px;
-      }
-    }
-
-    /* Ultra-small screens */
-    @media (max-width: 360px) {
-      .seat {
-        width: 26px;
-        height: 26px;
         font-size: 8px;
-        line-height: 26px;
       }
+    }
 
-      .gap-seat {
-        width: 26px;
-        height: 26px;
+    @media (min-width: 321px) and (max-width: 480px) {
+      :root {
+        --base-touch-size: max(32px, 3.2vw);
+        --touch-spacing: max(6px, 0.8vw);
       }
-
-      .row {
-        gap: 3px;
+      
+      .seat {
+        font-size: 9px;
       }
+    }
 
-      #seatingChart {
-        gap: 6px;
+    @media (min-width: 481px) and (max-width: 768px) {
+      :root {
+        --base-touch-size: max(36px, 3.5vw);
+        --touch-spacing: max(8px, 1vw);
+      }
+      
+      .seat {
+        font-size: 10px;
+      }
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
+      :root {
+        --base-touch-size: max(40px, 3.8vw);
+        --touch-spacing: max(10px, 1.2vw);
+      }
+      
+      .seat {
+        font-size: 11px;
+      }
+    }
+
+    @media (min-width: 1025px) {
+      :root {
+        --base-touch-size: max(44px, 4vw);
+        --touch-spacing: max(12px, 1.5vw);
+      }
+      
+      .seat {
+        font-size: 12px;
+      }
+    }
+
+    /* High-DPI display adjustments */
+    @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+      :root {
+        --base-touch-size: max(var(--base-touch-size), 44px);
+      }
+    }
+
+    /* Landscape orientation adjustments */
+    @media (orientation: landscape) and (max-height: 500px) {
+      :root {
+        --base-touch-size: max(var(--base-touch-size), 40px);
+      }
+      
+      .header {
+        padding-top: 2rem;
       }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Accessibility Toolbar (No Voice Features) -->
+    <!-- Accessibility Toolbar -->
     <div class="accessibility-toolbar">
       <button class="accessibility-btn" id="themeToggle" aria-label="Toggle dark and light mode">🌙 Dark</button>
       <button class="accessibility-btn" id="readingModeBtn" aria-label="Toggle reading mode for better readability">👓 Reading</button>
@@ -529,7 +520,7 @@
     </form>
   </div>
 
-  <!-- Enhanced JavaScript WITHOUT Voice Features -->
+  <!-- Enhanced JavaScript (same as before) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
     import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-database.js";
