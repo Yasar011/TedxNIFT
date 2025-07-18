@@ -5,15 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Interstellar Movie Night Booking</title>
   <style>
-    /* Reset & Base Styles */
+    /* Reset & base */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #2C3E50 0%, #4CA1AF 100%); /* Premium Color Theme */
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont,
+        'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #2C3E50 0%, #4CA1AF 100%); /* new primary gradient */
       min-height: 100vh;
       display: flex;
       justify-content: center;
-      align-items: flex-start; /* Align to top for better scrolling on mobile */
+      align-items: flex-start;
       padding: 16px;
       color: #fff;
     }
@@ -29,12 +30,12 @@
       position: relative;
     }
 
-    /* Login Button */
+    /* Login button */
     .btn-login {
       position: absolute;
       top: 16px;
       right: 16px;
-      background: rgba(236, 240, 241, 0.8);
+      background: #ECF0F1;
       color: #2C3E50;
       border: none;
       border-radius: 6px;
@@ -42,16 +43,14 @@
       font-size: 12px;
       font-weight: 600;
       cursor: pointer;
-      transition: transform 0.2s, background 0.2s;
     }
-    .btn-login:hover { background: #ECF0F1; }
     .btn-login:active { transform: scale(0.95); }
 
     /* Header */
     .header {
       text-align: center;
       margin-bottom: 24px;
-      padding-top: 36px; /* Make space for login button */
+      padding-top: 36px; /* space for login */
     }
     .header h1 {
       font-size: 22px;
@@ -60,9 +59,13 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    .header p { font-size: 12px; opacity: 0.8; margin-top: 4px; }
+    .header p {
+      font-size: 12px;
+      opacity: 0.8;
+      margin-top: 4px;
+    }
 
-    /* Movie Card */
+    /* Movie card */
     .movie-card {
       background: rgba(255,255,255,0.05);
       border-radius: 8px;
@@ -74,25 +77,49 @@
       font-size: 14px;
     }
     .movie-card .movie-title { font-weight: 600; }
+    .movie-card .movie-time { font-weight: 500; }
+    .movie-card .movie-price { font-weight: 500; }
 
     /* Legend */
-    .legend { display: flex; justify-content: center; gap: 12px; font-size: 10px; margin-bottom: 12px; }
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      font-size: 10px;
+      margin-bottom: 12px;
+    }
     .legend-item { display: flex; align-items: center; gap: 4px; }
     .legend-color { width: 10px; height: 10px; border-radius: 2px; }
     .available { background: #27AE60; }
     .selected  { background: #2980B9; }
     .occupied  { background: #C0392B; }
 
-    /* Seating Area */
+    /* Seating area */
     .seating-area {
       background: rgba(255,255,255,0.05);
       border-radius: 8px;
       padding: 12px;
       margin-bottom: 16px;
       min-height: 0;
+      display: flex;
+      justify-content: center;
     }
-    .auditorium { display: flex; flex-direction: column; gap: 6px; min-height: 0; }
-    #seatingChart { width: 100%; max-height: 45vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+    .auditorium {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-height: 0;
+      width: 100%;
+    }
+    #seatingChart {
+      width: 100%;
+      max-height: 45vh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-right: 4px;
+    }
+
+    /* SCREEN banner */
     .screen {
       background: linear-gradient(45deg, #ECF0F1, #BDC3C7);
       color: #2C3E50;
@@ -102,74 +129,114 @@
       font-weight: 600;
       font-size: 10px;
       margin-bottom: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
-    /* Direction Banner (Positioned after seats) */
+    /* Direction banners */
     .direction {
       display: flex;
       justify-content: space-between;
       font-size: 10px;
-      margin-top: 8px; /* Margin from last seat row */
-      padding: 0 4px;
+      margin: 4px 0;
+    }
+    .direction span {
+      background: rgba(236,240,241,0.2);
+      color: #2C3E50;
+      padding: 2px 6px;
+      border-radius: 4px;
     }
 
-    /* Seats */
-    .seat-row { display: flex; align-items: center; justify-content: center; }
-    .row-label { width: 14px; text-align: right; margin-right: 4px; font-size: 8px; }
-    .seats { display: flex; }
+    /* Seat rows */
+    .seat-row {
+      display: flex;
+      align-items: center;
+    }
+    .row-label {
+      width: 14px;
+      text-align: right;
+      margin-right: 4px;
+      font-size: 8px;
+      font-weight: 600;
+    }
+    .seats { display: flex; flex-wrap: nowrap; }
+
     .seat {
-      width: 22px; height: 22px; margin: 1px; border-radius: 3px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 8px; font-weight: 600; cursor: pointer;
-      background: #27AE60; color: #fff;
+      width: 22px;
+      height: 22px;
+      margin: 1px;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      background: #27AE60;
+      color: #fff;
       border: 1px solid rgba(255,255,255,0.2);
       touch-action: manipulation;
-      transition: all 0.2s ease;
+      transition: transform 0.15s;
     }
-    .seat:hover:not(.occupied) { transform: scale(1.1); box-shadow: 0 0 8px rgba(255,255,255,0.3); }
-    .seat.selected { background: #2980B9; border-color: #fff; transform: scale(1.1); }
+    .seat:hover:not(.occupied) { transform: scale(1.1); }
+    .seat.selected { background: #2980B9; border-color: #fff; }
     .seat.occupied { background: #C0392B; opacity: 0.7; cursor: not-allowed; }
-    .aisle-horizontal { height: 6px; }
-    .aisle-vertical   { width: 8px; }
 
-    /* Mobile-Specific Overrides */
+    .aisle-horizontal { height: 6px; }
+    .aisle-vertical   { width: 6px; }
+
+    /* Mobile overrides: 10×10 seats */
     @media (max-width: 480px) {
-      body { padding: 8px; }
-      .booking-container { padding: 16px; }
-      .header h1 { font-size: 20px; }
-      .seat { width: 10px; height: 10px; font-size: 0; /* Hide numbers on tiny seats */ }
-      .row-label { font-size: 8px; }
+      .seat { width: 10px; height: 10px; font-size: 6px; }
+      .row-label { font-size: 6px; margin-right: 2px; }
       .screen { padding: 4px 8px; font-size: 8px; }
-      .direction { font-size: 8px; }
+      .direction span { font-size: 6px; padding: 1px 4px; }
       #seatingChart { max-height: 40vh; }
     }
 
-    /* Form & Messages */
-    .message { padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 12px; display: none; text-align: center; }
-    .success { background: rgba(39,174,96,0.2); border:1px solid #27AE60; color:#27AE60; }
-    .error   { background: rgba(192,57,43,0.2); border:1px solid #C0392B; color:#C0392B; }
+    /* Form & messages */
+    .message {
+      padding: 8px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+      font-size: 12px;
+      display: none;
+      text-align: center;
+      font-weight: 500;
+    }
+    .success { background: rgba(39,174,96,0.2); border:1px solid rgba(39,174,96,0.3); color:#27AE60; }
+    .error   { background: rgba(192,57,43,0.2); border:1px solid rgba(192,57,43,0.3); color:#C0392B; }
+
     .booking-form {
-      background: rgba(255,255,255,0.05); border-radius: 8px; padding: 16px;
-      display: none; animation: slideIn 0.3s ease-out;
+      background: rgba(255,255,255,0.05);
+      border-radius: 8px;
+      padding: 16px;
+      display: none;
+      animation: slideIn 0.3s ease-out;
+      font-size: 12px;
     }
     @keyframes slideIn {
-      from { opacity:0; transform: translateY(10px); }
+      from { opacity:0; transform: translateY(8px); }
       to   { opacity:1; transform: translateY(0); }
     }
     .form-group { margin-bottom: 12px; }
-    .form-group label { display:block; margin-bottom:6px; font-size:12px; opacity:0.9; }
-    .form-group input, .form-group select {
-      width:100%; padding:10px; border-radius:6px;
-      border:1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2);
-      color:#fff; font-size:12px;
+    .form-group label { display:block; margin-bottom:6px; opacity:0.9; }
+    .form-group input,
+    .form-group select {
+      width:100%; padding:8px;
+      border-radius:6px; border:1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.1); color:#fff;
+      font-size:12px;
     }
-    .form-group input:focus, .form-group select:focus {
-      outline:none; border-color:#2980B9; box-shadow:0 0 0 2px rgba(41,128,185,0.3);
+    .form-group input:focus,
+    .form-group select:focus {
+      outline:none; border-color:#2980B9;
+      box-shadow:0 0 0 2px rgba(41,128,185,0.2);
     }
     .book-btn {
-      width:100%; padding:12px; background: #2980B9; color:#fff; border:none;
-      border-radius:8px; font-size:14px; font-weight:600; cursor:pointer;
-      transition: background 0.2s;
+      width:100%; padding:10px;
+      background: #2980B9; color:#fff; border:none;
+      border-radius:6px; font-size:14px; font-weight:600;
+      cursor:pointer; transition:background 0.15s;
     }
     .book-btn:hover { background:#2471A3; }
   </style>
@@ -177,7 +244,7 @@
 <body>
 
   <div class="booking-container">
-    <button class="btn-login" onclick="alert('Login feature is under development. You can book tickets without logging in.')">
+    <button class="btn-login" onclick="alert('⚙️ Feature under development – booking requires no login')">
       Login
     </button>
 
@@ -188,7 +255,8 @@
 
     <div class="movie-card">
       <div class="movie-title">Interstellar</div>
-      <span>9:15 PM • ₹29</span>
+      <div class="movie-time">9:15 PM</div>
+      <div class="movie-price">₹29</div>
     </div>
 
     <div class="legend">
@@ -200,33 +268,45 @@
     <div class="seating-area">
       <div class="auditorium">
         <div class="screen">SCREEN</div>
-        <div id="seatingChart"></div>
         <div class="direction">
-          <span>⬅️ Entrance</span>
-          <span>Exit ➡️</span>
+          <span>Entrance ⬅️</span><span>Exit ➡️</span>
         </div>
+        <div id="seatingChart"></div>
       </div>
     </div>
 
-    <div class="message success" id="successMessage"></div>
+    <div class="message success" id="successMessage">Seat booked successfully! 🎉</div>
     <div class="message error" id="errorMessage"></div>
 
     <form class="booking-form" id="bookingForm">
-      <h3 class="form-title" style="text-align:center; font-size:16px; margin-bottom:16px;">Complete Your Booking</h3>
-      <div class="form-group"><label for="name">Full Name</label><input type="text" id="name" required></div>
-      <div class="form-group"><label for="department">Department</label>
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" required>
+      </div>
+      <div class="form-group">
+        <label for="department">Department</label>
         <select id="department" required>
-          <option value="">Select Department</option><option>AD</option><option>BFT</option><option>FC</option><option>FD</option><option>MFM</option><option>TD</option><option>Staff</option><option>Faculty</option><option>Other</option>
+          <option value="">Select Department</option>
+          <option>AD</option><option>BFT</option><option>FC</option>
+          <option>FD</option><option>MFM</option><option>TD</option>
+          <option>Staff</option><option>Faculty</option><option>Other</option>
         </select>
       </div>
-      <div class="form-group"><label for="semester">Semester</label>
+      <div class="form-group">
+        <label for="semester">Semester</label>
         <select id="semester" required>
-          <option value="">Select Semester</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>Other</option>
+          <option value="">Select Semester</option>
+          <option>1</option><option>2</option><option>3</option>
+          <option>4</option><option>5</option><option>6</option>
+          <option>7</option><option>8</option><option>Other</option>
         </select>
       </div>
-      <div class="form-group"><label for="snacks">Need Snacks?</label>
+      <div class="form-group">
+        <label for="snacks">Need Snacks?</label>
         <select id="snacks" required>
-          <option value="">Select Option</option><option value="yes">Yes, I need snacks</option><option value="no">No, thank you</option>
+          <option value="">Select Option</option>
+          <option value="yes">Yes, I need snacks</option>
+          <option value="no">No, thank you</option>
         </select>
       </div>
       <div class="form-group"><label for="email">Email Address</label><input type="email" id="email" required></div>
@@ -256,37 +336,50 @@
     document.addEventListener("DOMContentLoaded", () => {
       const chart = document.getElementById("seatingChart");
       const form  = document.getElementById("bookingForm");
-      const successMsg = document.getElementById("successMessage");
-      const errorMsg = document.getElementById("errorMessage");
+      const success = document.getElementById("successMessage");
+      const error   = document.getElementById("errorMessage");
 
       onValue(ref(db, "seats/"), snap => renderChart(snap.val()||{}));
 
       function renderChart(data) {
         chart.innerHTML = "";
         ['A','B','C','D','E','F','G','H'].forEach((r,i) => {
-          if (i === 4) { chart.appendChild(document.createElement("div")).className = "aisle-horizontal"; }
-          const row = chart.appendChild(document.createElement("div"));
+          if (i === 4) {
+            const aisleH = document.createElement("div");
+            aisleH.className = "aisle-horizontal";
+            chart.appendChild(aisleH);
+          }
+          const row = document.createElement("div");
           row.className = "seat-row";
-          row.appendChild(document.createElement("div")).className = "row-label";
-          row.lastChild.textContent = r;
-          const seats = row.appendChild(document.createElement("div"));
+          const lbl = document.createElement("div");
+          lbl.className = "row-label";
+          lbl.textContent = r;
+          row.appendChild(lbl);
+          const seats = document.createElement("div");
           seats.className = "seats";
           for (let n=1; n<=30; n++){
-            if (n === 16) { seats.appendChild(document.createElement("div")).className = "aisle-vertical"; }
-            const s = seats.appendChild(document.createElement("div"));
-            const id = `${r}${n}`;
+            if (n === 16) {
+              const aisleV = document.createElement("div");
+              aisleV.className = "aisle-vertical";
+              seats.appendChild(aisleV);
+            }
+            const s = document.createElement("div");
             s.className = "seat";
+            const id = `${r}${n}`;
             if (data[id]) s.classList.add("occupied");
             s.textContent = n;
             s.dataset.seat = id;
             s.addEventListener("click", () => selectSeat(s, id));
+            seats.appendChild(s);
           }
+          row.appendChild(seats);
+          chart.appendChild(row);
         });
       }
 
       function selectSeat(el, id) {
         if (el.classList.contains("occupied")) return;
-        if (selectedSeatElement) selectedSeatElement.classList.remove("selected");
+        selectedSeatElement && selectedSeatElement.classList.remove("selected");
         el.classList.add("selected");
         selectedSeat = id;
         selectedSeatElement = el;
@@ -297,7 +390,7 @@
 
       form.addEventListener("submit", async e => {
         e.preventDefault();
-        const formData = {
+        const data = {
           name: document.getElementById("name").value.trim(),
           department: document.getElementById("department").value,
           semester: document.getElementById("semester").value,
@@ -306,28 +399,29 @@
           phone: document.getElementById("phone").value.trim(),
           seatNumber: selectedSeat
         };
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) return showError("Invalid email format.");
-        if (!/^\d{10}$/.test(formData.phone)) return showError("Enter a valid 10-digit phone number.");
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) return showError("Invalid email");
+        if (!/^\d{10}$/.test(data.phone)) return showError("Invalid phone");
         try {
-          await set(ref(db, `seats/${selectedSeat}`), { status:"occupied", ...formData, timestamp: new Date().toISOString() });
-          selectedSeatElement.classList.remove("selected");
-          selectedSeatElement.classList.add("occupied");
-          form.reset();
-          form.style.display = "none";
-          selectedSeat = null; selectedSeatElement = null;
+          await set(ref(db, `seats/${selectedSeat}`), { status:"occupied", ...data, timestamp: new Date().toISOString() });
+          selectedSeatElement.classList.replace("selected","occupied");
+          form.reset(); form.style.display = "none";
+          selectedSeat = selectedSeatElement = null;
           showSuccess("Seat booked successfully! 🎉");
-          if (formData.snacks === "yes") {
-            setTimeout(() => window.location.href = "https://docs.google.com/forms/d/e/1FAIpQLSfhtN9lejsmBoJ7Ux3UYuwjNyYAEKpQFB1-dVrJCpaY1ZWyEQ/viewform?usp=header", 2000);
+          if (data.snacks === "yes") {
+            setTimeout(() => window.location.href = "https://docs.google.com/forms/d/e/1FAIpQLSfhtN9lejsmBoJ7Ux3UYuwjNyYAEKpQFB1-dVrJCpaY1ZWyEQ/viewform?usp=header", 1500);
           }
-        } catch (err) { showError("Booking failed. Please try again."); }
+        } catch {
+          showError("Booking failed");
+        }
       });
 
-      function showSuccess(msg) { showMessage(successMsg, msg); }
-      function showError(msg) { showMessage(errorMsg, msg); }
-      function showMessage(el, msg) {
-        el.textContent = msg;
-        el.style.display = "block";
-        setTimeout(() => el.style.display = "none", 4000);
+      function showSuccess(msg){
+        success.textContent = msg; success.style.display="block";
+        setTimeout(() => success.style.display="none", 3000);
+      }
+      function showError(msg){
+        error.textContent = msg; error.style.display="block";
+        setTimeout(() => error.style.display="none", 3000);
       }
     });
   </script>
