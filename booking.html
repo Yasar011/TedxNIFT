@@ -1,801 +1,409 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>Interstellar Movie Night Booking</title>
-  <style>
-    :root {
-      --primary-color: #ffcc00;
-      --text-light: #ffffff;
-      --text-dark: #111111;
-      --bg-light: #f7f7f7;
-      --bg-dark: #101820;
-      --seat-available: #6c757d;
-      --seat-selected: #28a745;
-      --seat-occupied: #dc3545;
-      
-      /* Dynamic touch target sizing based on screen width */
-      --base-touch-size: max(24px, 2.5vw); /* Never smaller than 24px, scales with viewport */
-      --touch-spacing: max(4px, 0.5vw);
-      --button-height: max(44px, 4vw);
-      --input-height: max(44px, 3.5vw);
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+<title>Interstellar Movie Night Booking</title>
+<style>
+  :root {
+    --primary-color: #ffcc00;
+    --text-light: #fff;
+    --text-dark: #111;
+    --bg-light: #f7f7f7;
+    --bg-dark: #101820;
+    --seat-available: #6c757d;
+    --seat-selected: #28a745;
+    --seat-occupied: #dc3545;
 
-    * {
-      box-sizing: border-box;
-    }
+    /* Responsive touch target sizes */
+    --base-touch-size: max(24px, 2.5vw);
+    --touch-spacing: max(4px, 0.5vw);
+  }
 
-    body {
-      font-family: "Segoe UI", sans-serif;
-      background-color: var(--bg-dark);
-      color: var(--text-light);
-      margin: 0;
-      padding: 0;
-      transition: background 0.3s, color 0.3s;
-      -webkit-tap-highlight-color: transparent;
-    }
+  * { box-sizing: border-box; margin:0; padding:0; }
 
-    body.light-mode {
-      background-color: var(--bg-light);
-      color: var(--text-dark);
-    }
+  body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    transition: background 0.3s, color 0.3s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body.light-mode {
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+  }
 
-    body.light-mode .seat {
-      color: var(--text-dark);
-    }
+  /* Toggle buttons for theme and reading mode */
+  .accessibility-toolbar {
+    position: fixed; top:1rem; right:1rem; display:flex; flex-direction:column; gap:0.4rem; z-index:1000;
+  }
+  .accessibility-btn {
+    background: var(--primary-color);
+    border:none; padding:8px 12px; border-radius:5px; cursor:pointer; font-size:12px; font-weight:600;
+    min-width:80px; display:flex; align-items:center; justify-content:center;
+  }
+  .accessibility-btn:hover { background:#e6b800; }
 
-    .container {
-      max-width: 960px;
-      margin: auto;
-      padding: 1rem;
-    }
+  .container {
+    max-width:960px; margin:auto; padding:1rem;
+  }
 
-    .accessibility-toolbar {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      z-index: 1000;
-    }
+  h1 { font-size: calc(1.5rem + 1vw); margin-bottom:0.4rem; text-align:center; font-weight:600; }
+  p { font-size:0.9rem; margin:2px; text-align:center; color:#bbb; }
 
-    .accessibility-btn {
-      background: var(--primary-color);
-      border: none;
-      color: #000;
-      padding: 8px 12px;
-      font-weight: bold;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: max(12px, 1.2vw);
-      min-width: max(80px, 8vw);
-      min-height: var(--button-height);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+  .movie-details {
+    text-align:center; margin:1rem 0; background: rgba(255,255,255,0.05); padding:1rem; border-radius:8px;
+  }
+  body.light-mode .movie-details { background: rgba(0,0,0,0.05); }
 
-    .accessibility-btn:hover {
-      background: #e6b800;
-    }
+  h2 { font-size:1.2rem; margin:0; color: var(--primary-color); }
 
-    .accessibility-btn:focus {
-      outline: 2px solid #fff;
-      outline-offset: 2px;
-    }
+  /* Legend outside seating for clarity */
+  .legend {
+    display: flex; justify-content: center; gap:15px; margin:1.5rem 0; flex-wrap:wrap;
+  }
+  .legend div { display:flex; align-items:center; gap:0.4rem; font-size:0.9rem; padding:5px 10px; background:rgba(255,255,255,0.1); border-radius:15px; }
+  body.light-mode .legend div { background: rgba(0,0,0,0.1); }
+  .box { width:16px; height:16px; border-radius:3px; }
 
-    .header {
-      text-align: center;
-      margin-bottom: 1.5rem;
-      padding-top: 4rem;
-    }
+  .available { background: var(--seat-available); }
+  .selected { background: var(--seat-selected); }
+  .occupied { background: var(--seat-occupied); }
 
-    .header h1 {
-      font-size: clamp(1.5rem, 4vw, 2.5rem);
-      margin-bottom: 0.5rem;
-      font-weight: 600;
-    }
+  /* Seating chart styles */
+  #seatingChart {
+    display: flex; flex-direction: column; align-items:center; gap:var(--touch-spacing);
+    margin:1.5rem 0;
+  }
+  .row {
+    display:flex; gap:var(--touch-spacing);
+  }
+  .gap-row { height: calc(var(--base-touch-size)/2); }
 
-    .header p {
-      margin: 3px;
-      font-size: clamp(0.8rem, 2vw, 1rem);
-      color: #bbb;
-    }
+  /* Seats styling with adaptive sizes and minimums */
+  .seat {
+    width: var(--base-touch-size);
+    height: var(--base-touch-size);
+    min-width:24px; min-height:24px;
+    font-size: clamp(8px,1.5vw,12px);
+    background-color: var(--seat-available);
+    color: var(--text-light);
+    border-radius:6px;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:all 0.2s; outline:none;
+  }
+  .seat:active { transform:scale(0.95); }
+  .seat:hover, .seat:focus {
+    transform: scale(1.1); outline:2px solid var(--primary-color);
+  }
+  .seat.selected { background: var(--seat-selected); box-shadow:0 0 15px rgba(40,167,69,0.6); }
+  .seat.occupied { background: var(--seat-occupied); cursor:not-allowed; opacity:0.7; }
+  
+  /* Gap (empty space) seats for layout */
+  .gap-seat {
+    width: var(--base-touch-size);
+    height: var(--base-touch-size);
+    background: transparent;
+    min-width:24px; min-height:24px;
+  }
 
-    .movie-details {
-      text-align: center;
-      margin-bottom: 1.5rem;
-      background: rgba(255,255,255,0.05);
-      padding: 1rem;
-      border-radius: 8px;
-    }
+  /* Screen style */
+  .screen {
+    margin:25px auto; padding:1rem; width:85%; text-align:center; font-weight:bold;
+    background:#e4e4e4; border-radius:8px; box-shadow:0 4px 15px rgba(0,0,0,0.3);
+    font-size:1rem; color:#222;
+  }
+  body.light-mode .screen { background:#ddd; color:#111; }
 
-    body.light-mode .movie-details {
-      background: rgba(0,0,0,0.05);
-    }
+  /* Booking form styles */
+  #bookingForm {
+    display:none; margin:2rem auto; padding:1.5rem; border-radius:10px;
+    background: rgba(255,255,255,0.05); width:90%; max-width:400px; backdrop-filter:blur(10px);
+  }
+  body.light-mode #bookingForm { background: rgba(0,0,0,0.05); }
 
-    .movie-details h2 {
-      color: var(--primary-color);
-      font-size: clamp(1.1rem, 3vw, 1.5rem);
-      margin: 0;
-    }
+  #bookingForm h3 { margin-bottom:1rem; text-align:center; color:var(--primary-color); font-size:1.3rem; font-weight:600; }
 
-    .legend {
-      display: flex;
-      justify-content: center;
-      gap: max(10px, 1.5vw);
-      margin: 1.5rem 0;
-      flex-wrap: wrap;
-    }
+  #bookingForm input, #bookingForm select {
+    width:100%; padding:1rem; margin-bottom:1rem; border:none; border-radius:6px; background:#222; color:#fff; font-size:1rem;
+  }
+  body.light-mode #bookingForm input, body.light-mode #bookingForm select {
+    background:#eee; color:#000;
+  }
 
-    .legend div {
-      display: flex;
-      gap: 0.5rem;
-      align-items: center;
-      font-size: clamp(0.8rem, 2vw, 1rem);
-      padding: max(5px, 0.8vw) max(10px, 1.2vw);
-      background: rgba(255,255,255,0.1);
-      border-radius: 15px;
-      min-height: var(--base-touch-size);
-    }
+  #bookingForm button {
+    width:100%; padding:1rem; font-size:1.1rem; background-color:var(--primary-color); border:none; border-radius:8px; cursor:pointer;
+  }
+  #bookingForm button:hover { background:#e6b800; }
 
-    body.light-mode .legend div {
-      background: rgba(0,0,0,0.1);
-    }
+  /* Messages */
+  #successMessage, #errorMessage {
+    display:none; text-align:center; padding:1rem; margin-top:1.5rem; border-radius:8px; font-weight:600; font-size:1rem;
+  }
+  #successMessage { background: var(--seat-selected); color:#fff; }
+  #errorMessage { background: var(--seat-occupied); color:#fff; }
 
-    .legend .box {
-      width: max(16px, 1.5vw);
-      height: max(16px, 1.5vw);
-      border-radius: 3px;
-    }
+  /* Responsive adjustments for tiny screens */
+  @media(max-width: 320px){ :root { --base-touch-size: max(28px,3vw); } }
+  @media(min-width:321px) and(max-width:480px) { :root { --base-touch-size: max(32px,3.2vw); } }
+  @media(min-width:481px) and(max-width:768px){ :root { --base-touch-size: max(36px,3.5vw); } }
+  @media(min-width:769px) and(max-width:1024px){ :root { --base-touch-size: max(40px,3.8vw); } }
+  @media(min-width:1025px){ :root { --base-touch-size: max(44px,4vw); } }
 
-    .available {
-      background: var(--seat-available);
-    }
-
-    .selected {
-      background: var(--seat-selected);
-    }
-
-    .occupied {
-      background: var(--seat-occupied);
-    }
-
-    .screen {
-      background: #e4e4e4;
-      color: #222;
-      text-align: center;
-      padding: 1rem;
-      margin: 25px auto;
-      width: 85%;
-      border-radius: 8px;
-      font-weight: bold;
-      font-size: clamp(0.9rem, 2.5vw, 1.2rem);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    }
-
-    body.light-mode .screen {
-      background: #ddd;
-      color: #111;
-    }
-
-    #seatingChart {
-      display: flex;
-      flex-direction: column;
-      gap: var(--touch-spacing);
-      align-items: center;
-      margin: 1.5rem 0;
-    }
-
-    .row {
-      display: flex;
-      gap: var(--touch-spacing);
-    }
-
-    .gap-row {
-      height: calc(var(--base-touch-size) / 2);
-    }
-
-    /* Responsive seat sizing based on screen width */
-    .seat {
-      width: var(--base-touch-size);
-      height: var(--base-touch-size);
-      font-size: clamp(8px, 1.5vw, 12px);
-      background: var(--seat-available);
-      color: var(--text-light);
-      border-radius: clamp(4px, 0.5vw, 8px);
-      line-height: 1;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      position: relative;
-      font-weight: 500;
-      border: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      
-      /* Ensure minimum touch target size */
-      min-width: 24px;
-      min-height: 24px;
-    }
-
-    .seat:active {
-      transform: scale(0.95);
-    }
-
-    .seat:hover, .seat:focus {
-      transform: scale(1.1);
-      box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
-      outline: 2px solid var(--primary-color);
-    }
-
-    .seat.selected {
-      background: var(--seat-selected);
-      box-shadow: 0 0 15px rgba(40, 167, 69, 0.6);
-    }
-
-    .seat.occupied {
-      background: var(--seat-occupied);
-      cursor: not-allowed;
-      opacity: 0.7;
-    }
-
-    .gap-seat {
-      width: var(--base-touch-size);
-      height: var(--base-touch-size);
-      background: transparent;
-      min-width: 24px;
-      min-height: 24px;
-    }
-
-    /* Screen reader announcements */
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
-    }
-
-    .announcement-area {
-      position: fixed;
-      top: -9999px;
-      left: -9999px;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
-    }
-
-    #bookingForm {
-      display: none;
-      background: rgba(255, 255, 255, 0.05);
-      padding: 1.5rem;
-      border-radius: 12px;
-      margin-top: 2rem;
-      max-width: 400px;
-      margin-left: auto;
-      margin-right: auto;
-      backdrop-filter: blur(10px);
-    }
-
-    body.light-mode #bookingForm {
-      background: rgba(0, 0, 0, 0.05);
-    }
-
-    #bookingForm h3 {
-      color: var(--primary-color);
-      margin-bottom: 1.5rem;
-      text-align: center;
-      font-size: clamp(1.2rem, 3vw, 1.5rem);
-      font-weight: 600;
-    }
-
-    #bookingForm input,
-    #bookingForm select {
-      width: 100%;
-      padding: max(12px, 1.5vw);
-      border: none;
-      margin-bottom: 1rem;
-      border-radius: 6px;
-      background: #222;
-      color: #fff;
-      font-size: clamp(14px, 2vw, 16px);
-      min-height: var(--input-height);
-    }
-
-    body.light-mode #bookingForm input,
-    body.light-mode #bookingForm select {
-      background: #eee;
-      color: #000;
-    }
-
-    #bookingForm button {
-      width: 100%;
-      padding: max(16px, 2vw);
-      background-color: var(--primary-color);
-      border: none;
-      border-radius: 8px;
-      color: #000;
-      font-size: clamp(1rem, 2.5vw, 1.2rem);
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-      min-height: var(--button-height);
-    }
-
-    #bookingForm button:hover {
-      background-color: #e6b800;
-      transform: translateY(-2px);
-    }
-
-    #bookingForm button:active {
-      transform: translateY(0);
-    }
-
-    #successMessage,
-    #errorMessage {
-      display: none;
-      text-align: center;
-      padding: 1.2rem;
-      margin-top: 1.5rem;
-      border-radius: 8px;
-      font-weight: 500;
-      font-size: clamp(0.9rem, 2vw, 1.1rem);
-    }
-
-    #successMessage {
-      background: var(--seat-selected);
-      color: #fff;
-    }
-
-    #errorMessage {
-      background-color: var(--seat-occupied);
-      color: #fff;
-    }
-
-    /* Reading mode styles */
-    body.reading-mode {
-      background: #f9f9f9;
-      color: #000;
-      font-size: 1.2rem;
-      line-height: 1.6;
-    }
-
-    body.reading-mode .accessibility-toolbar {
-      background: rgba(0, 0, 0, 0.1);
-      padding: 1rem;
-      border-radius: 8px;
-    }
-
-    /* Enhanced responsive breakpoints for different screen sizes */
-    @media (max-width: 320px) {
-      :root {
-        --base-touch-size: max(28px, 3vw);
-        --touch-spacing: max(6px, 0.8vw);
-      }
-      
-      .seat {
-        font-size: 8px;
-      }
-    }
-
-    @media (min-width: 321px) and (max-width: 480px) {
-      :root {
-        --base-touch-size: max(32px, 3.2vw);
-        --touch-spacing: max(6px, 0.8vw);
-      }
-      
-      .seat {
-        font-size: 9px;
-      }
-    }
-
-    @media (min-width: 481px) and (max-width: 768px) {
-      :root {
-        --base-touch-size: max(36px, 3.5vw);
-        --touch-spacing: max(8px, 1vw);
-      }
-      
-      .seat {
-        font-size: 10px;
-      }
-    }
-
-    @media (min-width: 769px) and (max-width: 1024px) {
-      :root {
-        --base-touch-size: max(40px, 3.8vw);
-        --touch-spacing: max(10px, 1.2vw);
-      }
-      
-      .seat {
-        font-size: 11px;
-      }
-    }
-
-    @media (min-width: 1025px) {
-      :root {
-        --base-touch-size: max(44px, 4vw);
-        --touch-spacing: max(12px, 1.5vw);
-      }
-      
-      .seat {
-        font-size: 12px;
-      }
-    }
-
-    /* High-DPI display adjustments */
-    @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-      :root {
-        --base-touch-size: max(var(--base-touch-size), 44px);
-      }
-    }
-
-    /* Landscape orientation adjustments */
-    @media (orientation: landscape) and (max-height: 500px) {
-      :root {
-        --base-touch-size: max(var(--base-touch-size), 40px);
-      }
-      
-      .header {
-        padding-top: 2rem;
-      }
-    }
-  </style>
+  /* Additional adjustments for very small devices */
+  @media(max-width:360px){ .seat { font-size:8px; } }
+</style>
 </head>
 <body>
-  <div class="container">
-    <!-- Accessibility Toolbar -->
-    <div class="accessibility-toolbar">
-      <button class="accessibility-btn" id="themeToggle" aria-label="Toggle dark and light mode">🌙 Dark</button>
-      <button class="accessibility-btn" id="readingModeBtn" aria-label="Toggle reading mode for better readability">👓 Reading</button>
-    </div>
 
-    <!-- ARIA Live Regions for screen reader announcements -->
-    <div id="politeAnnouncement" aria-live="polite" aria-atomic="true" class="announcement-area"></div>
-    <div id="assertiveAnnouncement" aria-live="assertive" aria-atomic="true" class="announcement-area"></div>
+<!-- Accessibility controls -->
+<div class="accessibility-toolbar">
+  <button class="accessibility-btn" id="themeToggle" aria-label="Toggle dark and light mode">🌙 Dark</button>
+  <button class="accessibility-btn" id="readingModeBtn" aria-label="Toggle reading mode">👓 Reading</button>
+</div>
 
-    <!-- Header -->
-    <div class="header">
-      <h1>Interstellar Movie Night</h1>
-      <p>Adventure & Photography Club</p>
-      <p>NIFT Jodhpur</p>
-    </div>
+<!-- Announcements for screen readers -->
+<div id="politeAnnouncement" aria-live="polite" aria-atomic="true" class="announcement-area"></div>
+<div id="assertiveAnnouncement" aria-live="assertive" aria-atomic="true" class="announcement-area"></div>
 
-    <!-- Movie Details -->
-    <div class="movie-details">
-      <h2>Show: 9:15 PM | ₹29 per seat</h2>
-    </div>
+<!-- Main content -->
+<div class="container">
 
-    <div class="legend" role="group" aria-label="Seat availability legend">
-      <div><div class="box available"></div>Available</div>
-      <div><div class="box selected"></div>Selected</div>
-      <div><div class="box occupied"></div>Occupied</div>
-    </div>
+<h1>Interstellar Movie Night</h1>
+<p>Adventure & Photography Club</p>
+<p>NIFT Jodhpur</p>
 
-    <div id="seatingChart" role="application" aria-label="Movie theater seating chart"></div>
-    <div class="screen" aria-label="Movie screen location">Screen</div>
+<div class="movie-details">
+  <h2>Show: 9:15 PM | ₹29 per seat</h2>
+</div>
 
-    <div id="successMessage" role="alert" aria-live="assertive">✅ Seat booked successfully!</div>
-    <div id="errorMessage" role="alert" aria-live="assertive"></div>
+<!-- Legend of seats -->
+<div class="legend" role="group" aria-label="Seat availability legend">
+  <div><div class="box available"></div>Available</div>
+  <div><div class="box selected"></div>Selected</div>
+  <div><div class="box occupied"></div>Occupied</div>
+</div>
 
-    <form id="bookingForm" aria-label="Booking form for selected seat">
-      <h3>Booking Details</h3>
-      <input type="text" id="name" placeholder="Your Name" required aria-label="Enter your full name" />
-      <select id="department" required aria-label="Select your department">
-        <option value="" disabled selected>Department</option>
-        <option value="AD">AD</option>
-        <option value="BDT">BFT</option>
-        <option value="FC">FC</option>
-        <option value="FD">FD</option>
-        <option value="MFM">MFM</option>
-        <option value="TD">TD</option>
-        <option value="STAFF">Staff</option>
-        <option value="FACULTY">Faculty</option>
-        <option value="OTHER">Other</option>
-      </select>
-      <select id="semester" required aria-label="Select your semester">
-        <option value="" disabled selected>Semester</option>
-        <option value="1">1</option><option value="2">2</option>
-        <option value="3">3</option><option value="4">4</option>
-        <option value="5">5</option><option value="6">6</option>
-        <option value="7">7</option><option value="8">8</option>
-        <option value="OTHER">Other</option>
-      </select>
-      <select id="snacks" required aria-label="Do you want snacks?">
-        <option value="" disabled selected>Would you like snacks?</option>
-        <option value="yes">Yes</option>
-        <option value="no">No</option>
-      </select>
-      <input type="email" id="email" placeholder="Email" required aria-label="Enter your email address" />
-      <input type="text" id="phone" placeholder="Phone (10 digits)" required aria-label="Enter your 10-digit phone number" />
-      <input type="text" id="seatNumber" disabled aria-label="Your selected seat number" />
-      <button type="submit" aria-label="Submit booking form">Book Now</button>
-    </form>
-  </div>
+<!-- Seating chart -->
+<div id="seatingChart" role="application" aria-label="Movie theater seating chart"></div>
 
-  <!-- Enhanced JavaScript (same as before) -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
-    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-database.js";
+<!-- Screen -->
+<div class="screen">Screen</div>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBpew8ODVHmmGndhZxQ3VK_CEurW0_EQyU",
-      authDomain: "nift-movie-nigt-apc.firebaseapp.com",
-      databaseURL: "https://nift-movie-nigt-apc-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "nift-movie-nigt-apc",
-      storageBucket: "nift-movie-nigt-apc.appspot.com",
-      messagingSenderId: "736122244542",
-      appId: "1:736122244542:web:69d88050a26fc8391dbdef",
-      measurementId: "G-GL1MBM6DW6"
-    };
+<!-- Feedback messages -->
+<div id="successMessage"></div>
+<div id="errorMessage"></div>
 
-    const app = initializeApp(firebaseConfig);
-    const database = getDatabase(app);
-    let selectedSeat = null;
+<!-- Booking Form -->
+<form id="bookingForm" aria-label="Booking form for selected seat">
+  <h3>Booking Details</h3>
+  <input type="text" id="name" placeholder="Your Name" required aria-label="Your full name"/>
+  <select id="department" required aria-label="Your Department">
+    <option value="" disabled selected>Department</option>
+    <option value="AD">AD</option>
+    <option value="BDT">BFT</option>
+    <option value="FC">FC</option>
+    <option value="FD">FD</option>
+    <option value="MFM">MFM</option>
+    <option value="TD">TD</option>
+    <option value="STAFF">Staff</option>
+    <option value="FACULTY">Faculty</option>
+    <option value="OTHER">Other</option>
+  </select>
+  <select id="semester" required aria-label="Your Semester">
+    <option value="" disabled selected>Semester</option>
+    <option value="1">1</option><option value="2">2</option>
+    <option value="3">3</option><option value="4">4</option>
+    <option value="5">5</option><option value="6">6</option>
+    <option value="7">7</option><option value="8">8</option>
+    <option value="OTHER">Other</option>
+  </select>
+  <select id="snacks" required aria-label="Snacks">
+    <option value="" disabled selected>Do you need snacks?</option>
+    <option value="yes">Yes</option>
+    <option value="no">No</option>
+  </select>
+  <input type="email" id="email" placeholder="Email" required aria-label="Your Email"/>
+  <input type="text" id="phone" placeholder="Phone (10 digits)" required aria-label="Your 10 digit Phone"/>
+  <input type="text" id="seatNumber" disabled aria-label="Selected seat"/>
+  <button type="submit" aria-label="Book Seat">Book Now</button>
+</form>
+</div>
 
-    // Screen Reader Helper (No Voice Features)
-    class AccessibilityHelper {
-      announcePolitely(text) {
-        document.getElementById('politeAnnouncement').textContent = text;
-        setTimeout(() => {
-          document.getElementById('politeAnnouncement').textContent = '';
-        }, 100);
+<!-- Scripts -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
+  import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBpew8ODVHmmGndhZxQ3VK_CEurW0_EQyU",
+    authDomain: "nift-movie-nigt-apc.firebaseapp.com",
+    databaseURL: "https://nift-movie-nigt-apc-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "nift-movie-nigt-apc",
+    storageBucket: "nift-movie-nigt-apc.appspot.com",
+    messagingSenderId: "736122244542",
+    appId: "1:736122244542:web:69d88050a26fc8391dbdef",
+    measurementId: "G-GL1MBM6DW6"
+  };
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  let selectedSeat = null;
+
+  // Utility for announcements
+  const announce = (id, msg) => {
+    document.getElementById(id).textContent=msg;
+    setTimeout(()=>{document.getElementById(id).textContent='';}, 100);
+  };
+
+  // Theme toggle button
+  document.getElementById('themeToggle').onclick=()=>{
+    document.body.classList.toggle('light-mode');
+    const isLight = document.body.classList.contains('light-mode');
+    document.getElementById('themeToggle').textContent=isLight ? '🌙 Dark' :'☀️ Light';
+    announce('politeAnnouncement', 'Theme switched');
+  };
+
+  // Reading mode toggle
+  document.getElementById('readingModeBtn').onclick=()=>{
+    document.body.classList.toggle('reading-mode');
+    const isReading= document.body.classList.contains('reading-mode');
+    document.getElementById('readingModeBtn').textContent=isReading ? '👓 Normal' :'👓 Reading';
+    announce('politeAnnouncement','Reading mode toggled');
+  };
+
+  // Load existing seats
+  const seatRef = ref(db, 'seats/');
+  onValue(seatRef, snap => {
+    const seats = snap.val()||{};
+    const chartDiv=document.getElementById('seatingChart');
+    chartDiv.innerHTML='';
+
+    const rows=8, seatsPerRow=30;
+    for(let i=0; i<rows; i++){
+      if(i===4){
+        const gapDiv=document.createElement('div');
+        gapDiv.className='gap-row';
+        chartDiv.appendChild(gapDiv);
       }
+      const rowDiv=document.createElement('div');
+      rowDiv.className='row';
 
-      announceUrgently(text) {
-        document.getElementById('assertiveAnnouncement').textContent = text;
-        setTimeout(() => {
-          document.getElementById('assertiveAnnouncement').textContent = '';
-        }, 100);
+      for(let j=seatsPerRow-1; j>=0; j--){
+        if(j===15){
+          const gapSeat=document.createElement('div');
+          gapSeat.className='gap-seat';
+          rowDiv.appendChild(gapSeat);
+        }
+
+        const seatId=`${String.fromCharCode(65+i)}${j+1}`;
+        const seatBtn=document.createElement('button');
+        seatBtn.className='seat';
+        seatBtn.setAttribute('role','button');
+        seatBtn.setAttribute('type','button');
+        seatBtn.setAttribute('aria-label',`Seat ${seatId} available`);
+        seatBtn.dataset.seatId=seatId;
+        seatBtn.textContent=seatId;
+
+        if(seats[seatId]){
+          seatBtn.classList.add('occupied');
+          seatBtn.setAttribute('aria-label',`Seat ${seatId} occupied`);
+          seatBtn.disabled=true;
+        }
+
+        seatBtn.onclick=()=>{
+          if(!seatBtn.classList.contains('occupied')){
+            if(selectedSeat) {
+              selectedSeat.classList.remove('selected');
+              selectedSeat.setAttribute('aria-label',`Seat ${selectedSeat.dataset.seatId} available`);
+            }
+            seatBtn.classList.add('selected');
+            seatBtn.setAttribute('aria-label',`Seat ${seatId} selected`);
+            selectedSeat=seatBtn;
+            document.getElementById('seatNumber').value=seatId;
+            document.getElementById('bookingForm').style.display='block';
+            document.getElementById('name').focus();
+          }
+        };
+
+        seatBtn.onkeydown=(e)=>{
+          if(e.key==='Enter'||e.key===' '){
+            e.preventDefault();
+            seatBtn.click();
+          }
+        };
+        rowDiv.appendChild(seatBtn);
       }
+      chartDiv.appendChild(rowDiv);
+    }
+  });
+
+  // Book seat
+  document.getElementById('bookingForm').onsubmit=()=>{
+    const btn=document.querySelector('#bookingForm button');
+    btn.disabled=true;
+    btn.textContent='Booking...';
+
+    const name=document.getElementById('name').value;
+    const dept=document.getElementById('department').value;
+    const sem=document.getElementById('semester').value;
+    const snacks=document.getElementById('snacks').value;
+    const email=document.getElementById('email').value;
+    const phone=document.getElementById('phone').value;
+    const seatId=document.getElementById('seatNumber').value;
+
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+      alert('Invalid email');
+      document.getElementById('email').focus();
+      btn.disabled=false; btn.textContent='Book Now'; return;
+    }
+    if(!/^\d{10}$/.test(phone)){
+      alert('Invalid phone');
+      document.getElementById('phone').focus();
+      btn.disabled=false; btn.textContent='Book Now'; return;
     }
 
-    const accessibilityHelper = new AccessibilityHelper();
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const seatingChart = document.getElementById("seatingChart");
-      const bookingForm = document.getElementById("bookingForm");
-      const successMessage = document.getElementById("successMessage");
-      const errorMessage = document.getElementById("errorMessage");
-      const themeToggle = document.getElementById("themeToggle");
-      const readingModeBtn = document.getElementById("readingModeBtn");
-      const rows = 8;
-      const seatsPerRow = 30;
-
-      // Theme Toggle
-      themeToggle.addEventListener("click", () => {
-        document.body.classList.toggle("light-mode");
-        const isLight = document.body.classList.contains("light-mode");
-        localStorage.setItem("theme", isLight ? "light" : "dark");
-        themeToggle.textContent = isLight ? "🌙 Dark" : "☀️ Light";
-        
-        accessibilityHelper.announcePolitely(isLight ? "Switched to light mode" : "Switched to dark mode");
-      });
-
-      // Reading Mode Toggle
-      readingModeBtn.addEventListener("click", () => {
-        document.body.classList.toggle("reading-mode");
-        const isReadingMode = document.body.classList.contains("reading-mode");
-        readingModeBtn.textContent = isReadingMode ? "👓 Normal" : "👓 Reading";
-        
-        accessibilityHelper.announcePolitely(isReadingMode ? "Reading mode enabled" : "Reading mode disabled");
-      });
-
-      // System theme auto load
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      if (!localStorage.getItem("theme")) {
-        document.body.classList.toggle("light-mode", !prefersDark);
-        themeToggle.textContent = prefersDark ? "☀️ Light" : "🌙 Dark";
+    set(ref(db, `seats/${seatId}`), {
+      status:'occupied',
+      name, dept, sem,
+      snacks, email, phone
+    }).then(()=>{
+      if(selectedSeat){
+        selectedSeat.classList.remove('selected');
+        selectedSeat.classList.add('occupied');
+        selectedSeat.setAttribute('aria-label',`Seat ${seatId} occupied`);
+        selectedSeat.disabled=true;
       }
+      document.getElementById('bookingForm').style.display='none';
+      document.getElementById('bookingForm').reset();
+      selectedSeat=null;
+      document.getElementById('successMessage').innerHTML='Seat booked successfully!';
+      document.getElementById('successMessage').style.display='block';
 
-      if (localStorage.getItem("theme") === "light") {
-        document.body.classList.add("light-mode");
-        themeToggle.textContent = "🌙 Dark";
-      }
-
-      // Load seat data from Firebase
-      const seatStatusRef = ref(database, "seats/");
-      onValue(seatStatusRef, (snapshot) => {
-        const seatData = snapshot.val() || {};
-        seatingChart.innerHTML = "";
-
-        for (let i = 0; i < rows; i++) {
-          if (i === 4) {
-            const gapRow = document.createElement("div");
-            gapRow.classList.add("gap-row");
-            gapRow.setAttribute("aria-hidden", "true");
-            seatingChart.appendChild(gapRow);
-          }
-
-          const row = document.createElement("div");
-          row.classList.add("row");
-          row.setAttribute("role", "row");
-          row.setAttribute("aria-label", `Row ${String.fromCharCode(65 + i)}`);
-
-          for (let j = seatsPerRow - 1; j >= 0; j--) {
-            if (j === 15) {
-              const gapSeat = document.createElement("div");
-              gapSeat.classList.add("gap-seat");
-              gapSeat.setAttribute("aria-hidden", "true");
-              row.appendChild(gapSeat);
-            }
-
-            const seat = document.createElement("button");
-            seat.classList.add("seat");
-            seat.setAttribute("type", "button");
-            const seatId = `${String.fromCharCode(65 + i)}${j + 1}`;
-            const isOccupied = seatData[seatId];
-            
-            if (isOccupied) {
-              seat.classList.add("occupied");
-              seat.disabled = true;
-              seat.setAttribute("aria-label", `Seat ${seatId} is occupied`);
-            } else {
-              seat.setAttribute("aria-label", `Seat ${seatId} is available`);
-            }
-
-            seat.textContent = seatId;
-            seat.setAttribute("data-seat-id", seatId);
-            seat.setAttribute("role", "button");
-
-            const handleSeatSelection = (event) => {
-              if (!seat.classList.contains("occupied")) {
-                if (selectedSeat) {
-                  selectedSeat.classList.remove("selected");
-                  selectedSeat.setAttribute("aria-label", `Seat ${selectedSeat.dataset.seatId} is available`);
-                }
-                seat.classList.add("selected");
-                seat.setAttribute("aria-label", `Seat ${seatId} is selected`);
-                selectedSeat = seat;
-                bookingForm.style.display = "block";
-                document.getElementById("seatNumber").value = seatId;
-                
-                // Announce selection
-                accessibilityHelper.announcePolitely(`Seat ${seatId} selected. Booking form is now available.`);
-                
-                // Scroll to form on mobile
-                setTimeout(() => {
-                  bookingForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                  document.getElementById('name').focus();
-                }, 500);
-              }
-            };
-
-            seat.addEventListener("click", handleSeatSelection);
-            seat.addEventListener("keydown", (e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                handleSeatSelection(e);
-              }
-            });
-
-            seat.addEventListener("focus", () => {
-              if (!isOccupied) {
-                accessibilityHelper.announcePolitely(`Focused on seat ${seatId}`);
-              }
-            });
-            
-            // Add touch feedback
-            seat.addEventListener("touchstart", () => {
-              if (!seat.classList.contains("occupied")) {
-                seat.style.opacity = "0.7";
-              }
-            });
-            
-            seat.addEventListener("touchend", () => {
-              seat.style.opacity = "1";
-            });
-            
-            row.appendChild(seat);
-          }
-          seatingChart.appendChild(row);
+      setTimeout(()=>{
+        document.getElementById('successMessage').style.display='none';
+        if(snacks==='yes'){
+          window.location.href='https://docs.google.com/forms/d/e/1FAIpQLSfhtN9lejsmBoJ7Ux3UYuwjNyYAEKpQFB1-dVrJCpaY1ZWyEQ/viewform?usp=header';
         }
+      },3000);
+    }).catch(e=>{alert('Error, try again');});
+    btn.disabled=false; btn.textContent='Book Now';
+    return false;
+  };
 
-        // Announce seat summary
-        const totalSeats = rows * seatsPerRow;
-        const occupiedCount = Object.keys(seatData).length;
-        const availableCount = totalSeats - occupiedCount;
-        
-        accessibilityHelper.announcePolitely(`Seating chart loaded. ${availableCount} seats available out of ${totalSeats} total seats.`);
-      });
+  // Theme toggle
+  document.getElementById('themeToggle').onclick=()=>{
+    document.body.classList.toggle('light-mode');
+    const isLight=document.body.classList.contains('light-mode');
+    document.getElementById('themeToggle').textContent=isLight?'🌙 Dark':'☀️ Light';
+  };
 
-      // Form submission with accessibility
-      bookingForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const submitBtn = bookingForm.querySelector("button");
-        submitBtn.disabled = true;
-        submitBtn.textContent = "Booking...";
-        
-        accessibilityHelper.announceUrgently("Processing your booking request...");
-        
-        const name = document.getElementById("name").value;
-        const department = document.getElementById("department").value;
-        const semester = document.getElementById("semester").value;
-        const snacks = document.getElementById("snacks").value;
-        const email = document.getElementById("email").value;
-        const phone = document.getElementById("phone").value;
-        const seatNumber = document.getElementById("seatNumber").value;
-
-        // Validation
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-          showError("Please enter a valid email address.");
-          document.getElementById("email").focus();
-          submitBtn.disabled = false;
-          submitBtn.textContent = "Book Now";
-          return;
-        }
-        if (!/^\d{10}$/.test(phone)) {
-          showError("Please enter a valid 10-digit phone number.");
-          document.getElementById("phone").focus();
-          submitBtn.disabled = false;
-          submitBtn.textContent = "Book Now";
-          return;
-        }
-
-        set(ref(database, `seats/${seatNumber}`), {
-          status: "occupied",
-          name, department, semester,
-          snacks, email, phone
-        }).then(() => {
-          if (selectedSeat) {
-            selectedSeat.classList.remove("selected");
-            selectedSeat.classList.add("occupied");
-            selectedSeat.disabled = true;
-            selectedSeat.setAttribute("aria-label", `Seat ${seatNumber} is now occupied`);
-          }
-          bookingForm.style.display = "none";
-          bookingForm.reset();
-          selectedSeat = null;
-          successMessage.style.display = "block";
-          
-          accessibilityHelper.announceUrgently("Booking successful!");
-          
-          setTimeout(() => {
-            if (snacks === "yes") {
-              setTimeout(() => {
-                window.location.href = "https://docs.google.com/forms/d/e/1FAIpQLSfhtN9lejsmBoJ7Ux3UYuwjNyYAEKpQFB1-dVrJCpaY1ZWyEQ/viewform?usp=header";
-              }, 1000);
-            } else {
-              successMessage.style.display = "none";
-            }
-          }, 3000);
-        }).catch((error) => {
-          showError("An error occurred while booking. Please try again.");
-          console.error("Firebase error:", error);
-        }).finally(() => {
-          submitBtn.disabled = false;
-          submitBtn.textContent = "Book Now";
-        });
-      });
-
-      const showError = (msg) => {
-        errorMessage.textContent = msg;
-        errorMessage.style.display = "block";
-        accessibilityHelper.announceUrgently(msg);
-        setTimeout(() => {
-          errorMessage.style.display = "none";
-        }, 5000);
-      };
-
-      // Keyboard navigation enhancements
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") {
-          if (bookingForm.style.display === "block") {
-            bookingForm.style.display = "none";
-            if (selectedSeat) {
-              selectedSeat.focus();
-            }
-          }
-        }
-      });
-    });
-  </script>
+  // Reading mode toggle
+  document.getElementById('readingModeBtn').onclick=()=>{
+    document.body.classList.toggle('reading-mode');
+    const isReading=document.body.classList.contains('reading-mode');
+    document.getElementById('readingModeBtn').textContent=isReading?'👓 Normal':'👓 Reading';
+  };
+</script>
 </body>
 </html>
