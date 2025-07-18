@@ -5,123 +5,161 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Interstellar Movie Night Booking</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    /* Reset & base */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont,
+        'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #2C3E50 0%, #4CA1AF 100%); /* new primary gradient */
       min-height: 100vh;
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: flex-start;
       padding: 16px;
       color: #fff;
     }
     .booking-container {
       background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(20px);
-      border-radius: 16px;
+      backdrop-filter: blur(15px);
+      border-radius: 12px;
       padding: 24px;
       max-width: 480px;
       width: 100%;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
       border: 1px solid rgba(255,255,255,0.2);
+      position: relative;
     }
-    .header { text-align: center; margin-bottom: 24px; }
+
+    /* Login button */
+    .btn-login {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: #ECF0F1;
+      color: #2C3E50;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-login:active { transform: scale(0.95); }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+      padding-top: 36px; /* space for login */
+    }
     .header h1 {
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 700;
-      background: linear-gradient(45deg,#fff,#f0f0f0);
+      background: linear-gradient(45deg, #ECF0F1, #BDC3C7);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
     .header p {
       font-size: 12px;
       opacity: 0.8;
-      font-weight: 500;
+      margin-top: 4px;
     }
+
+    /* Movie card */
     .movie-card {
       background: rgba(255,255,255,0.05);
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
-      border: 1px solid rgba(255,255,255,0.1);
-    }
-    .movie-title {
-      font-size: 18px;
-      font-weight: 600;
-      color: #fff;
-      margin-bottom: 8px;
-    }
-    .movie-details {
-      display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      opacity: 0.9;
-    }
-    .legend {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      margin-bottom: 16px;
-    }
-    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 10px; }
-    .legend-color { width: 12px; height: 12px; border-radius: 3px; }
-    .available { background: #4CAF50; }
-    .selected  { background: #2196F3; }
-    .occupied  { background: #FF5722; }
-
-    /* seating */
-    .seating-area {
-      background: rgba(255,255,255,0.05);
-      border-radius: 12px;
+      border-radius: 8px;
       padding: 12px;
       margin-bottom: 16px;
       display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+    }
+    .movie-card .movie-title { font-weight: 600; }
+    .movie-card .movie-time { font-weight: 500; }
+    .movie-card .movie-price { font-weight: 500; }
+
+    /* Legend */
+    .legend {
+      display: flex;
       justify-content: center;
+      gap: 12px;
+      font-size: 10px;
+      margin-bottom: 12px;
+    }
+    .legend-item { display: flex; align-items: center; gap: 4px; }
+    .legend-color { width: 10px; height: 10px; border-radius: 2px; }
+    .available { background: #27AE60; }
+    .selected  { background: #2980B9; }
+    .occupied  { background: #C0392B; }
+
+    /* Seating area */
+    .seating-area {
+      background: rgba(255,255,255,0.05);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 16px;
       min-height: 0;
+      display: flex;
+      justify-content: center;
     }
     .auditorium {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
       min-height: 0;
+      width: 100%;
     }
     #seatingChart {
       width: 100%;
-      max-height: 50vh;
+      max-height: 45vh;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
       padding-right: 4px;
     }
+
+    /* SCREEN banner */
     .screen {
-      background: linear-gradient(45deg,#f0f0f0,#e0e0e0);
-      color: #333;
-      padding: 8px 16px;
-      border-radius: 6px;
+      background: linear-gradient(45deg, #ECF0F1, #BDC3C7);
+      color: #2C3E50;
+      padding: 6px 12px;
+      border-radius: 4px;
       text-align: center;
       font-weight: 600;
       font-size: 10px;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
+
+    /* Direction banners */
+    .direction {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      margin: 4px 0;
+    }
+    .direction span {
+      background: rgba(236,240,241,0.2);
+      color: #2C3E50;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    /* Seat rows */
     .seat-row {
       display: flex;
       align-items: center;
-      justify-content: center;
     }
     .row-label {
       width: 14px;
       text-align: right;
-      margin-right: 6px;
-      font-size: 10px;
+      margin-right: 4px;
+      font-size: 8px;
       font-weight: 600;
-      color: #fff;
     }
-    .seats { display: flex; }
+    .seats { display: flex; flex-wrap: nowrap; }
+
     .seat {
       width: 22px;
       height: 22px;
@@ -133,106 +171,83 @@
       font-size: 8px;
       font-weight: 600;
       cursor: pointer;
-      background: #4CAF50;
+      background: #27AE60;
       color: #fff;
-      border: 1px solid rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
       touch-action: manipulation;
-      transition: transform 0.2s;
+      transition: transform 0.15s;
     }
-    .seat:hover:not(.occupied) {
-      transform: scale(1.1);
-      box-shadow: 0 2px 6px rgba(255,255,255,0.3);
-    }
-    .seat.selected {
-      background: #2196F3;
-      border-color: #fff;
-    }
-    .seat.occupied {
-      background: #FF5722;
-      opacity: 0.7;
-      cursor: not-allowed;
-    }
-    .aisle-horizontal { height: 8px; }
-    .aisle-vertical   { width: 8px; }
+    .seat:hover:not(.occupied) { transform: scale(1.1); }
+    .seat.selected { background: #2980B9; border-color: #fff; }
+    .seat.occupied { background: #C0392B; opacity: 0.7; cursor: not-allowed; }
 
-    /* phones: 10×10 seats */
+    .aisle-horizontal { height: 6px; }
+    .aisle-vertical   { width: 6px; }
+
+    /* Mobile overrides: 10×10 seats */
     @media (max-width: 480px) {
-      .seat {
-        width: 10px;
-        height: 10px;
-        font-size: 6px;
-        margin: 1px;
-      }
-      .row-label { font-size: 8px; margin-right: 4px; }
-      .screen { padding: 6px 12px; font-size: 8px; margin-bottom: 8px; }
-      #seatingChart { max-height: 45vh; }
+      .seat { width: 10px; height: 10px; font-size: 6px; }
+      .row-label { font-size: 6px; margin-right: 2px; }
+      .screen { padding: 4px 8px; font-size: 8px; }
+      .direction span { font-size: 6px; padding: 1px 4px; }
+      #seatingChart { max-height: 40vh; }
     }
 
-    /* form & messages */
+    /* Form & messages */
     .message {
-      padding: 12px;
-      border-radius: 8px;
+      padding: 8px;
+      border-radius: 6px;
       margin-bottom: 12px;
       font-size: 12px;
       display: none;
       text-align: center;
       font-weight: 500;
     }
-    .success { background: rgba(76,175,80,0.2); border:1px solid rgba(76,175,80,0.3); color:#4CAF50; }
-    .error   { background: rgba(244,67,54,0.2); border:1px solid rgba(244,67,54,0.3); color:#F44336; }
+    .success { background: rgba(39,174,96,0.2); border:1px solid rgba(39,174,96,0.3); color:#27AE60; }
+    .error   { background: rgba(192,57,43,0.2); border:1px solid rgba(192,57,43,0.3); color:#C0392B; }
 
     .booking-form {
       background: rgba(255,255,255,0.05);
-      border-radius: 12px;
+      border-radius: 8px;
       padding: 16px;
       display: none;
       animation: slideIn 0.3s ease-out;
       font-size: 12px;
     }
     @keyframes slideIn {
-      from { opacity: 0; transform: translateY(12px); }
-      to   { opacity: 1; transform: translateY(0); }
+      from { opacity:0; transform: translateY(8px); }
+      to   { opacity:1; transform: translateY(0); }
     }
     .form-group { margin-bottom: 12px; }
-    .form-group label {
-      display: block;
-      margin-bottom: 6px;
-      opacity: 0.9;
-      font-weight: 500;
-    }
+    .form-group label { display:block; margin-bottom:6px; opacity:0.9; }
     .form-group input,
     .form-group select {
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid rgba(255,255,255,0.2);
-      background: rgba(255,255,255,0.1);
-      color: #fff;
-      font-size: 12px;
+      width:100%; padding:8px;
+      border-radius:6px; border:1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.1); color:#fff;
+      font-size:12px;
     }
     .form-group input:focus,
     .form-group select:focus {
-      outline: none;
-      border-color: #2196F3;
-      box-shadow: 0 0 0 2px rgba(33,150,243,0.1);
+      outline:none; border-color:#2980B9;
+      box-shadow:0 0 0 2px rgba(41,128,185,0.2);
     }
     .book-btn {
-      width: 100%;
-      padding: 12px;
-      background: linear-gradient(45deg,#2196F3,#21CBF3);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s;
+      width:100%; padding:10px;
+      background: #2980B9; color:#fff; border:none;
+      border-radius:6px; font-size:14px; font-weight:600;
+      cursor:pointer; transition:background 0.15s;
     }
-    .book-btn:hover { background: linear-gradient(45deg,#1e88e5,#1ab7ea); }
+    .book-btn:hover { background:#2471A3; }
   </style>
 </head>
 <body>
+
   <div class="booking-container">
+    <button class="btn-login" onclick="alert('⚙️ Feature under development – booking requires no login')">
+      Login
+    </button>
+
     <div class="header">
       <h1>Interstellar Movie Night</h1>
       <p>NIFT Jodhpur • Adventure & Photography Club</p>
@@ -240,7 +255,8 @@
 
     <div class="movie-card">
       <div class="movie-title">Interstellar</div>
-      <div class="movie-details"><span>9:15 PM</span><span>₹29</span></div>
+      <div class="movie-time">9:15 PM</div>
+      <div class="movie-price">₹29</div>
     </div>
 
     <div class="legend">
@@ -252,6 +268,9 @@
     <div class="seating-area">
       <div class="auditorium">
         <div class="screen">SCREEN</div>
+        <div class="direction">
+          <span>Entrance ⬅️</span><span>Exit ➡️</span>
+        </div>
         <div id="seatingChart"></div>
       </div>
     </div>
@@ -268,18 +287,18 @@
         <label for="department">Department</label>
         <select id="department" required>
           <option value="">Select Department</option>
-          <option>AD</option><option>BFT</option><option>FC</option><option>FD</option>
-          <option>MFM</option><option>TD</option><option>Staff</option><option>Faculty</option>
-          <option>Other</option>
+          <option>AD</option><option>BFT</option><option>FC</option>
+          <option>FD</option><option>MFM</option><option>TD</option>
+          <option>Staff</option><option>Faculty</option><option>Other</option>
         </select>
       </div>
       <div class="form-group">
         <label for="semester">Semester</label>
         <select id="semester" required>
           <option value="">Select Semester</option>
-          <option>1</option><option>2</option><option>3</option><option>4</option>
-          <option>5</option><option>6</option><option>7</option><option>8</option>
-          <option>Other</option>
+          <option>1</option><option>2</option><option>3</option>
+          <option>4</option><option>5</option><option>6</option>
+          <option>7</option><option>8</option><option>Other</option>
         </select>
       </div>
       <div class="form-group">
@@ -320,15 +339,15 @@
       const success = document.getElementById("successMessage");
       const error   = document.getElementById("errorMessage");
 
-      onValue(ref(db, "seats/"), snapshot => render(chart, snapshot.val()||{}));
+      onValue(ref(db, "seats/"), snap => renderChart(snap.val()||{}));
 
-      function render(root, data) {
-        root.innerHTML = "";
+      function renderChart(data) {
+        chart.innerHTML = "";
         ['A','B','C','D','E','F','G','H'].forEach((r,i) => {
-          if (i===4) {
-            const h = document.createElement("div");
-            h.className = "aisle-horizontal";
-            root.appendChild(h);
+          if (i === 4) {
+            const aisleH = document.createElement("div");
+            aisleH.className = "aisle-horizontal";
+            chart.appendChild(aisleH);
           }
           const row = document.createElement("div");
           row.className = "seat-row";
@@ -339,10 +358,10 @@
           const seats = document.createElement("div");
           seats.className = "seats";
           for (let n=1; n<=30; n++){
-            if (n===16) {
-              const v = document.createElement("div");
-              v.className = "aisle-vertical";
-              seats.appendChild(v);
+            if (n === 16) {
+              const aisleV = document.createElement("div");
+              aisleV.className = "aisle-vertical";
+              seats.appendChild(aisleV);
             }
             const s = document.createElement("div");
             s.className = "seat";
@@ -354,7 +373,7 @@
             seats.appendChild(s);
           }
           row.appendChild(seats);
-          root.appendChild(row);
+          chart.appendChild(row);
         });
       }
 
@@ -380,30 +399,29 @@
           phone: document.getElementById("phone").value.trim(),
           seatNumber: selectedSeat
         };
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) return showErr("Invalid email");
-        if (!/^\d{10}$/.test(data.phone)) return showErr("Invalid phone");
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) return showError("Invalid email");
+        if (!/^\d{10}$/.test(data.phone)) return showError("Invalid phone");
         try {
           await set(ref(db, `seats/${selectedSeat}`), { status:"occupied", ...data, timestamp: new Date().toISOString() });
           selectedSeatElement.classList.replace("selected","occupied");
-          form.reset();
-          form.style.display = "none";
+          form.reset(); form.style.display = "none";
           selectedSeat = selectedSeatElement = null;
-          showSucc("Seat booked successfully! 🎉");
-          if (data.snacks === "yes") setTimeout(() => window.location.href = "https://docs.google.com/forms/...", 1500);
+          showSuccess("Seat booked successfully! 🎉");
+          if (data.snacks === "yes") {
+            setTimeout(() => window.location.href = "https://docs.google.com/forms/d/e/1FAIpQLSfhtN9lejsmBoJ7Ux3UYuwjNyYAEKpQFB1-dVrJCpaY1ZWyEQ/viewform?usp=header", 1500);
+          }
         } catch {
-          showErr("Booking failed");
+          showError("Booking failed");
         }
       });
 
-      function showSucc(msg){
-        success.textContent = msg;
-        success.style.display = "block";
-        setTimeout(() => success.style.display = "none", 3000);
+      function showSuccess(msg){
+        success.textContent = msg; success.style.display="block";
+        setTimeout(() => success.style.display="none", 3000);
       }
-      function showErr(msg){
-        error.textContent = msg;
-        error.style.display = "block";
-        setTimeout(() => error.style.display = "none", 3000);
+      function showError(msg){
+        error.textContent = msg; error.style.display="block";
+        setTimeout(() => error.style.display="none", 3000);
       }
     });
   </script>
