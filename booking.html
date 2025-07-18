@@ -1,529 +1,385 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interstellar Movie Night Booking</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background: #0b3d91; /* Dark blue background */
-            color: #fff;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Interstellar Movie Night Booking</title>
+  <style>
+    /* --------- Reset & Base --------- */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      background: #0b3d91;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
 
-        .container {
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-        }
+    /* --------- Container --------- */
+    .container {
+      width: 100%;
+      max-width: 480px;
+      background: rgba(0,0,0,0.7);
+      border-radius: 8px;
+      overflow: hidden;
+    }
 
-        .header {
-            background: linear-gradient(135deg, #0b3d91, #000); /* Space-themed gradient */
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            color: #fff;
-            margin-bottom: 20px;
-        }
+    /* --------- Header --------- */
+    header {
+      background: linear-gradient(135deg, #0b3d91, #000);
+      padding: 16px;
+      text-align: center;
+    }
+    header h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    header p {
+      font-size: 0.9rem;
+      opacity: 0.8;
+      margin-top: 4px;
+    }
 
-        .header h1 {
-            margin: 10px 0;
-            font-size: 28px;
-            font-weight: bold;
-        }
+    /* --------- Movie Info --------- */
+    .movie-info {
+      text-align: center;
+      padding: 16px;
+    }
+    .movie-info h2 {
+      font-size: 1.25rem;
+      color: #ffcc00;
+      margin-bottom: 8px;
+    }
+    .movie-info p {
+      font-size: 0.9rem;
+      margin: 4px 0;
+    }
+    .movie-info strong { color: #ffcc00; }
 
-        .header p {
-            margin: 5px 0;
-            font-size: 16px;
-        }
+    /* --------- Legend --------- */
+    .legend {
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 0;
+    }
+    .legend div {
+      display: flex;
+      align-items: center;
+      font-size: 0.8rem;
+    }
+    .legend .box {
+      width: 16px; height: 16px;
+      margin-right: 6px;
+      border-radius: 4px;
+    }
+    .available { background: #6c757d; }
+    .selected  { background: #28a745; }
+    .occupied  { background: #dc3545; }
 
-        .movie-details {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+    /* --------- Seating Chart --------- */
+    #seatingChart {
+      overflow-x: auto;
+      padding: 0 8px;
+    }
+    .screen-wrapper {
+      text-align: center;
+      margin: 16px 0;
+    }
+    .screen {
+      display: inline-block;
+      background: #f1f1f1;
+      color: #333;
+      padding: 8px 24px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    .row {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 6px;
+    }
+    .seat, .gap-seat {
+      width: 28px; height: 28px;
+      margin: 2px;
+      border-radius: 4px;
+      font-size: 0.65rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    .seat {
+      background: #6c757d;
+      color: #fff;
+      transition: transform .15s, box-shadow .15s;
+    }
+    .seat:hover { transform: scale(1.1); box-shadow: 0 0 6px rgba(255,255,255,0.5); }
+    .seat.selected { background: #28a745; }
+    .seat.occupied { background: #dc3545; cursor: not-allowed; }
+    .gap-seat { background: transparent; cursor: default; }
 
-        .movie-details h2 {
-            margin: 0;
-            font-size: 24px;
-            font-weight: bold;
-            color: #ffcc00; /* Yellow for Interstellar theme */
-        }
+    /* --------- Form --------- */
+    form {
+      background: rgba(0,0,0,0.8);
+      padding: 16px;
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+    }
+    form h3 {
+      color: #ffcc00;
+      font-size: 1.1rem;
+    }
+    form label {
+      font-size: 0.8rem;
+      margin-bottom: 4px;
+    }
+    form input[type="text"],
+    form input[type="email"],
+    form select {
+      padding: 8px;
+      border: 1px solid #444;
+      border-radius: 4px;
+      background: #333;
+      color: #fff;
+      font-size: 0.9rem;
+      width: 100%;
+    }
+    form input[readonly] {
+      background: #555;
+      cursor: default;
+    }
+    form button {
+      padding: 10px;
+      background: #ffcc00;
+      color: #000;
+      font-weight: bold;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    form button:hover { background: #e6b800; }
+    form button:disabled { background: #888; cursor: not-allowed; }
 
-        .movie-details p {
-            margin: 5px 0;
-            font-size: 16px;
-            color: #fff;
-        }
+    /* --------- Messages --------- */
+    #successMessage, #errorMessage {
+      display: none;
+      max-width: 100%;
+      margin: 12px auto;
+      padding: 10px;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      text-align: center;
+      role: alert;
+    }
+    #successMessage { background: #28a745; color: #fff; }
+    #errorMessage   { background: #dc3545; color: #fff; }
 
-        .legend {
-            display: flex;
-            justify-content: center;
-            margin: 20px 0;
-        }
-
-        .legend div {
-            display: flex;
-            align-items: center;
-            margin: 0 15px;
-        }
-
-        .legend .box {
-            width: 20px;
-            height: 20px;
-            margin-right: 5px;
-            border-radius: 5px;
-        }
-
-        .legend .available {
-            background-color: #6c757d;
-        }
-
-        .legend .selected {
-            background-color: #28a745;
-        }
-
-        .legend .occupied {
-            background-color: #dc3545;
-        }
-
-        .screen {
-            margin: 20px auto;
-            padding: 10px;
-            background: #f9f9f9; /* Light notebook-like background */
-            font-weight: bold;
-            border-radius: 5px;
-            width: 80%;
-            text-align: center;
-            transform: perspective(500px) rotateX(10deg);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
-            color: #333; /* Dark text for contrast */
-            position: relative;
-            overflow: hidden;
-        }
-
-        .screen::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: repeating-linear-gradient(
-                transparent,
-                transparent 24px,
-                #ccc 24px,
-                #ccc 25px
-            ); /* Notebook lines */
-            z-index: 1;
-        }
-
-        .screen::after {
-            content: 'Screen';
-            position: relative;
-            z-index: 2;
-            background: #f9f9f9; /* Match the background */
-            padding: 0 10px;
-        }
-
-        .row {
-            display: flex;
-            justify-content: center;
-            margin: 5px 0;
-        }
-
-        .gap-row {
-            height: 20px;
-        }
-
-        .seat {
-            width: 25px;
-            height: 25px;
-            margin: 3px;
-            background-color: #6c757d;
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            cursor: pointer;
-            font-size: 10px;
-            box-sizing: border-box;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .seat:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-        }
-
-        .seat.selected {
-            background-color: #28a745;
-        }
-
-        .seat.occupied {
-            background-color: #dc3545;
-            cursor: not-allowed;
-        }
-
-        .gap-seat {
-            width: 25px;
-            height: 25px;
-            margin: 3px;
-            background-color: transparent;
-        }
-
-        #bookingForm {
-            display: none;
-            margin-top: 20px;
-            text-align: left;
-            max-width: 400px;
-            margin: 20px auto;
-            background: rgba(0, 0, 0, 0.8); /* Semi-transparent black background */
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-        }
-
-        #bookingForm h3 {
-            margin-bottom: 10px;
-            font-size: 20px;
-            font-weight: bold;
-            color: #ffcc00; /* Yellow for Interstellar theme */
-        }
-
-        #bookingForm input,
-        #bookingForm select {
-            width: 100%;
-            margin: 5px 0 15px 0;
-            padding: 10px;
-            border: 1px solid #444;
-            border-radius: 5px;
-            font-size: 14px;
-            background-color: #333;
-            color: #fff;
-        }
-
-        #bookingForm input::placeholder,
-        #bookingForm select::placeholder {
-            color: #bbb;
-        }
-
-        #bookingForm button {
-            width: 100%;
-            padding: 12px;
-            background-color: #ffcc00; /* Yellow for Interstellar theme */
-            color: #000;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
-        }
-
-        #bookingForm button:hover {
-            background-color: #e6b800;
-        }
-
-        #bookingForm button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
-
-        #successMessage {
-            display: none;
-            background-color: #28a745;
-            color: white;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 20px auto;
-            max-width: 400px;
-        }
-
-        #errorMessage {
-            display: none;
-            background-color: #dc3545;
-            color: white;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 20px auto;
-            max-width: 400px;
-        }
-
-        @media (max-width: 768px) {
-            .seat {
-                width: 20px;
-                height: 20px;
-                font-size: 8px;
-                margin: 2px;
-            }
-
-            .screen {
-                width: 90%;
-            }
-
-            .row {
-                margin: 3px 0;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .seat {
-                width: 15px;
-                height: 15px;
-                font-size: 6px;
-                margin: 1px;
-            }
-
-            .screen {
-                font-size: 12px;
-            }
-        }
-    </style>
+    /* --------- Responsive --------- */
+    @media (max-width: 360px) {
+      .seat, .gap-seat { width: 24px; height: 24px; font-size: 0.6rem; }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Interstellar Movie Night Booking</h1>
-            <p>National Institute of Fashion Technology, Jodhpur</p>
-            <p>Adventure & Photography Club</p>
-        </div>
+  <div class="container">
+    <header>
+      <h1>Interstellar Movie Night</h1>
+      <p>NIFT Jodhpur • Adventure & Photography Club</p>
+    </header>
 
-        <div class="movie-details">
-            <h2>Interstellar</h2>
-            <p><strong>Show Time:</strong> 9:15 PM</p>
-            <p><strong>Price:</strong> ₹29</p>
-        </div>
+    <section class="movie-info">
+      <h2>Interstellar</h2>
+      <p><strong>Show Time:</strong> 9:15 PM</p>
+      <p><strong>Price:</strong> ₹29</p>
+    </section>
 
-        <div class="legend">
-            <div><div class="box available"></div>Available</div>
-            <div><div class="box selected"></div>Selected</div>
-            <div><div class="box occupied"></div>Occupied</div>
-        </div>
+    <section class="legend">
+      <div><span class="box available"></span>Available</div>
+      <div><span class="box selected"></span>Selected</div>
+      <div><span class="box occupied"></span>Occupied</div>
+    </section>
 
-        <div id="seatingChart"></div>
+    <div id="seatingChart"></div>
+    <div class="screen-wrapper"><div class="screen">SCREEN</div></div>
 
-        <div class="screen">Screen</div>
+    <div id="successMessage" role="alert">Seat booked successfully!</div>
+    <div id="errorMessage" role="alert"></div>
 
-        <div id="successMessage">You booked the seat successfully!</div>
-        <div id="errorMessage"></div>
+    <form id="bookingForm" aria-live="polite">
+      <h3>Booking Details</h3>
 
-        <form id="bookingForm">
-            <h3>Booking Details</h3>
-            <input type="text" id="name" placeholder="Name" required aria-label="Name">
-            <select id="department" required aria-label="Department">
-                <option value="" disabled selected>Department</option>
-                <option value="AD">AD</option>
-                <option value="BDT">BFT</option>
-                <option value="FC">FC</option>
-                <option value="FD">FD</option>
-                <option value="MFM">MFM</option>
-                <option value="TD">TD</option>
-                <option value="STAFF">Staff</option>
-                <option value="FACULTY">Faculty</option>
-                <option value="OTHER">Other</option>
-            </select>
-            <select id="semester" required aria-label="Semester">
-                <option value="" disabled selected>Semester</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="OTHER">Other</option>
-            </select>
+      <div>
+        <label for="name">Name</label>
+        <input type="text" id="name" required />
+      </div>
 
-            <!-- Snacks Dropdown -->
-            <select id="snacks" required aria-label="Snacks">
-                <option value="" disabled selected>Do you need snacks?</option>
-                <option value="yes">Yes</option>
-                <option value="no">No</option>
-            </select>
+      <div>
+        <label for="department">Department</label>
+        <select id="department" required>
+          <option value="" disabled selected>Select department</option>
+          <option value="AD">AD</option>
+          <option value="BFT">BFT</option>
+          <option value="FC">FC</option>
+          <option value="FD">FD</option>
+          <option value="MFM">MFM</option>
+          <option value="TD">TD</option>
+          <option value="STAFF">Staff</option>
+          <option value="FACULTY">Faculty</option>
+          <option value="OTHER">Other</option>
+        </select>
+      </div>
 
-            <input type="email" id="email" placeholder="Email" required aria-label="Email">
-            <input type="text" id="phone" placeholder="Phone" required aria-label="Phone">
-            <input type="text" id="seatNumber" disabled aria-label="Selected Seat">
-            <button type="submit">Book Now</button>
-        </form>
-    </div>
+      <div>
+        <label for="semester">Semester</label>
+        <select id="semester" required>
+          <option value="" disabled selected>Select semester</option>
+          <option>1</option><option>2</option><option>3</option><option>4</option>
+          <option>5</option><option>6</option><option>7</option><option>8</option>
+          <option value="OTHER">Other</option>
+        </select>
+      </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
-        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-database.js";
+      <div>
+        <label for="snacks">Need Snacks?</label>
+        <select id="snacks" required>
+          <option value="" disabled selected>Yes or No</option>
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+        </select>
+      </div>
 
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyBpew8ODVHmmGndhZxQ3VK_CEurW0_EQyU",
-            authDomain: "nift-movie-nigt-apc.firebaseapp.com",
-            databaseURL: "https://nift-movie-nigt-apc-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "nift-movie-nigt-apc",
-            storageBucket: "nift-movie-nigt-apc.appspot.com",
-            messagingSenderId: "736122244542",
-            appId: "1:736122244542:web:69d88050a26fc8391dbdef",
-            measurementId: "G-GL1MBM6DW6"
-        };
+      <div>
+        <label for="email">Email</label>
+        <input type="email" id="email" required />
+      </div>
 
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const database = getDatabase(app);
+      <div>
+        <label for="phone">Phone</label>
+        <input type="text" id="phone" required />
+      </div>
 
-        let selectedSeat = null;
+      <div>
+        <label for="seatNumber">Seat Number</label>
+        <input type="text" id="seatNumber" readonly />
+      </div>
 
-        document.addEventListener("DOMContentLoaded", () => {
-            const seatingChart = document.getElementById("seatingChart");
-            const bookingForm = document.getElementById("bookingForm");
-            const successMessage = document.getElementById("successMessage");
-            const errorMessage = document.getElementById("errorMessage");
-            const rows = 8;
-            const seatsPerRow = 30;
+      <button type="submit">Book Now</button>
+    </form>
+  </div>
 
-            // Load seat data from Firebase
-            const seatStatusRef = ref(database, "seats/");
-            onValue(seatStatusRef, (snapshot) => {
-                const seatData = snapshot.val() || {};
+  <script type="module" defer>
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-database.js";
 
-                seatingChart.innerHTML = "";
+    const firebaseConfig = {
+      apiKey: "AIzaSyBpew8ODVHmmGndhZxQ3VK_CEurW0_EQyU",
+      authDomain: "nift-movie-nigt-apc.firebaseapp.com",
+      databaseURL: "https://nift-movie-nigt-apc-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "nift-movie-nigt-apc",
+      storageBucket: "nift-movie-nigt-apc.appspot.com",
+      messagingSenderId: "736122244542",
+      appId: "1:736122244542:web:69d88050a26fc8391dbdef",
+      measurementId: "G-GL1MBM6DW6"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-                for (let i = 0; i < rows; i++) {
-                    if (i === 4) {
-                        const gapRow = document.createElement("div");
-                        gapRow.classList.add("gap-row");
-                        seatingChart.appendChild(gapRow);
-                    }
+    let selectedSeatEl = null;
 
-                    const rowElement = document.createElement("div");
-                    rowElement.classList.add("row");
+    document.addEventListener("DOMContentLoaded", () => {
+      const chart = document.getElementById("seatingChart");
+      const form = document.getElementById("bookingForm");
+      const success = document.getElementById("successMessage");
+      const error = document.getElementById("errorMessage");
+      const rows = 8, seatsPerRow = 30;
 
-                    for (let j = seatsPerRow - 1; j >= 0; j--) { // Flip the seating arrangement
-                        if (j === 15) {
-                            const gapSeat = document.createElement("div");
-                            gapSeat.classList.add("gap-seat");
-                            rowElement.appendChild(gapSeat);
-                        }
-
-                        const seatElement = document.createElement("div");
-                        seatElement.classList.add("seat");
-                        const seatId = `${String.fromCharCode(65 + i)}${j + 1}`;
-
-                        if (seatData[seatId]) {
-                            seatElement.classList.add("occupied");
-                        }
-
-                        seatElement.textContent = seatId;
-                        seatElement.setAttribute("aria-label", `Seat ${seatId}`);
-                        seatElement.setAttribute("tabindex", "0"); // Make seats focusable
-                        seatElement.addEventListener("click", () => handleSeatSelection(seatElement, seatId));
-                        seatElement.addEventListener("keydown", (e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                                handleSeatSelection(seatElement, seatId);
-                            }
-                        });
-                        rowElement.appendChild(seatElement);
-                    }
-                    seatingChart.appendChild(rowElement);
-                }
-            });
-
-            const handleSeatSelection = (seatElement, seatId) => {
-                if (!seatElement.classList.contains("occupied")) {
-                    if (selectedSeat) {
-                        selectedSeat.classList.remove("selected");
-                    }
-                    seatElement.classList.add("selected");
-                    selectedSeat = seatElement;
-
-                    bookingForm.style.display = "block";
-                    document.getElementById("seatNumber").value = seatId;
-                }
+      onValue(ref(db, "seats/"), snap => {
+        const data = snap.val() || {};
+        chart.innerHTML = "";
+        for (let r = 0; r < rows; r++) {
+          if (r === 4) {
+            const gapRow = document.createElement("div");
+            gapRow.className = "row gap-row";
+            gapRow.style.height = "16px";
+            chart.append(gapRow);
+          }
+          const rowEl = document.createElement("div");
+          rowEl.className = "row";
+          for (let c = seatsPerRow; c >= 1; c--) {
+            if (c === 16) {
+              const gap = document.createElement("div");
+              gap.className = "gap-seat";
+              rowEl.append(gap);
+            }
+            const id = `${String.fromCharCode(65 + r)}${c}`;
+            const seatEl = document.createElement("div");
+            seatEl.className = "seat" + (data[id] ? " occupied" : "");
+            seatEl.textContent = id;
+            seatEl.tabIndex = 0;
+            seatEl.setAttribute("aria-label", "Seat "+id);
+            seatEl.onclick = () => selectSeat(seatEl, id);
+            seatEl.onkeydown = e => {
+              if (e.key === "Enter" || e.key === " ") selectSeat(seatEl, id);
             };
+            rowEl.append(seatEl);
+          }
+          chart.append(rowEl);
+        }
+      });
 
-            bookingForm.addEventListener("submit", (e) => {
-                e.preventDefault();
+      function selectSeat(el, id) {
+        if (el.classList.contains("occupied")) return;
+        if (selectedSeatEl) selectedSeatEl.classList.remove("selected");
+        el.classList.add("selected");
+        selectedSeatEl = el;
+        form.style.display = "flex";
+        document.getElementById("seatNumber").value = id;
+        el.focus();
+      }
 
-                const name = document.getElementById("name").value;
-                const department = document.getElementById("department").value;
-                const semester = document.getElementById("semester").value;
-                const snacks = document.getElementById("snacks").value; // Get snacks value
-                const email = document.getElementById("email").value;
-                const phone = document.getElementById("phone").value;
-                const seatNumber = document.getElementById("seatNumber").value;
+      form.onsubmit = e => {
+        e.preventDefault();
+        const name  = nameField.value.trim();
+        const dept  = department.value;
+        const sem   = semester.value;
+        const snack = snacks.value;
+        const mail  = email.value.trim();
+        const phone = phone.value.trim();
+        const seat  = seatNumber.value;
 
-                // Validate email
-                if (!validateEmail(email)) {
-                    showError("Please enter a valid email address.");
-                    return;
-                }
+        // simple validation
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)) return showErr("Invalid email.");
+        if (!/^\d{10}$/.test(phone)) return showErr("Invalid phone.");
 
-                // Validate phone number (10 digits)
-                if (!validatePhone(phone)) {
-                    showError("Please enter a valid 10-digit phone number.");
-                    return;
-                }
+        set(ref(db, `seats/${seat}`), {
+          name, department: dept, semester: sem,
+          snacks: snack, email: mail, phone
+        }).then(() => {
+          selectedSeatEl.classList.remove("selected");
+          selectedSeatEl.classList.add("occupied");
+          form.reset();
+          form.style.display = "none";
+          success.style.display = "block";
+          setTimeout(() => success.style.display = "none", 3000);
+          if (snack === "yes") {
+            setTimeout(() => {
+              window.location.href = "https://docs.google.com/forms/d/e/1FAIpQLSfhtN9lejsmBoJ7Ux3UYuwjNyYAEKpQFB1-dVrJCpaY1ZWyEQ/viewform";
+            }, 3000);
+          }
+        }).catch(err => showErr("Booking failed."));
+      };
 
-                set(ref(database, `seats/${seatNumber}`), {
-                    status: "occupied",
-                    name,
-                    department,
-                    semester,
-                    snacks, // Store snacks preference
-                    email,
-                    phone,
-                }).then(() => {
-                    if (selectedSeat) {
-                        selectedSeat.classList.remove("selected");
-                        selectedSeat.classList.add("occupied");
-                    }
-
-                    bookingForm.style.display = "none";
-                    bookingForm.reset();
-                    selectedSeat = null;
-
-                    // Show success message
-                    successMessage.style.display = "block";
-
-                    // Redirect to Google Form only if snacks are needed
-                    if (snacks === "yes") {
-                        setTimeout(() => {
-                            successMessage.style.display = "none";
-                            window.location.href = "https://docs.google.com/forms/d/e/1FAIpQLSfhtN9lejsmBoJ7Ux3UYuwjNyYAEKpQFB1-dVrJCpaY1ZWyEQ/viewform?usp=header";
-                        }, 3000);
-                    } else {
-                        setTimeout(() => {
-                            successMessage.style.display = "none";
-                        }, 3000);
-                    }
-                }).catch((error) => {
-                    showError("An error occurred. Please try again.");
-                    console.error("Firebase error:", error);
-                });
-            });
-
-            const validateEmail = (email) => {
-                const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                return regex.test(email);
-            };
-
-            const validatePhone = (phone) => {
-                const regex = /^\d{10}$/;
-                return regex.test(phone);
-            };
-
-            const showError = (message) => {
-                errorMessage.textContent = message;
-                errorMessage.style.display = "block";
-                setTimeout(() => {
-                    errorMessage.style.display = "none";
-                }, 5000);
-            };
-        });
-    </script>
+      function showErr(msg) {
+        error.textContent = msg;
+        error.style.display = "block";
+        setTimeout(() => error.style.display = "none", 4000);
+      }
+    });
+  </script>
 </body>
 </html>
