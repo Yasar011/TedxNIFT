@@ -17,92 +17,68 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 20px;
-      color: #ffffff;
+      padding: 16px;
+      color: #fff;
     }
     .booking-container {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255,255,255,0.1);
       backdrop-filter: blur(20px);
-      border-radius: 24px;
-      padding: 32px;
-      max-width: 1200px;
+      border-radius: 16px;
+      padding: 24px;
+      max-width: 480px;
       width: 100%;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
     }
-    .header {
-      text-align: center;
-      margin-bottom: 32px;
-    }
+    .header { text-align: center; margin-bottom: 24px; }
     .header h1 {
-      font-size: 28px;
+      font-size: 24px;
       font-weight: 700;
-      margin-bottom: 8px;
-      background: linear-gradient(45deg, #fff, #f0f0f0);
+      background: linear-gradient(45deg,#fff,#f0f0f0);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      background-clip: text;
     }
     .header p {
-      font-size: 14px;
+      font-size: 12px;
       opacity: 0.8;
       font-weight: 500;
     }
     .movie-card {
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 16px;
-      padding: 24px;
-      margin-bottom: 24px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      border: 1px solid rgba(255,255,255,0.1);
     }
     .movie-title {
-      font-size: 22px;
+      font-size: 18px;
       font-weight: 600;
-      margin-bottom: 12px;
-      color: #ffffff;
+      color: #fff;
+      margin-bottom: 8px;
     }
     .movie-details {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-    }
-    .movie-details span {
-      font-size: 14px;
+      font-size: 12px;
       opacity: 0.9;
-      background: rgba(255, 255, 255, 0.1);
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-weight: 500;
     }
     .legend {
       display: flex;
       justify-content: center;
-      gap: 20px;
-      margin-bottom: 24px;
-      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 16px;
     }
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      font-weight: 500;
-    }
-    .legend-color {
-      width: 16px;
-      height: 16px;
-      border-radius: 4px;
-    }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 10px; }
+    .legend-color { width: 12px; height: 12px; border-radius: 3px; }
     .available { background: #4CAF50; }
     .selected  { background: #2196F3; }
     .occupied  { background: #FF5722; }
 
-    /* Compact, scrollable seating area */
+    /* seating */
     .seating-area {
       background: rgba(255,255,255,0.05);
-      border-radius: 16px;
-      padding: 16px;
+      border-radius: 12px;
+      padding: 12px;
       margin-bottom: 16px;
       display: flex;
       justify-content: center;
@@ -111,26 +87,26 @@
     .auditorium {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 8px;
       min-height: 0;
     }
     #seatingChart {
-      max-height: 55vh;
+      width: 100%;
+      max-height: 50vh;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
-      padding-right: 5px;
-      width: 100%;
+      padding-right: 4px;
     }
     .screen {
-      background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+      background: linear-gradient(45deg,#f0f0f0,#e0e0e0);
       color: #333;
-      padding: 10px 20px;
-      border-radius: 8px;
+      padding: 8px 16px;
+      border-radius: 6px;
       text-align: center;
       font-weight: 600;
-      font-size: 12px;
-      margin-bottom: 16px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      font-size: 10px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     .seat-row {
       display: flex;
@@ -138,117 +114,121 @@
       justify-content: center;
     }
     .row-label {
-      width: 16px;
+      width: 14px;
       text-align: right;
-      margin-right: 8px;
+      margin-right: 6px;
+      font-size: 10px;
       font-weight: 600;
-      font-size: 12px;
       color: #fff;
     }
-    .seats {
-      display: flex;
-    }
+    .seats { display: flex; }
     .seat {
       width: 22px;
       height: 22px;
-      margin: 2px;
-      border-radius: 4px;
+      margin: 1px;
+      border-radius: 3px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 8px;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s ease;
       background: #4CAF50;
-      color: white;
+      color: #fff;
       border: 1px solid rgba(255,255,255,0.1);
       touch-action: manipulation;
+      transition: transform 0.2s;
     }
     .seat:hover:not(.occupied) {
       transform: scale(1.1);
-      box-shadow: 0 4px 12px rgba(255,255,255,0.3);
+      box-shadow: 0 2px 6px rgba(255,255,255,0.3);
     }
     .seat.selected {
       background: #2196F3;
       border-color: #fff;
-      box-shadow: 0 0 0 2px #2196F3;
     }
     .seat.occupied {
       background: #FF5722;
-      cursor: not-allowed;
       opacity: 0.7;
+      cursor: not-allowed;
     }
-    .aisle-horizontal { height: 16px; }
-    .aisle-vertical   { width: 16px; }
+    .aisle-horizontal { height: 8px; }
+    .aisle-vertical   { width: 8px; }
 
-    /* Media query: phones get 10×10 seats */
+    /* phones: 10×10 seats */
     @media (max-width: 480px) {
       .seat {
         width: 10px;
         height: 10px;
-        margin: 1px;
         font-size: 6px;
+        margin: 1px;
       }
-      .row-label {
-        font-size: 10px;
-      }
-      .aisle-vertical   { width: 8px; }
-      .aisle-horizontal { height: 8px; }
+      .row-label { font-size: 8px; margin-right: 4px; }
+      .screen { padding: 6px 12px; font-size: 8px; margin-bottom: 8px; }
+      #seatingChart { max-height: 45vh; }
     }
+
+    /* form & messages */
+    .message {
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      font-size: 12px;
+      display: none;
+      text-align: center;
+      font-weight: 500;
+    }
+    .success { background: rgba(76,175,80,0.2); border:1px solid rgba(76,175,80,0.3); color:#4CAF50; }
+    .error   { background: rgba(244,67,54,0.2); border:1px solid rgba(244,67,54,0.3); color:#F44336; }
 
     .booking-form {
       background: rgba(255,255,255,0.05);
-      border-radius: 16px;
-      padding: 24px;
+      border-radius: 12px;
+      padding: 16px;
       display: none;
       animation: slideIn 0.3s ease-out;
+      font-size: 12px;
     }
     @keyframes slideIn {
-      from { opacity:0; transform: translateY(20px); }
-      to   { opacity:1; transform: translateY(0); }
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
-    .form-title { font-size:18px; font-weight:600; margin-bottom:20px; color:#fff; }
-    .form-group { margin-bottom:16px; }
+    .form-group { margin-bottom: 12px; }
     .form-group label {
-      display:block; font-size:14px; font-weight:500; margin-bottom:8px; opacity:0.9;
+      display: block;
+      margin-bottom: 6px;
+      opacity: 0.9;
+      font-weight: 500;
     }
     .form-group input,
     .form-group select {
-      width:100%; padding:14px 16px;
-      background:rgba(255,255,255,0.1);
-      border:1px solid rgba(255,255,255,0.2);
-      border-radius:12px; color:#fff; font-size:14px;
-      transition: all 0.2s ease;
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      font-size: 12px;
     }
     .form-group input:focus,
     .form-group select:focus {
-      outline:none; border-color:#2196F3;
-      box-shadow:0 0 0 3px rgba(33,150,243,0.1);
-    }
-    .form-group input::placeholder { color:rgba(255,255,255,0.6); }
-    .form-group input[readonly] {
-      background:rgba(255,255,255,0.05); cursor:not-allowed;
+      outline: none;
+      border-color: #2196F3;
+      box-shadow: 0 0 0 2px rgba(33,150,243,0.1);
     }
     .book-btn {
-      width:100%; padding:16px;
-      background:linear-gradient(45deg,#2196F3,#21CBF3);
-      color:#fff; border:none; border-radius:12px;
-      font-size:16px; font-weight:600; cursor:pointer;
-      transition:all 0.2s ease; box-shadow:0 4px 12px rgba(33,150,243,0.3);
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(45deg,#2196F3,#21CBF3);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
     }
-    .book-btn:hover    { transform: translateY(-2px); box-shadow:0 6px 16px rgba(33,150,243,0.4); }
-    .book-btn:active   { transform: translateY(0); }
-    .message {
-      padding:16px; border-radius:12px; margin-bottom:20px;
-      font-weight:500; text-align:center; display:none;
-    }
-    .success { background:rgba(76,175,80,0.2); border:1px solid rgba(76,175,80,0.3); color:#4CAF50; }
-    .error   { background:rgba(244,67,54,0.2); border:1px solid rgba(244,67,54,0.3); color:#F44336; }
-
-    @media (max-width: 768px) {
-      .booking-container { padding:20px; margin:10px; }
-    }
+    .book-btn:hover { background: linear-gradient(45deg,#1e88e5,#1ab7ea); }
   </style>
 </head>
 <body>
@@ -257,49 +237,53 @@
       <h1>Interstellar Movie Night</h1>
       <p>NIFT Jodhpur • Adventure & Photography Club</p>
     </div>
+
     <div class="movie-card">
       <div class="movie-title">Interstellar</div>
-      <div class="movie-details">
-        <span>9:15 PM</span><span>₹29</span>
-      </div>
+      <div class="movie-details"><span>9:15 PM</span><span>₹29</span></div>
     </div>
+
     <div class="legend">
       <div class="legend-item"><div class="legend-color available"></div><span>Available</span></div>
       <div class="legend-item"><div class="legend-color selected"></div><span>Selected</span></div>
       <div class="legend-item"><div class="legend-color occupied"></div><span>Occupied</span></div>
     </div>
+
     <div class="seating-area">
       <div class="auditorium">
         <div class="screen">SCREEN</div>
         <div id="seatingChart"></div>
       </div>
     </div>
+
     <div class="message success" id="successMessage">Seat booked successfully! 🎉</div>
     <div class="message error" id="errorMessage"></div>
+
     <form class="booking-form" id="bookingForm">
-      <h3 class="form-title">Complete Your Booking</h3>
-      <div class="form-group"><label for="name">Full Name</label><input type="text" id="name" required></div>
-      <div class="form-group"><label for="department">Department</label>
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" required>
+      </div>
+      <div class="form-group">
+        <label for="department">Department</label>
         <select id="department" required>
           <option value="">Select Department</option>
-          <option value="AD">AD</option><option value="BFT">BFT</option>
-          <option value="FC">FC</option><option value="FD">FD</option>
-          <option value="MFM">MFM</option><option value="TD">TD</option>
-          <option value="STAFF">Staff</option><option value="FACULTY">Faculty</option>
-          <option value="OTHER">Other</option>
+          <option>AD</option><option>BFT</option><option>FC</option><option>FD</option>
+          <option>MFM</option><option>TD</option><option>Staff</option><option>Faculty</option>
+          <option>Other</option>
         </select>
       </div>
-      <div class="form-group"><label for="semester">Semester</label>
+      <div class="form-group">
+        <label for="semester">Semester</label>
         <select id="semester" required>
           <option value="">Select Semester</option>
-          <option value="1">1st</option><option value="2">2nd</option>
-          <option value="3">3rd</option><option value="4">4th</option>
-          <option value="5">5th</option><option value="6">6th</option>
-          <option value="7">7th</option><option value="8">8th</option>
-          <option value="OTHER">Other</option>
+          <option>1</option><option>2</option><option>3</option><option>4</option>
+          <option>5</option><option>6</option><option>7</option><option>8</option>
+          <option>Other</option>
         </select>
       </div>
-      <div class="form-group"><label for="snacks">Need Snacks?</label>
+      <div class="form-group">
+        <label for="snacks">Need Snacks?</label>
         <select id="snacks" required>
           <option value="">Select Option</option>
           <option value="yes">Yes, I need snacks</option>
@@ -312,6 +296,7 @@
       <button type="submit" class="book-btn">Book Now</button>
     </form>
   </div>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
     import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-database.js";
@@ -326,101 +311,99 @@
       measurementId: "G-GL1MBM6DW6"
     };
     const app = initializeApp(firebaseConfig);
-    const database = getDatabase(app);
+    const db  = getDatabase(app);
     let selectedSeat = null, selectedSeatElement = null;
+
     document.addEventListener("DOMContentLoaded", () => {
-      const seatingChart = document.getElementById("seatingChart");
-      const bookingForm  = document.getElementById("bookingForm");
-      const successMsg   = document.getElementById("successMessage");
-      const errorMsg     = document.getElementById("errorMessage");
-      onValue(ref(database,"seats/"), snap => renderSeatingChart(snap.val()||{}));
-      function renderSeatingChart(data) {
-        seatingChart.innerHTML="";
-        ['A','B','C','D','E','F','G','H'].forEach((r,i)=>{
-          if(i===4){
-            const aisleH=document.createElement("div");
-            aisleH.className="aisle-horizontal";
-            seatingChart.appendChild(aisleH);
+      const chart = document.getElementById("seatingChart");
+      const form  = document.getElementById("bookingForm");
+      const success = document.getElementById("successMessage");
+      const error   = document.getElementById("errorMessage");
+
+      onValue(ref(db, "seats/"), snapshot => render(chart, snapshot.val()||{}));
+
+      function render(root, data) {
+        root.innerHTML = "";
+        ['A','B','C','D','E','F','G','H'].forEach((r,i) => {
+          if (i===4) {
+            const h = document.createElement("div");
+            h.className = "aisle-horizontal";
+            root.appendChild(h);
           }
-          const rowEl=document.createElement("div");
-          rowEl.className="seat-row";
-          const lbl=document.createElement("div");
-          lbl.className="row-label";
-          lbl.textContent=r;
-          rowEl.appendChild(lbl);
-          const seatsContainer=document.createElement("div");
-          seatsContainer.className="seats";
-          for(let num=1;num<=30;num++){
-            if(num===16){
-              const aisleV=document.createElement("div");
-              aisleV.className="aisle-vertical";
-              seatsContainer.appendChild(aisleV);
+          const row = document.createElement("div");
+          row.className = "seat-row";
+          const lbl = document.createElement("div");
+          lbl.className = "row-label";
+          lbl.textContent = r;
+          row.appendChild(lbl);
+          const seats = document.createElement("div");
+          seats.className = "seats";
+          for (let n=1; n<=30; n++){
+            if (n===16) {
+              const v = document.createElement("div");
+              v.className = "aisle-vertical";
+              seats.appendChild(v);
             }
-            const seatEl=document.createElement("div");
-            seatEl.className="seat";
-            const id=`${r}${num}`;
-            if(data[id]) seatEl.classList.add("occupied");
-            seatEl.textContent=num;
-            seatEl.setAttribute("data-seat",id);
-            seatEl.addEventListener("click",()=>handleSeatSelection(seatEl,id));
-            seatsContainer.appendChild(seatEl);
+            const s = document.createElement("div");
+            s.className = "seat";
+            const id = `${r}${n}`;
+            if (data[id]) s.classList.add("occupied");
+            s.textContent = n;
+            s.dataset.seat = id;
+            s.addEventListener("click", () => selectSeat(s, id));
+            seats.appendChild(s);
           }
-          rowEl.appendChild(seatsContainer);
-          seatingChart.appendChild(rowEl);
+          row.appendChild(seats);
+          root.appendChild(row);
         });
       }
-      function handleSeatSelection(el,id){
-        if(el.classList.contains("occupied")) return;
-        if(selectedSeatElement) selectedSeatElement.classList.remove("selected");
+
+      function selectSeat(el, id) {
+        if (el.classList.contains("occupied")) return;
+        selectedSeatElement && selectedSeatElement.classList.remove("selected");
         el.classList.add("selected");
-        selectedSeat=id;
-        selectedSeatElement=el;
-        bookingForm.style.display="block";
-        document.getElementById("seatNumber").value=id;
-        bookingForm.scrollIntoView({behavior:'smooth'});
+        selectedSeat = id;
+        selectedSeatElement = el;
+        form.style.display = "block";
+        document.getElementById("seatNumber").value = id;
+        form.scrollIntoView({ behavior: 'smooth' });
       }
-      bookingForm.addEventListener("submit",async e=>{
+
+      form.addEventListener("submit", async e => {
         e.preventDefault();
-        const formData={
-          name:document.getElementById("name").value.trim(),
-          department:document.getElementById("department").value,
-          semester:document.getElementById("semester").value,
-          snacks:document.getElementById("snacks").value,
-          email:document.getElementById("email").value.trim(),
-          phone:document.getElementById("phone").value.trim(),
-          seatNumber:selectedSeat
+        const data = {
+          name: document.getElementById("name").value.trim(),
+          department: document.getElementById("department").value,
+          semester: document.getElementById("semester").value,
+          snacks: document.getElementById("snacks").value,
+          email: document.getElementById("email").value.trim(),
+          phone: document.getElementById("phone").value.trim(),
+          seatNumber: selectedSeat
         };
-        if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)){
-          return showError("Please enter a valid email address");
-        }
-        if(!/^\d{10}$/.test(formData.phone)){
-          return showError("Please enter a valid 10-digit phone number");
-        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) return showErr("Invalid email");
+        if (!/^\d{10}$/.test(data.phone)) return showErr("Invalid phone");
         try {
-          await set(ref(database,`seats/${selectedSeat}`),{status:"occupied",...formData,timestamp:new Date().toISOString()});
-          selectedSeatElement.classList.remove("selected");
-          selectedSeatElement.classList.add("occupied");
-          bookingForm.reset();
-          bookingForm.style.display="none";
-          selectedSeat=null; selectedSeatElement=null;
-          showSuccess("Seat booked successfully! 🎉");
-          if(formData.snacks==="yes") {
-            setTimeout(()=>window.location.href="https://docs.google.com/forms/d/e/1FAIpQLSfhtN9lejsmBoJ7Ux3UYuwjNyYAEKpQFB1-dVrJCpaY1ZWyEQ/viewform?usp=header",2000);
-          }
-        } catch(err){
-          console.error(err);
-          showError("Booking failed. Please try again.");
+          await set(ref(db, `seats/${selectedSeat}`), { status:"occupied", ...data, timestamp: new Date().toISOString() });
+          selectedSeatElement.classList.replace("selected","occupied");
+          form.reset();
+          form.style.display = "none";
+          selectedSeat = selectedSeatElement = null;
+          showSucc("Seat booked successfully! 🎉");
+          if (data.snacks === "yes") setTimeout(() => window.location.href = "https://docs.google.com/forms/...", 1500);
+        } catch {
+          showErr("Booking failed");
         }
       });
-      function showSuccess(msg){
-        successMsg.textContent=msg;
-        successMsg.style.display="block";
-        setTimeout(()=>successMsg.style.display="none",4000);
+
+      function showSucc(msg){
+        success.textContent = msg;
+        success.style.display = "block";
+        setTimeout(() => success.style.display = "none", 3000);
       }
-      function showError(msg){
-        errorMsg.textContent=msg;
-        errorMsg.style.display="block";
-        setTimeout(()=>errorMsg.style.display="none",4000);
+      function showErr(msg){
+        error.textContent = msg;
+        error.style.display = "block";
+        setTimeout(() => error.style.display = "none", 3000);
       }
     });
   </script>
