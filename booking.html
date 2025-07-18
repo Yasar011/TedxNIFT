@@ -127,7 +127,7 @@
       display: flex;
       justify-content: center;
 
-      /* 1. Let the seating-chart flex container shrink below its content size */
+      /* 1. Allow flex children to shrink for scrolling */
       min-height: 0;
     }
 
@@ -136,13 +136,14 @@
       flex-direction: column;
       gap: 12px;
 
-      /* 1. Let the seating-chart flex container shrink below its content size */
+      /* 1. Allow flex children to shrink for scrolling */
       min-height: 0;
     }
 
     #seatingChart {
       width: 100%;
-      /* 2. Allow the seating-chart to scroll on mobile with momentum */
+
+      /* 2. Constrain height and enable touch scrolling */
       max-height: 60vh;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
@@ -499,7 +500,6 @@
         const rows = ["A", "B", "C", "D", "E", "F", "G", "H"];
 
         rows.forEach((rowLetter, rowIndex) => {
-          // Add horizontal aisle after row D
           if (rowIndex === 4) {
             const aisleHorizontal = document.createElement("div");
             aisleHorizontal.className = "aisle-horizontal";
@@ -509,19 +509,15 @@
           const rowElement = document.createElement("div");
           rowElement.className = "seat-row";
 
-          // Row label
           const rowLabel = document.createElement("div");
           rowLabel.className = "row-label";
           rowLabel.textContent = rowLetter;
           rowElement.appendChild(rowLabel);
 
-          // Seats container
           const seatsContainer = document.createElement("div");
           seatsContainer.className = "seats";
 
-          // Create seats 1-30
           for (let seatNumber = 1; seatNumber <= 30; seatNumber++) {
-            // Add vertical aisle after seat 15
             if (seatNumber === 16) {
               const aisleVertical = document.createElement("div");
               aisleVertical.className = "aisle-vertical";
@@ -530,9 +526,8 @@
 
             const seatElement = document.createElement("div");
             seatElement.className = "seat";
-            const seatId = `${rowLetter}${seatNumber}`;
+            const seatId = `${rowLetter}${seatNumber}`;           
 
-            // Check if seat is occupied
             if (seatData[seatId]) {
               seatElement.classList.add("occupied");
             }
@@ -553,28 +548,19 @@
 
       function handleSeatSelection(element, seatId) {
         if (element.classList.contains("occupied")) return;
-
-        // Clear previous selection
         if (selectedSeatElement) {
           selectedSeatElement.classList.remove("selected");
         }
-
-        // Select new seat
         element.classList.add("selected");
         selectedSeat = seatId;
         selectedSeatElement = element;
-
-        // Show booking form
         bookingForm.style.display = "block";
         document.getElementById("seatNumber").value = seatId;
-
-        // Smooth scroll to form
         bookingForm.scrollIntoView({ behavior: "smooth" });
       }
 
       bookingForm.addEventListener("submit", async (e) => {
         e.preventDefault();
-
         const formData = {
           name: document.getElementById("name").value.trim(),
           department: document.getElementById("department").value,
@@ -585,39 +571,28 @@
           seatNumber: selectedSeat,
         };
 
-        // Validation
         if (!validateEmail(formData.email)) {
           showError("Please enter a valid email address");
           return;
         }
-
         if (!validatePhone(formData.phone)) {
           showError("Please enter a valid 10-digit phone number");
           return;
         }
 
         try {
-          // Save to Firebase
           await set(ref(database, `seats/${selectedSeat}`), {
             status: "occupied",
             ...formData,
             timestamp: new Date().toISOString(),
           });
-
-          // Update UI
           selectedSeatElement.classList.remove("selected");
           selectedSeatElement.classList.add("occupied");
-
-          // Reset form
           bookingForm.reset();
           bookingForm.style.display = "none";
           selectedSeat = null;
           selectedSeatElement = null;
-
-          // Show success message
           showSuccess("Seat booked successfully! 🎉");
-
-          // Redirect to Google Form if snacks are needed
           if (formData.snacks === "yes") {
             setTimeout(() => {
               window.location.href =
@@ -633,11 +608,9 @@
       function validateEmail(email) {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
       }
-
       function validatePhone(phone) {
         return /^\d{10}$/.test(phone);
       }
-
       function showSuccess(message) {
         successMessage.textContent = message;
         successMessage.style.display = "block";
@@ -645,7 +618,6 @@
           successMessage.style.display = "none";
         }, 4000);
       }
-
       function showError(message) {
         errorMessage.textContent = message;
         errorMessage.style.display = "block";
