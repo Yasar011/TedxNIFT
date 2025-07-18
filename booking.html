@@ -1,16 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Interstellar Movie Night Booking</title>
-  <style>
+```html
+
+
+
+  
+  
+  Interstellar Movie Night Booking
+  
     /* Reset & base */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont,
-        'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #2C3E50 0%, #4CA1AF 100%); /* new primary gradient */
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #2C3E50 0%, #4CA1AF 100%);
       min-height: 100vh;
       display: flex;
       justify-content: center;
@@ -77,7 +77,7 @@
       font-size: 14px;
     }
     .movie-card .movie-title { font-weight: 600; }
-    .movie-card .movie-time { font-weight: 500; }
+    .movie-card .movie-time,
     .movie-card .movie-price { font-weight: 500; }
 
     /* Legend */
@@ -137,7 +137,7 @@
       display: flex;
       justify-content: space-between;
       font-size: 10px;
-      margin: 4px 0;
+      margin: 4px 0 12px;
     }
     .direction span {
       background: rgba(236,240,241,0.2);
@@ -239,86 +239,88 @@
       cursor:pointer; transition:background 0.15s;
     }
     .book-btn:hover { background:#2471A3; }
-  </style>
-</head>
-<body>
+  
 
-  <div class="booking-container">
-    <button class="btn-login" onclick="alert('⚙️ Feature under development – booking requires no login')">
+
+
+  
+    
       Login
-    </button>
+    
 
-    <div class="header">
-      <h1>Interstellar Movie Night</h1>
-      <p>NIFT Jodhpur • Adventure & Photography Club</p>
-    </div>
+    
+      Interstellar Movie Night
+      NIFT Jodhpur • Adventure & Photography Club
+    
 
-    <div class="movie-card">
-      <div class="movie-title">Interstellar</div>
-      <div class="movie-time">9:15 PM</div>
-      <div class="movie-price">₹29</div>
-    </div>
+    
+      Interstellar
+      9:15 PM
+      ₹29
+    
 
-    <div class="legend">
-      <div class="legend-item"><div class="legend-color available"></div><span>Available</span></div>
-      <div class="legend-item"><div class="legend-color selected"></div><span>Selected</span></div>
-      <div class="legend-item"><div class="legend-color occupied"></div><span>Occupied</span></div>
-    </div>
+    
+      Available
+      Selected
+      Occupied
+    
 
-    <div class="seating-area">
-      <div class="auditorium">
-        <div class="screen">SCREEN</div>
-        <div class="direction">
-          <span>Entrance ⬅️</span><span>Exit ➡️</span>
-        </div>
-        <div id="seatingChart"></div>
-      </div>
-    </div>
+    
+      
+        SCREEN
+        
+        
+          Entrance ⬅️
+          Exit ➡️
+        
+      
+    
 
-    <div class="message success" id="successMessage">Seat booked successfully! 🎉</div>
-    <div class="message error" id="errorMessage"></div>
+    Seat booked successfully! 🎉
+    
 
-    <form class="booking-form" id="bookingForm">
-      <div class="form-group">
-        <label for="name">Full Name</label>
-        <input type="text" id="name" required>
-      </div>
-      <div class="form-group">
-        <label for="department">Department</label>
-        <select id="department" required>
-          <option value="">Select Department</option>
-          <option>AD</option><option>BFT</option><option>FC</option>
-          <option>FD</option><option>MFM</option><option>TD</option>
-          <option>Staff</option><option>Faculty</option><option>Other</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="semester">Semester</label>
-        <select id="semester" required>
-          <option value="">Select Semester</option>
-          <option>1</option><option>2</option><option>3</option>
-          <option>4</option><option>5</option><option>6</option>
-          <option>7</option><option>8</option><option>Other</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="snacks">Need Snacks?</label>
-        <select id="snacks" required>
-          <option value="">Select Option</option>
-          <option value="yes">Yes, I need snacks</option>
-          <option value="no">No, thank you</option>
-        </select>
-      </div>
-      <div class="form-group"><label for="email">Email Address</label><input type="email" id="email" required></div>
-      <div class="form-group"><label for="phone">Phone Number</label><input type="tel" id="phone" required></div>
-      <div class="form-group"><label for="seatNumber">Selected Seat</label><input type="text" id="seatNumber" readonly></div>
-      <button type="submit" class="book-btn">Book Now</button>
-    </form>
-  </div>
+    
+      
+        Full Name
+        
+      
+      
+        Department
+        
+          Select Department
+          ADBFTFC
+          FDMFMTD
+          StaffFacultyOther
+        
+      
+      
+        Semester
+        
+          Select Semester
+          123
+          456
+          78Other
+        
+      
+      
+        Need Snacks?
+        
+          Select Option
+          Yes, I need snacks
+          No, thank you
+        
+      
+      Email Address
+      Phone Number
+      Selected Seat
+      Book Now
+    
+  
 
-  <script type="module">
+  
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
     import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-database.js";
+
     const firebaseConfig = {
       apiKey: "AIzaSyBpew8ODVHmmGndhZxQ3VK_CEurW0_EQyU",
       authDomain: "nift-movie-nigt-apc.firebaseapp.com",
@@ -334,46 +336,38 @@
     let selectedSeat = null, selectedSeatElement = null;
 
     document.addEventListener("DOMContentLoaded", () => {
-      const chart = document.getElementById("seatingChart");
-      const form  = document.getElementById("bookingForm");
+      const chart   = document.getElementById("seatingChart");
+      const form    = document.getElementById("bookingForm");
       const success = document.getElementById("successMessage");
       const error   = document.getElementById("errorMessage");
 
-      onValue(ref(db, "seats/"), snap => renderChart(snap.val()||{}));
+      onValue(ref(db, "seats/"), snapshot => {
+        const data = snapshot.val() || {};
+        renderSeats(data);
+      });
 
-      function renderChart(data) {
+      function renderSeats(data) {
         chart.innerHTML = "";
-        ['A','B','C','D','E','F','G','H'].forEach((r,i) => {
+        const rows = ['A','B','C','D','E','F','G','H'];
+        rows.forEach((r, i) => {
           if (i === 4) {
             const aisleH = document.createElement("div");
             aisleH.className = "aisle-horizontal";
             chart.appendChild(aisleH);
           }
-          const row = document.createElement("div");
-          row.className = "seat-row";
+          const rowEl = document.createElement("div");
+          rowEl.className = "seat-row";
           const lbl = document.createElement("div");
           lbl.className = "row-label";
           lbl.textContent = r;
-          row.appendChild(lbl);
+          rowEl.appendChild(lbl);
           const seats = document.createElement("div");
           seats.className = "seats";
-          for (let n=1; n<=30; n++){
-            if (n === 16) {
-              const aisleV = document.createElement("div");
-              aisleV.className = "aisle-vertical";
-              seats.appendChild(aisleV);
-            }
-            const s = document.createElement("div");
-            s.className = "seat";
-            const id = `${r}${n}`;
-            if (data[id]) s.classList.add("occupied");
-            s.textContent = n;
-            s.dataset.seat = id;
-            s.addEventListener("click", () => selectSeat(s, id));
+          for (let n = 1; n  selectSeat(s, id));
             seats.appendChild(s);
           }
-          row.appendChild(seats);
-          chart.appendChild(row);
+          rowEl.appendChild(seats);
+          chart.appendChild(rowEl);
         });
       }
 
@@ -399,31 +393,34 @@
           phone: document.getElementById("phone").value.trim(),
           seatNumber: selectedSeat
         };
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) return showError("Invalid email");
-        if (!/^\d{10}$/.test(data.phone)) return showError("Invalid phone");
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) return showMsg(error, "Please enter a valid email");
+        if (!/^\d{10}$/.test(data.phone)) return showMsg(error, "Please enter a valid 10-digit phone number");
         try {
-          await set(ref(db, `seats/${selectedSeat}`), { status:"occupied", ...data, timestamp: new Date().toISOString() });
-          selectedSeatElement.classList.replace("selected","occupied");
-          form.reset(); form.style.display = "none";
+          await set(ref(db, `seats/${selectedSeat}`), { status: "occupied", ...data, timestamp: new Date().toISOString() });
+          selectedSeatElement.classList.replace("selected", "occupied");
+          form.reset();
+          form.style.display = "none";
           selectedSeat = selectedSeatElement = null;
-          showSuccess("Seat booked successfully! 🎉");
+          showMsg(success, "Seat booked successfully! 🎉");
           if (data.snacks === "yes") {
             setTimeout(() => window.location.href = "https://docs.google.com/forms/d/e/1FAIpQLSfhtN9lejsmBoJ7Ux3UYuwjNyYAEKpQFB1-dVrJCpaY1ZWyEQ/viewform?usp=header", 1500);
           }
         } catch {
-          showError("Booking failed");
+          showMsg(error, "Booking failed. Please try again.");
         }
       });
 
-      function showSuccess(msg){
-        success.textContent = msg; success.style.display="block";
-        setTimeout(() => success.style.display="none", 3000);
-      }
-      function showError(msg){
-        error.textContent = msg; error.style.display="block";
-        setTimeout(() => error.style.display="none", 3000);
+      function showMsg(el, msg) {
+        el.textContent = msg;
+        el.style.display = "block";
+        setTimeout(() => el.style.display = "none", 3000);
       }
     });
-  </script>
-</body>
-</html>
+  
+
+
+```
+
+[1] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/81983559/1f3ccb2e-77c4-41b2-af08-34266970e937/index.html
+[2] https://pplx-res.cloudinary.com/image/private/user_uploads/81983559/c2d18043-a07b-42b4-ac86-eb7b8f2b0e93/WhatsApp-Image-2025-07-18-at-23.44.49_c0c4a501.jpg
+[3] https://pplx-res.cloudinary.com/image/private/user_uploads/81983559/78dfde88-90bf-4c6a-b4c8-3c800a6794bc/WhatsApp-Image-2025-07-18-at-23.52.46_df98f8b4.jpg
