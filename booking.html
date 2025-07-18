@@ -1,20 +1,19 @@
-```html
-
-
-
-  
-  
-  Interstellar Movie Night Booking
-  
-    /* Reset & base */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interstellar Movie Night Booking</title>
+  <style>
+    /* Reset & Base Styles */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #2C3E50 0%, #4CA1AF 100%);
+      background: linear-gradient(135deg, #2C3E50 0%, #4CA1AF 100%); /* Premium Color Theme */
       min-height: 100vh;
       display: flex;
       justify-content: center;
-      align-items: flex-start;
+      align-items: flex-start; /* Align to top for better scrolling on mobile */
       padding: 16px;
       color: #fff;
     }
@@ -30,12 +29,12 @@
       position: relative;
     }
 
-    /* Login button */
+    /* Login Button */
     .btn-login {
       position: absolute;
       top: 16px;
       right: 16px;
-      background: #ECF0F1;
+      background: rgba(236, 240, 241, 0.8);
       color: #2C3E50;
       border: none;
       border-radius: 6px;
@@ -43,14 +42,16 @@
       font-size: 12px;
       font-weight: 600;
       cursor: pointer;
+      transition: transform 0.2s, background 0.2s;
     }
+    .btn-login:hover { background: #ECF0F1; }
     .btn-login:active { transform: scale(0.95); }
 
     /* Header */
     .header {
       text-align: center;
       margin-bottom: 24px;
-      padding-top: 36px; /* space for login */
+      padding-top: 36px; /* Make space for login button */
     }
     .header h1 {
       font-size: 22px;
@@ -59,13 +60,9 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    .header p {
-      font-size: 12px;
-      opacity: 0.8;
-      margin-top: 4px;
-    }
+    .header p { font-size: 12px; opacity: 0.8; margin-top: 4px; }
 
-    /* Movie card */
+    /* Movie Card */
     .movie-card {
       background: rgba(255,255,255,0.05);
       border-radius: 8px;
@@ -77,49 +74,25 @@
       font-size: 14px;
     }
     .movie-card .movie-title { font-weight: 600; }
-    .movie-card .movie-time,
-    .movie-card .movie-price { font-weight: 500; }
 
     /* Legend */
-    .legend {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      font-size: 10px;
-      margin-bottom: 12px;
-    }
+    .legend { display: flex; justify-content: center; gap: 12px; font-size: 10px; margin-bottom: 12px; }
     .legend-item { display: flex; align-items: center; gap: 4px; }
     .legend-color { width: 10px; height: 10px; border-radius: 2px; }
     .available { background: #27AE60; }
     .selected  { background: #2980B9; }
     .occupied  { background: #C0392B; }
 
-    /* Seating area */
+    /* Seating Area */
     .seating-area {
       background: rgba(255,255,255,0.05);
       border-radius: 8px;
       padding: 12px;
       margin-bottom: 16px;
       min-height: 0;
-      display: flex;
-      justify-content: center;
     }
-    .auditorium {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      min-height: 0;
-      width: 100%;
-    }
-    #seatingChart {
-      width: 100%;
-      max-height: 45vh;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      padding-right: 4px;
-    }
-
-    /* SCREEN banner */
+    .auditorium { display: flex; flex-direction: column; gap: 6px; min-height: 0; }
+    #seatingChart { width: 100%; max-height: 45vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
     .screen {
       background: linear-gradient(45deg, #ECF0F1, #BDC3C7);
       color: #2C3E50;
@@ -129,198 +102,143 @@
       font-weight: 600;
       font-size: 10px;
       margin-bottom: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
-    /* Direction banners */
+    /* Direction Banner (Positioned after seats) */
     .direction {
       display: flex;
       justify-content: space-between;
       font-size: 10px;
-      margin: 4px 0 12px;
-    }
-    .direction span {
-      background: rgba(236,240,241,0.2);
-      color: #2C3E50;
-      padding: 2px 6px;
-      border-radius: 4px;
+      margin-top: 8px; /* Margin from last seat row */
+      padding: 0 4px;
     }
 
-    /* Seat rows */
-    .seat-row {
-      display: flex;
-      align-items: center;
-    }
-    .row-label {
-      width: 14px;
-      text-align: right;
-      margin-right: 4px;
-      font-size: 8px;
-      font-weight: 600;
-    }
-    .seats { display: flex; flex-wrap: nowrap; }
-
+    /* Seats */
+    .seat-row { display: flex; align-items: center; justify-content: center; }
+    .row-label { width: 14px; text-align: right; margin-right: 4px; font-size: 8px; }
+    .seats { display: flex; }
     .seat {
-      width: 22px;
-      height: 22px;
-      margin: 1px;
-      border-radius: 3px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      background: #27AE60;
-      color: #fff;
+      width: 22px; height: 22px; margin: 1px; border-radius: 3px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 8px; font-weight: 600; cursor: pointer;
+      background: #27AE60; color: #fff;
       border: 1px solid rgba(255,255,255,0.2);
       touch-action: manipulation;
-      transition: transform 0.15s;
+      transition: all 0.2s ease;
     }
-    .seat:hover:not(.occupied) { transform: scale(1.1); }
-    .seat.selected { background: #2980B9; border-color: #fff; }
+    .seat:hover:not(.occupied) { transform: scale(1.1); box-shadow: 0 0 8px rgba(255,255,255,0.3); }
+    .seat.selected { background: #2980B9; border-color: #fff; transform: scale(1.1); }
     .seat.occupied { background: #C0392B; opacity: 0.7; cursor: not-allowed; }
-
     .aisle-horizontal { height: 6px; }
-    .aisle-vertical   { width: 6px; }
+    .aisle-vertical   { width: 8px; }
 
-    /* Mobile overrides: 10×10 seats */
+    /* Mobile-Specific Overrides */
     @media (max-width: 480px) {
-      .seat { width: 10px; height: 10px; font-size: 6px; }
-      .row-label { font-size: 6px; margin-right: 2px; }
+      body { padding: 8px; }
+      .booking-container { padding: 16px; }
+      .header h1 { font-size: 20px; }
+      .seat { width: 10px; height: 10px; font-size: 0; /* Hide numbers on tiny seats */ }
+      .row-label { font-size: 8px; }
       .screen { padding: 4px 8px; font-size: 8px; }
-      .direction span { font-size: 6px; padding: 1px 4px; }
+      .direction { font-size: 8px; }
       #seatingChart { max-height: 40vh; }
     }
 
-    /* Form & messages */
-    .message {
-      padding: 8px;
-      border-radius: 6px;
-      margin-bottom: 12px;
-      font-size: 12px;
-      display: none;
-      text-align: center;
-      font-weight: 500;
-    }
-    .success { background: rgba(39,174,96,0.2); border:1px solid rgba(39,174,96,0.3); color:#27AE60; }
-    .error   { background: rgba(192,57,43,0.2); border:1px solid rgba(192,57,43,0.3); color:#C0392B; }
-
+    /* Form & Messages */
+    .message { padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 12px; display: none; text-align: center; }
+    .success { background: rgba(39,174,96,0.2); border:1px solid #27AE60; color:#27AE60; }
+    .error   { background: rgba(192,57,43,0.2); border:1px solid #C0392B; color:#C0392B; }
     .booking-form {
-      background: rgba(255,255,255,0.05);
-      border-radius: 8px;
-      padding: 16px;
-      display: none;
-      animation: slideIn 0.3s ease-out;
-      font-size: 12px;
+      background: rgba(255,255,255,0.05); border-radius: 8px; padding: 16px;
+      display: none; animation: slideIn 0.3s ease-out;
     }
     @keyframes slideIn {
-      from { opacity:0; transform: translateY(8px); }
+      from { opacity:0; transform: translateY(10px); }
       to   { opacity:1; transform: translateY(0); }
     }
     .form-group { margin-bottom: 12px; }
-    .form-group label { display:block; margin-bottom:6px; opacity:0.9; }
-    .form-group input,
-    .form-group select {
-      width:100%; padding:8px;
-      border-radius:6px; border:1px solid rgba(255,255,255,0.2);
-      background: rgba(255,255,255,0.1); color:#fff;
-      font-size:12px;
+    .form-group label { display:block; margin-bottom:6px; font-size:12px; opacity:0.9; }
+    .form-group input, .form-group select {
+      width:100%; padding:10px; border-radius:6px;
+      border:1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2);
+      color:#fff; font-size:12px;
     }
-    .form-group input:focus,
-    .form-group select:focus {
-      outline:none; border-color:#2980B9;
-      box-shadow:0 0 0 2px rgba(41,128,185,0.2);
+    .form-group input:focus, .form-group select:focus {
+      outline:none; border-color:#2980B9; box-shadow:0 0 0 2px rgba(41,128,185,0.3);
     }
     .book-btn {
-      width:100%; padding:10px;
-      background: #2980B9; color:#fff; border:none;
-      border-radius:6px; font-size:14px; font-weight:600;
-      cursor:pointer; transition:background 0.15s;
+      width:100%; padding:12px; background: #2980B9; color:#fff; border:none;
+      border-radius:8px; font-size:14px; font-weight:600; cursor:pointer;
+      transition: background 0.2s;
     }
     .book-btn:hover { background:#2471A3; }
-  
+  </style>
+</head>
+<body>
 
-
-
-  
-    
+  <div class="booking-container">
+    <button class="btn-login" onclick="alert('Login feature is under development. You can book tickets without logging in.')">
       Login
-    
+    </button>
 
-    
-      Interstellar Movie Night
-      NIFT Jodhpur • Adventure & Photography Club
-    
+    <div class="header">
+      <h1>Interstellar Movie Night</h1>
+      <p>NIFT Jodhpur • Adventure & Photography Club</p>
+    </div>
 
-    
-      Interstellar
-      9:15 PM
-      ₹29
-    
+    <div class="movie-card">
+      <div class="movie-title">Interstellar</div>
+      <span>9:15 PM • ₹29</span>
+    </div>
 
-    
-      Available
-      Selected
-      Occupied
-    
+    <div class="legend">
+      <div class="legend-item"><div class="legend-color available"></div><span>Available</span></div>
+      <div class="legend-item"><div class="legend-color selected"></div><span>Selected</span></div>
+      <div class="legend-item"><div class="legend-color occupied"></div><span>Occupied</span></div>
+    </div>
 
-    
-      
-        SCREEN
-        
-        
-          Entrance ⬅️
-          Exit ➡️
-        
-      
-    
+    <div class="seating-area">
+      <div class="auditorium">
+        <div class="screen">SCREEN</div>
+        <div id="seatingChart"></div>
+        <div class="direction">
+          <span>⬅️ Entrance</span>
+          <span>Exit ➡️</span>
+        </div>
+      </div>
+    </div>
 
-    Seat booked successfully! 🎉
-    
+    <div class="message success" id="successMessage"></div>
+    <div class="message error" id="errorMessage"></div>
 
-    
-      
-        Full Name
-        
-      
-      
-        Department
-        
-          Select Department
-          ADBFTFC
-          FDMFMTD
-          StaffFacultyOther
-        
-      
-      
-        Semester
-        
-          Select Semester
-          123
-          456
-          78Other
-        
-      
-      
-        Need Snacks?
-        
-          Select Option
-          Yes, I need snacks
-          No, thank you
-        
-      
-      Email Address
-      Phone Number
-      Selected Seat
-      Book Now
-    
-  
+    <form class="booking-form" id="bookingForm">
+      <h3 class="form-title" style="text-align:center; font-size:16px; margin-bottom:16px;">Complete Your Booking</h3>
+      <div class="form-group"><label for="name">Full Name</label><input type="text" id="name" required></div>
+      <div class="form-group"><label for="department">Department</label>
+        <select id="department" required>
+          <option value="">Select Department</option><option>AD</option><option>BFT</option><option>FC</option><option>FD</option><option>MFM</option><option>TD</option><option>Staff</option><option>Faculty</option><option>Other</option>
+        </select>
+      </div>
+      <div class="form-group"><label for="semester">Semester</label>
+        <select id="semester" required>
+          <option value="">Select Semester</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>Other</option>
+        </select>
+      </div>
+      <div class="form-group"><label for="snacks">Need Snacks?</label>
+        <select id="snacks" required>
+          <option value="">Select Option</option><option value="yes">Yes, I need snacks</option><option value="no">No, thank you</option>
+        </select>
+      </div>
+      <div class="form-group"><label for="email">Email Address</label><input type="email" id="email" required></div>
+      <div class="form-group"><label for="phone">Phone Number</label><input type="tel" id="phone" required></div>
+      <div class="form-group"><label for="seatNumber">Selected Seat</label><input type="text" id="seatNumber" readonly></div>
+      <button type="submit" class="book-btn">Book Now</button>
+    </form>
+  </div>
 
-  
+  <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
     import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-database.js";
-
     const firebaseConfig = {
       apiKey: "AIzaSyBpew8ODVHmmGndhZxQ3VK_CEurW0_EQyU",
       authDomain: "nift-movie-nigt-apc.firebaseapp.com",
@@ -336,44 +254,39 @@
     let selectedSeat = null, selectedSeatElement = null;
 
     document.addEventListener("DOMContentLoaded", () => {
-      const chart   = document.getElementById("seatingChart");
-      const form    = document.getElementById("bookingForm");
-      const success = document.getElementById("successMessage");
-      const error   = document.getElementById("errorMessage");
+      const chart = document.getElementById("seatingChart");
+      const form  = document.getElementById("bookingForm");
+      const successMsg = document.getElementById("successMessage");
+      const errorMsg = document.getElementById("errorMessage");
 
-      onValue(ref(db, "seats/"), snapshot => {
-        const data = snapshot.val() || {};
-        renderSeats(data);
-      });
+      onValue(ref(db, "seats/"), snap => renderChart(snap.val()||{}));
 
-      function renderSeats(data) {
+      function renderChart(data) {
         chart.innerHTML = "";
-        const rows = ['A','B','C','D','E','F','G','H'];
-        rows.forEach((r, i) => {
-          if (i === 4) {
-            const aisleH = document.createElement("div");
-            aisleH.className = "aisle-horizontal";
-            chart.appendChild(aisleH);
-          }
-          const rowEl = document.createElement("div");
-          rowEl.className = "seat-row";
-          const lbl = document.createElement("div");
-          lbl.className = "row-label";
-          lbl.textContent = r;
-          rowEl.appendChild(lbl);
-          const seats = document.createElement("div");
+        ['A','B','C','D','E','F','G','H'].forEach((r,i) => {
+          if (i === 4) { chart.appendChild(document.createElement("div")).className = "aisle-horizontal"; }
+          const row = chart.appendChild(document.createElement("div"));
+          row.className = "seat-row";
+          row.appendChild(document.createElement("div")).className = "row-label";
+          row.lastChild.textContent = r;
+          const seats = row.appendChild(document.createElement("div"));
           seats.className = "seats";
-          for (let n = 1; n  selectSeat(s, id));
-            seats.appendChild(s);
+          for (let n=1; n<=30; n++){
+            if (n === 16) { seats.appendChild(document.createElement("div")).className = "aisle-vertical"; }
+            const s = seats.appendChild(document.createElement("div"));
+            const id = `${r}${n}`;
+            s.className = "seat";
+            if (data[id]) s.classList.add("occupied");
+            s.textContent = n;
+            s.dataset.seat = id;
+            s.addEventListener("click", () => selectSeat(s, id));
           }
-          rowEl.appendChild(seats);
-          chart.appendChild(rowEl);
         });
       }
 
       function selectSeat(el, id) {
         if (el.classList.contains("occupied")) return;
-        selectedSeatElement && selectedSeatElement.classList.remove("selected");
+        if (selectedSeatElement) selectedSeatElement.classList.remove("selected");
         el.classList.add("selected");
         selectedSeat = id;
         selectedSeatElement = el;
@@ -384,7 +297,7 @@
 
       form.addEventListener("submit", async e => {
         e.preventDefault();
-        const data = {
+        const formData = {
           name: document.getElementById("name").value.trim(),
           department: document.getElementById("department").value,
           semester: document.getElementById("semester").value,
@@ -393,34 +306,30 @@
           phone: document.getElementById("phone").value.trim(),
           seatNumber: selectedSeat
         };
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) return showMsg(error, "Please enter a valid email");
-        if (!/^\d{10}$/.test(data.phone)) return showMsg(error, "Please enter a valid 10-digit phone number");
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) return showError("Invalid email format.");
+        if (!/^\d{10}$/.test(formData.phone)) return showError("Enter a valid 10-digit phone number.");
         try {
-          await set(ref(db, `seats/${selectedSeat}`), { status: "occupied", ...data, timestamp: new Date().toISOString() });
-          selectedSeatElement.classList.replace("selected", "occupied");
+          await set(ref(db, `seats/${selectedSeat}`), { status:"occupied", ...formData, timestamp: new Date().toISOString() });
+          selectedSeatElement.classList.remove("selected");
+          selectedSeatElement.classList.add("occupied");
           form.reset();
           form.style.display = "none";
-          selectedSeat = selectedSeatElement = null;
-          showMsg(success, "Seat booked successfully! 🎉");
-          if (data.snacks === "yes") {
-            setTimeout(() => window.location.href = "https://docs.google.com/forms/d/e/1FAIpQLSfhtN9lejsmBoJ7Ux3UYuwjNyYAEKpQFB1-dVrJCpaY1ZWyEQ/viewform?usp=header", 1500);
+          selectedSeat = null; selectedSeatElement = null;
+          showSuccess("Seat booked successfully! 🎉");
+          if (formData.snacks === "yes") {
+            setTimeout(() => window.location.href = "https://docs.google.com/forms/d/e/1FAIpQLSfhtN9lejsmBoJ7Ux3UYuwjNyYAEKpQFB1-dVrJCpaY1ZWyEQ/viewform?usp=header", 2000);
           }
-        } catch {
-          showMsg(error, "Booking failed. Please try again.");
-        }
+        } catch (err) { showError("Booking failed. Please try again."); }
       });
 
-      function showMsg(el, msg) {
+      function showSuccess(msg) { showMessage(successMsg, msg); }
+      function showError(msg) { showMessage(errorMsg, msg); }
+      function showMessage(el, msg) {
         el.textContent = msg;
         el.style.display = "block";
-        setTimeout(() => el.style.display = "none", 3000);
+        setTimeout(() => el.style.display = "none", 4000);
       }
     });
-  
-
-
-```
-
-[1] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/81983559/1f3ccb2e-77c4-41b2-af08-34266970e937/index.html
-[2] https://pplx-res.cloudinary.com/image/private/user_uploads/81983559/c2d18043-a07b-42b4-ac86-eb7b8f2b0e93/WhatsApp-Image-2025-07-18-at-23.44.49_c0c4a501.jpg
-[3] https://pplx-res.cloudinary.com/image/private/user_uploads/81983559/78dfde88-90bf-4c6a-b4c8-3c800a6794bc/WhatsApp-Image-2025-07-18-at-23.52.46_df98f8b4.jpg
+  </script>
+</body>
+</html>
