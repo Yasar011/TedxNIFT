@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <title>Interstellar Movie Night Booking</title>
   <style>
     :root {
@@ -16,6 +16,10 @@
       --seat-occupied: #dc3545;
     }
 
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: "Segoe UI", sans-serif;
       background-color: var(--bg-dark);
@@ -23,6 +27,7 @@
       margin: 0;
       padding: 0;
       transition: background 0.3s, color 0.3s;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body.light-mode {
@@ -37,7 +42,7 @@
     .container {
       max-width: 960px;
       margin: auto;
-      padding: 1.5rem;
+      padding: 1rem;
     }
 
     .theme-toggle {
@@ -47,51 +52,71 @@
       background: var(--primary-color);
       border: none;
       color: #000;
-      padding: 8px 14px;
+      padding: 10px 16px;
       font-weight: bold;
-      border-radius: 5px;
+      border-radius: 25px;
       cursor: pointer;
       z-index: 1000;
+      font-size: 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
     }
 
     .header {
       text-align: center;
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
+      padding-top: 3rem;
     }
 
     .header h1 {
-      font-size: 2rem;
-      margin-bottom: 0.4rem;
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
     }
 
     .header p {
-      margin: 2px;
-      font-size: 0.95rem;
+      margin: 3px;
+      font-size: 0.9rem;
       color: #bbb;
     }
 
     .movie-details {
       text-align: center;
-      margin-bottom: 1.2rem;
+      margin-bottom: 1.5rem;
+      background: rgba(255,255,255,0.05);
+      padding: 1rem;
+      border-radius: 8px;
+    }
+
+    body.light-mode .movie-details {
+      background: rgba(0,0,0,0.05);
     }
 
     .movie-details h2 {
       color: var(--primary-color);
-      font-size: 1.4rem;
+      font-size: 1.3rem;
+      margin: 0;
     }
 
     .legend {
       display: flex;
       justify-content: center;
-      gap: 20px;
+      gap: 15px;
       margin: 1.5rem 0;
+      flex-wrap: wrap;
     }
 
     .legend div {
       display: flex;
       gap: 0.5rem;
       align-items: center;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
+      padding: 5px 10px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 15px;
+    }
+
+    body.light-mode .legend div {
+      background: rgba(0,0,0,0.1);
     }
 
     .legend .box {
@@ -116,71 +141,83 @@
       background: #e4e4e4;
       color: #222;
       text-align: center;
-      padding: 0.8rem;
-      margin: 20px auto;
-      width: 90%;
-      border-radius: 6px;
+      padding: 1rem;
+      margin: 25px auto;
+      width: 85%;
+      border-radius: 8px;
       font-weight: bold;
+      font-size: 1rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     }
 
-    body.dark-mode .screen {
-      background: #ccc;
+    body.light-mode .screen {
+      background: #ddd;
       color: #111;
     }
 
     #seatingChart {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 8px;
       align-items: center;
+      margin: 1.5rem 0;
     }
 
     .row {
       display: flex;
-      gap: 4px;
+      gap: 6px;
     }
 
     .gap-row {
-      height: 12px;
+      height: 15px;
     }
 
     .seat {
-      width: 26px;
-      height: 26px;
-      font-size: 10px;
+      width: 32px;
+      height: 32px;
+      font-size: 11px;
       background: var(--seat-available);
       color: var(--text-light);
-      border-radius: 5px;
-      line-height: 26px;
+      border-radius: 6px;
+      line-height: 32px;
       text-align: center;
       cursor: pointer;
       transition: all 0.2s;
+      position: relative;
+      font-weight: 500;
+    }
+
+    .seat:active {
+      transform: scale(0.95);
     }
 
     .seat.selected {
       background: var(--seat-selected);
+      box-shadow: 0 0 15px rgba(40, 167, 69, 0.6);
     }
 
     .seat.occupied {
       background: var(--seat-occupied);
       cursor: not-allowed;
+      opacity: 0.7;
     }
 
     .gap-seat {
-      width: 26px;
-      height: 26px;
+      width: 32px;
+      height: 32px;
       background: transparent;
     }
 
     #bookingForm {
       display: none;
       background: rgba(255, 255, 255, 0.05);
-      padding: 20px;
-      border-radius: 8px;
+      padding: 1.5rem;
+      border-radius: 12px;
       margin-top: 2rem;
       max-width: 400px;
       margin-left: auto;
       margin-right: auto;
+      backdrop-filter: blur(10px);
     }
 
     body.light-mode #bookingForm {
@@ -189,20 +226,22 @@
 
     #bookingForm h3 {
       color: var(--primary-color);
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
       text-align: center;
-      font-size: 1.2rem;
+      font-size: 1.3rem;
+      font-weight: 600;
     }
 
     #bookingForm input,
     #bookingForm select {
       width: 100%;
-      padding: 10px;
+      padding: 14px;
       border: none;
       margin-bottom: 1rem;
-      border-radius: 4px;
+      border-radius: 6px;
       background: #222;
       color: #fff;
+      font-size: 16px;
     }
 
     body.light-mode #bookingForm input,
@@ -213,26 +252,34 @@
 
     #bookingForm button {
       width: 100%;
-      padding: 12px;
+      padding: 16px;
       background-color: var(--primary-color);
       border: none;
-      border-radius: 4px;
+      border-radius: 8px;
       color: #000;
-      font-size: 1rem;
+      font-size: 1.1rem;
+      font-weight: 600;
       cursor: pointer;
+      transition: all 0.3s;
     }
 
     #bookingForm button:hover {
       background-color: #e6b800;
+      transform: translateY(-2px);
+    }
+
+    #bookingForm button:active {
+      transform: translateY(0);
     }
 
     #successMessage,
     #errorMessage {
       display: none;
       text-align: center;
-      padding: 1rem;
+      padding: 1.2rem;
       margin-top: 1.5rem;
-      border-radius: 6px;
+      border-radius: 8px;
+      font-weight: 500;
     }
 
     #successMessage {
@@ -245,29 +292,109 @@
       color: #fff;
     }
 
-    @media (max-width: 600px) {
-      body {
-        font-size: 0.95rem;
-        padding: 0 1rem;
-      }
-
-      .seat {
-        width: 22px;
-        height: 22px;
-        font-size: 9px;
-        line-height: 22px;
-      }
-
+    /* Enhanced Mobile Styles */
+    @media (max-width: 768px) {
       .container {
-        padding: 1rem;
+        padding: 0.5rem;
+      }
+
+      .header {
+        padding-top: 4rem;
       }
 
       .header h1 {
-        font-size: 1.5rem;
+        font-size: 1.6rem;
       }
 
       .movie-details h2 {
         font-size: 1.1rem;
+      }
+
+      .seat {
+        width: 35px;
+        height: 35px;
+        font-size: 10px;
+        line-height: 35px;
+      }
+
+      .gap-seat {
+        width: 35px;
+        height: 35px;
+      }
+
+      .row {
+        gap: 8px;
+      }
+
+      #seatingChart {
+        gap: 10px;
+      }
+
+      .legend {
+        gap: 10px;
+        font-size: 0.8rem;
+      }
+
+      #bookingForm {
+        padding: 1.2rem;
+        margin: 1.5rem 0.5rem;
+      }
+
+      #bookingForm input,
+      #bookingForm select {
+        padding: 16px;
+        font-size: 16px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .seat {
+        width: 30px;
+        height: 30px;
+        font-size: 9px;
+        line-height: 30px;
+      }
+
+      .gap-seat {
+        width: 30px;
+        height: 30px;
+      }
+
+      .row {
+        gap: 5px;
+      }
+
+      .screen {
+        width: 90%;
+        font-size: 0.9rem;
+      }
+
+      .theme-toggle {
+        padding: 8px 12px;
+        font-size: 12px;
+      }
+    }
+
+    /* Ultra-small screens */
+    @media (max-width: 360px) {
+      .seat {
+        width: 26px;
+        height: 26px;
+        font-size: 8px;
+        line-height: 26px;
+      }
+
+      .gap-seat {
+        width: 26px;
+        height: 26px;
+      }
+
+      .row {
+        gap: 3px;
+      }
+
+      #seatingChart {
+        gap: 6px;
       }
     }
   </style>
@@ -276,7 +403,7 @@
   <div class="container">
 
     <!-- Toggle Light/Dark Mode -->
-    <button class="theme-toggle" id="themeToggle">🌙 Dark Mode</button>
+    <button class="theme-toggle" id="themeToggle">🌙 Dark</button>
 
     <!-- Header -->
     <div class="header">
@@ -370,19 +497,19 @@
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       if (!localStorage.getItem("theme")) {
         document.body.classList.toggle("light-mode", !prefersDark);
-        themeToggle.textContent = prefersDark ? "☀️ Light Mode" : "🌙 Dark Mode";
+        themeToggle.textContent = prefersDark ? "☀️ Light" : "🌙 Dark";
       }
 
       if (localStorage.getItem("theme") === "light") {
         document.body.classList.add("light-mode");
-        themeToggle.textContent = "🌙 Dark Mode";
+        themeToggle.textContent = "🌙 Dark";
       }
 
       themeToggle.addEventListener("click", () => {
         document.body.classList.toggle("light-mode");
         const isLight = document.body.classList.contains("light-mode");
         localStorage.setItem("theme", isLight ? "light" : "dark");
-        themeToggle.textContent = isLight ? "🌙 Dark Mode" : "☀️ Light Mode";
+        themeToggle.textContent = isLight ? "🌙 Dark" : "☀️ Light";
       });
 
       // Load seat data from Firebase
@@ -415,13 +542,33 @@
                 selectedSeat = seat;
                 bookingForm.style.display = "block";
                 document.getElementById("seatNumber").value = seatId;
+                
+                // Smooth scroll to form on mobile
+                setTimeout(() => {
+                  bookingForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
               }
             };
 
             seat.addEventListener("click", handleSeatSelection);
             seat.addEventListener("keydown", (e) => {
-              if (e.key === "Enter" || e.key === " ") handleSeatSelection();
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                handleSeatSelection();
+              }
             });
+            
+            // Add touch feedback
+            seat.addEventListener("touchstart", () => {
+              if (!seat.classList.contains("occupied")) {
+                seat.style.opacity = "0.7";
+              }
+            });
+            
+            seat.addEventListener("touchend", () => {
+              seat.style.opacity = "1";
+            });
+            
             row.appendChild(seat);
           }
           seatingChart.appendChild(row);
@@ -430,6 +577,10 @@
 
       bookingForm.addEventListener("submit", (e) => {
         e.preventDefault();
+        const submitBtn = bookingForm.querySelector("button");
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Booking...";
+        
         const name = document.getElementById("name").value;
         const department = document.getElementById("department").value;
         const semester = document.getElementById("semester").value;
@@ -439,8 +590,18 @@
         const seatNumber = document.getElementById("seatNumber").value;
 
         // Validation
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showError("Enter valid email.");
-        if (!/^\d{10}$/.test(phone)) return showError("Enter valid 10-digit phone.");
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          showError("Enter valid email.");
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Book Now";
+          return;
+        }
+        if (!/^\d{10}$/.test(phone)) {
+          showError("Enter valid 10-digit phone.");
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Book Now";
+          return;
+        }
 
         set(ref(database, `seats/${seatNumber}`), {
           status: "occupied",
@@ -455,6 +616,7 @@
           bookingForm.reset();
           selectedSeat = null;
           successMessage.style.display = "block";
+          
           setTimeout(() => {
             if (snacks === "yes") {
               window.location.href = "https://docs.google.com/forms/d/e/1FAIpQLSfhtN9lejsmBoJ7Ux3UYuwjNyYAEKpQFB1-dVrJCpaY1ZWyEQ/viewform?usp=header";
@@ -465,6 +627,9 @@
         }).catch((error) => {
           showError("An error occurred. Try again.");
           console.error("Firebase error:", error);
+        }).finally(() => {
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Book Now";
         });
       });
 
