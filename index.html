@@ -1,249 +1,151 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movie Night</title>
-    <style>
-        :root {
-            --primary-color: #007bff;
-            --hover-color: #0056b3;
-            --accent-color: #ff5722;
-            --text-color: #fff;
-            --overlay-color: rgba(0, 0, 0, 0.6);
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Movie Night</title>
+  <style>
+    /* ===== Variables ===== */
+    :root {
+      --primary: #FF5722;
+      --primary-dark: #E64A19;
+      --bg-overlay: rgba(0, 0, 0, 0.7);
+      --text-light: #FFFFFF;
+      --font-sans: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden;
-        }
+    /* ===== Global Reset ===== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: var(--font-sans); background: #000; color: var(--text-light); }
+    button { border: none; outline: none; }
 
-        .background-slideshow {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-        }
+    /* ===== Full-Screen Slideshow ===== */
+    .slideshow {
+      position: fixed; inset: 0; overflow: hidden; z-index: -1;
+    }
+    .slide {
+      position: absolute; inset: 0;
+      background-size: cover; background-position: center;
+      opacity: 0; transition: opacity 1.2s ease-in-out;
+    }
+    .slide.active { opacity: 1; }
 
-        .background-slideshow img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            position: absolute;
-            top: 0;
-            left: 0;
-            opacity: 0;
-            transition: opacity 1.5s ease-in-out;
-        }
+    /* ===== Overlay & Centering ===== */
+    .overlay {
+      position: fixed; inset: 0;
+      background: var(--bg-overlay);
+      display: flex; align-items: center; justify-content: center;
+      padding: 1rem;
+      text-align: center;
+    }
+    .content {
+      max-width: 350px; width: 100%;
+    }
+    .content img.logo {
+      width: 100px; height: 100px;
+      border-radius: 50%; margin: 0 auto 1rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      display: block;
+    }
+    .content h1 {
+      font-size: 1.8rem; margin-bottom: 0.5rem;
+    }
+    .content p {
+      font-size: 1rem; line-height: 1.4; margin-bottom: 1rem;
+    }
+    .content p.movie {
+      font-weight: bold; font-size: 1.1rem;
+    }
 
-        .background-slideshow img.active {
-            opacity: 1;
-        }
+    /* ===== Buttons ===== */
+    .btn {
+      display: block; width: 100%;
+      padding: 0.75rem; margin: 0.5rem 0;
+      font-size: 1rem; border-radius: 0.5rem;
+      cursor: pointer; transition: background 0.3s ease;
+    }
+    .btn-primary {
+      background: var(--primary); color: var(--text-light);
+      opacity: 0.6; pointer-events: none;
+    }
+    .btn-primary.enabled {
+      opacity: 1; pointer-events: auto;
+    }
+    .btn-primary.enabled:hover {
+      background: var(--primary-dark);
+    }
+    .btn-admin {
+      background: transparent; color: var(--text-light);
+      font-size: 0.9rem; text-decoration: underline;
+      margin-top: 0.5rem;
+    }
+    .btn-admin:hover { color: var(--primary); }
 
-        .overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--overlay-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
+    /* ===== Developer Footer ===== */
+    .footer {
+      position: absolute; bottom: 0.5rem; left: 0.5rem;
+      font-size: 0.75rem; text-align: left;
+    }
+    .footer a { color: var(--primary); text-decoration: none; }
+    .footer a:hover { text-decoration: underline; }
 
-        .content {
-            color: var(--text-color);
-            padding: 20px;
-            max-width: 600px;
-        }
-
-        .content h1 {
-            font-size: 3rem;
-            margin-bottom: 20px;
-        }
-
-        .content p {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-        }
-
-        .club-logo {
-            width: 120px;
-            height: 120px;
-            margin-bottom: 20px;
-            border-radius: 50%;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-        }
-
-        .book-now-button {
-            background-color: var(--primary-color);
-            color: var(--text-color);
-            padding: 15px 30px;
-            border: none;
-            border-radius: 5px;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: background-color 0.3s ease, opacity 0.3s ease;
-            opacity: 0.6;
-            pointer-events: none;
-        }
-
-        .book-now-button:hover {
-            background-color: var(--hover-color);
-        }
-
-        .book-now-button.enabled {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .admin-login-button {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background-color: var(--accent-color);
-            color: var(--text-color);
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            font-size: 1rem;
-            cursor: pointer;
-        }
-
-        .admin-login-button:hover {
-            background-color: #e64a19;
-        }
-
-        .developer-details {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            font-size: 1rem;
-            color: var(--text-color);
-            text-align: left;
-        }
-
-        .developer-details a {
-            color: #ffcc00;
-            text-decoration: none;
-        }
-
-        .developer-details a:hover {
-            text-decoration: underline;
-        }
-
-        @media (max-width: 768px) {
-            .content h1 {
-                font-size: 2rem;
-            }
-
-            .content p {
-                font-size: 1.2rem;
-            }
-
-            .club-logo {
-                width: 100px;
-                height: 100px;
-            }
-
-            .book-now-button, .admin-login-button {
-                padding: 10px 20px;
-                font-size: 1rem;
-            }
-
-            .developer-details {
-                font-size: 0.8rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .content h1 {
-                font-size: 1.5rem;
-            }
-
-            .content p {
-                font-size: 1rem;
-            }
-
-            .club-logo {
-                width: 80px;
-                height: 80px;
-            }
-
-            .book-now-button, .admin-login-button {
-                padding: 8px 16px;
-                font-size: 0.9rem;
-            }
-
-            .developer-details {
-                font-size: 0.7rem;
-            }
-        }
-    </style>
+    /* ===== Responsive Text Scaling ===== */
+    @media(min-width: 400px) {
+      .content h1 { font-size: 2.2rem; }
+      .content p { font-size: 1.1rem; }
+      .btn { font-size: 1.1rem; }
+    }
+  </style>
 </head>
 <body>
 
-    <!-- Background Slideshow -->
-    <div class="background-slideshow">
-        <img src="https://th.bing.com/th/id/R.590449b6eb15ff9b4bf9f91dc4230afa?rik=Uhm4lqeUqQTEDQ&riu=http%3a%2f%2fgetwallpapers.com%2fwallpaper%2ffull%2fa%2fc%2f3%2f20008.jpg&ehk=5Ib1kGVNfH0TaU%2bEAzxelxW5BTWFzmG3nZxmAZ3n6UE%3d&risl=&pid=ImgRaw&r=0" class="active" alt="Slide 1: Movie Night Background">
-        <img src="https://wallpaperaccess.com/full/300648.jpg" alt="Slide 2: Movie Night Background">
-        <img src="https://cdn.lifehack.org/wp-content/uploads/2014/12/Interstellar-2014-Poster-Wallpaper.jpg" alt="Slide 3: Interstellar Movie Poster">
-        <img src="https://m.media-amazon.com/images/M/MV5BYmJkMjM3NTktYThjZS00YzQyLTlkMDMtZWU2Y2U1Mjc0ZWExL2ltYWdlXkEyXkFqcGdeQXVyNzE4NDc2Mjc@._V1_.jpg" alt="Slide 4: Movie Night Background">
+  <!-- Slideshow -->
+  <div class="slideshow">
+    <div class="slide active" style="background-image:url('https://th.bing.com/th/id/R.590449b6eb15ff9b4bf9f91dc4230afa?rik=Uhm4lqeUqQTEDQ&riu=http%3a%2f%2fgetwallpapers.com%2fwallpaper%2ffull%2fa%2fc%2f3%2f20008.jpg');"></div>
+    <div class="slide" style="background-image:url('https://wallpaperaccess.com/full/300648.jpg');"></div>
+    <div class="slide" style="background-image:url('https://cdn.lifehack.org/wp-content/uploads/2014/12/Interstellar-2014-Poster-Wallpaper.jpg');"></div>
+    <div class="slide" style="background-image:url('https://m.media-amazon.com/images/M/MV5BYmJkMjM3NTktYThjZS00YzQyLTlkMDMtZWU2Y2U1Mjc0ZWExL2ltYWdlXkEyXkFqcGdeQXVyNzE4NDc2Mjc@._V1_.jpg');"></div>
+  </div>
+
+  <!-- Overlay Content -->
+  <div class="overlay">
+    <div class="content">
+      <img src="adventure-and-photography-club-logo.png" alt="Club Logo" class="logo">
+      <h1>Movie Night</h1>
+      <p>Join us for an unforgettable cinematic experience under the stars.</p>
+      <p class="movie">Now Showing: Interstellar</p>
+      <button id="bookBtn" class="btn btn-primary">Please Wait...</button>
+      <button class="btn btn-admin" onclick="location.href='login.html'">Admin Login</button>
     </div>
+  </div>
 
-    <!-- Full-Screen Overlay -->
-    <div class="overlay">
-        <div class="content">
-            <img src="adventure and photography club logo-Recovered@0.5x.png" alt="Adventure and Photography Club Logo" class="club-logo">
-            <h1>Welcome to Movie Night!</h1>
-            <p>Join us for an unforgettable cinematic experience.</p>
-            <p><strong>Movie:</strong> Interstellar</p>
+  <!-- Developer Credit -->
+  <div class="footer">
+    Developed by <a href="https://www.instagram.com/_y_asar_" target="_blank">YASAR C H</a> • 
+    <a href="mailto:Yasar.h@nift.ac.in">Yasar.h@nift.ac.in</a>
+  </div>
 
-            <!-- Book Now Button -->
-            <button class="book-now-button" id="bookNowButton" aria-label="Book Now">Wait</button>
-        </div>
-    </div>
+  <!-- Script -->
+  <script>
+    // Slideshow rotation
+    const slides = document.querySelectorAll('.slide');
+    let idx = 0;
+    setInterval(() => {
+      slides[idx].classList.remove('active');
+      idx = (idx + 1) % slides.length;
+      slides[idx].classList.add('active');
+    }, 3000);
 
-    <!-- Admin Login Button -->
-    <button class="admin-login-button" onclick="window.location.href='login.html'">Admin Login</button>
-
-    <!-- Developer Details -->
-    <div class="developer-details">
-        <p>Developed by: <a href="https://www.instagram.com/_y_asar_" target="_blank" rel="noopener noreferrer">YASAR C H</a></p>
-        <p>Email: <a href="mailto:Yasar.h@nift.ac.in">Yasar.h@nift.ac.in</a></p>
-    </div>
-
-    <!-- JavaScript -->
-    <script>
-        const images = document.querySelectorAll('.background-slideshow img');
-        let currentIndex = 0;
-
-        function changeSlide() {
-            images[currentIndex].classList.remove('active');
-            currentIndex = (currentIndex + 1) % images.length;
-            images[currentIndex].classList.add('active');
-        }
-
-        setInterval(changeSlide, 3000);
-
-        // Enable "Book Now" button after 5 seconds
-        setTimeout(() => {
-            const bookNowButton = document.getElementById('bookNowButton');
-            bookNowButton.classList.add('enabled');
-            bookNowButton.textContent = 'Book Now';
-            bookNowButton.addEventListener('click', () => {
-                // Redirect to booking page
-                window.location.href = 'early access.html';
-            });
-        }, 5000);
-    </script>
+    // Enable Book button after delay
+    const bookBtn = document.getElementById('bookBtn');
+    setTimeout(() => {
+      bookBtn.textContent = 'Book Now';
+      bookBtn.classList.add('enabled');
+      bookBtn.addEventListener('click', () => {
+        location.href = 'early-access.html';
+      });
+    }, 5000);
+  </script>
 
 </body>
 </html>
