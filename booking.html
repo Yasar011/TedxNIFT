@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <title>Interstellar Movie Night Booking</title>
   <style>
     :root {
@@ -16,6 +16,10 @@
       --seat-occupied: #dc3545;
     }
 
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: "Segoe UI", sans-serif;
       background-color: var(--bg-dark);
@@ -23,6 +27,7 @@
       margin: 0;
       padding: 0;
       transition: background 0.3s, color 0.3s;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body.light-mode {
@@ -37,7 +42,7 @@
     .container {
       max-width: 960px;
       margin: auto;
-      padding: 1.5rem;
+      padding: 1rem;
     }
 
     .accessibility-toolbar {
@@ -59,7 +64,7 @@
       border-radius: 5px;
       cursor: pointer;
       font-size: 12px;
-      min-width: 120px;
+      min-width: 100px;
     }
 
     .accessibility-btn:hover {
@@ -73,42 +78,60 @@
 
     .header {
       text-align: center;
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
+      padding-top: 3rem;
     }
 
     .header h1 {
-      font-size: 2rem;
-      margin-bottom: 0.4rem;
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
     }
 
     .header p {
-      margin: 2px;
-      font-size: 0.95rem;
+      margin: 3px;
+      font-size: 0.9rem;
       color: #bbb;
     }
 
     .movie-details {
       text-align: center;
-      margin-bottom: 1.2rem;
+      margin-bottom: 1.5rem;
+      background: rgba(255,255,255,0.05);
+      padding: 1rem;
+      border-radius: 8px;
+    }
+
+    body.light-mode .movie-details {
+      background: rgba(0,0,0,0.05);
     }
 
     .movie-details h2 {
       color: var(--primary-color);
-      font-size: 1.4rem;
+      font-size: 1.3rem;
+      margin: 0;
     }
 
     .legend {
       display: flex;
       justify-content: center;
-      gap: 20px;
+      gap: 15px;
       margin: 1.5rem 0;
+      flex-wrap: wrap;
     }
 
     .legend div {
       display: flex;
       gap: 0.5rem;
       align-items: center;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
+      padding: 5px 10px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 15px;
+    }
+
+    body.light-mode .legend div {
+      background: rgba(0,0,0,0.1);
     }
 
     .legend .box {
@@ -133,32 +156,35 @@
       background: #e4e4e4;
       color: #222;
       text-align: center;
-      padding: 0.8rem;
-      margin: 20px auto;
-      width: 90%;
-      border-radius: 6px;
+      padding: 1rem;
+      margin: 25px auto;
+      width: 85%;
+      border-radius: 8px;
       font-weight: bold;
+      font-size: 1rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     }
 
-    body.dark-mode .screen {
-      background: #ccc;
+    body.light-mode .screen {
+      background: #ddd;
       color: #111;
     }
 
     #seatingChart {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 8px;
       align-items: center;
+      margin: 1.5rem 0;
     }
 
     .row {
       display: flex;
-      gap: 4px;
+      gap: 6px;
     }
 
     .gap-row {
-      height: 12px;
+      height: 15px;
     }
 
     .seat {
@@ -174,6 +200,11 @@
       transition: all 0.2s;
       position: relative;
       font-weight: 500;
+      border: none;
+    }
+
+    .seat:active {
+      transform: scale(0.95);
     }
 
     .seat:hover, .seat:focus {
@@ -224,12 +255,13 @@
     #bookingForm {
       display: none;
       background: rgba(255, 255, 255, 0.05);
-      padding: 20px;
-      border-radius: 8px;
+      padding: 1.5rem;
+      border-radius: 12px;
       margin-top: 2rem;
       max-width: 400px;
       margin-left: auto;
       margin-right: auto;
+      backdrop-filter: blur(10px);
     }
 
     body.light-mode #bookingForm {
@@ -238,20 +270,22 @@
 
     #bookingForm h3 {
       color: var(--primary-color);
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
       text-align: center;
-      font-size: 1.2rem;
+      font-size: 1.3rem;
+      font-weight: 600;
     }
 
     #bookingForm input,
     #bookingForm select {
       width: 100%;
-      padding: 10px;
+      padding: 14px;
       border: none;
       margin-bottom: 1rem;
-      border-radius: 4px;
+      border-radius: 6px;
       background: #222;
       color: #fff;
+      font-size: 16px;
     }
 
     body.light-mode #bookingForm input,
@@ -262,26 +296,34 @@
 
     #bookingForm button {
       width: 100%;
-      padding: 12px;
+      padding: 16px;
       background-color: var(--primary-color);
       border: none;
-      border-radius: 4px;
+      border-radius: 8px;
       color: #000;
-      font-size: 1rem;
+      font-size: 1.1rem;
+      font-weight: 600;
       cursor: pointer;
+      transition: all 0.3s;
     }
 
     #bookingForm button:hover {
       background-color: #e6b800;
+      transform: translateY(-2px);
+    }
+
+    #bookingForm button:active {
+      transform: translateY(0);
     }
 
     #successMessage,
     #errorMessage {
       display: none;
       text-align: center;
-      padding: 1rem;
+      padding: 1.2rem;
       margin-top: 1.5rem;
-      border-radius: 6px;
+      border-radius: 8px;
+      font-weight: 500;
     }
 
     #successMessage {
@@ -308,39 +350,123 @@
       border-radius: 8px;
     }
 
-    @media (max-width: 600px) {
-      .seat {
-        width: 30px;
-        height: 30px;
-        font-size: 10px;
-        line-height: 30px;
+    /* Enhanced Mobile Styles */
+    @media (max-width: 768px) {
+      .container {
+        padding: 0.5rem;
       }
 
-      .container {
-        padding: 1rem;
+      .header {
+        padding-top: 4rem;
       }
 
       .header h1 {
-        font-size: 1.5rem;
+        font-size: 1.6rem;
       }
 
       .movie-details h2 {
         font-size: 1.1rem;
+      }
+
+      .seat {
+        width: 35px;
+        height: 35px;
+        font-size: 10px;
+        line-height: 35px;
+      }
+
+      .gap-seat {
+        width: 35px;
+        height: 35px;
+      }
+
+      .row {
+        gap: 8px;
+      }
+
+      #seatingChart {
+        gap: 10px;
+      }
+
+      .legend {
+        gap: 10px;
+        font-size: 0.8rem;
+      }
+
+      #bookingForm {
+        padding: 1.2rem;
+        margin: 1.5rem 0.5rem;
+      }
+
+      #bookingForm input,
+      #bookingForm select {
+        padding: 16px;
+        font-size: 16px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .seat {
+        width: 30px;
+        height: 30px;
+        font-size: 9px;
+        line-height: 30px;
+      }
+
+      .gap-seat {
+        width: 30px;
+        height: 30px;
+      }
+
+      .row {
+        gap: 5px;
+      }
+
+      .screen {
+        width: 90%;
+        font-size: 0.9rem;
+      }
+
+      .accessibility-btn {
+        padding: 8px 10px;
+        font-size: 11px;
+        min-width: 80px;
+      }
+    }
+
+    /* Ultra-small screens */
+    @media (max-width: 360px) {
+      .seat {
+        width: 26px;
+        height: 26px;
+        font-size: 8px;
+        line-height: 26px;
+      }
+
+      .gap-seat {
+        width: 26px;
+        height: 26px;
+      }
+
+      .row {
+        gap: 3px;
+      }
+
+      #seatingChart {
+        gap: 6px;
       }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Accessibility Toolbar -->
+    <!-- Accessibility Toolbar (No Voice Features) -->
     <div class="accessibility-toolbar">
-      <button class="accessibility-btn" id="themeToggle" aria-label="Toggle dark and light mode">🌙 Dark Mode</button>
-      <button class="accessibility-btn" id="readPageBtn" aria-label="Read entire page aloud">📖 Read Page</button>
-      <button class="accessibility-btn" id="readingModeBtn" aria-label="Toggle reading mode for better readability">👓 Reading Mode</button>
-      <button class="accessibility-btn" id="stopSpeechBtn" aria-label="Stop all speech" style="display: none;">🔇 Stop Speech</button>
+      <button class="accessibility-btn" id="themeToggle" aria-label="Toggle dark and light mode">🌙 Dark</button>
+      <button class="accessibility-btn" id="readingModeBtn" aria-label="Toggle reading mode for better readability">👓 Reading</button>
     </div>
 
-    <!-- ARIA Live Regions for announcements -->
+    <!-- ARIA Live Regions for screen reader announcements -->
     <div id="politeAnnouncement" aria-live="polite" aria-atomic="true" class="announcement-area"></div>
     <div id="assertiveAnnouncement" aria-live="assertive" aria-atomic="true" class="announcement-area"></div>
 
@@ -403,7 +529,7 @@
     </form>
   </div>
 
-  <!-- Enhanced JavaScript with Screen Reader Support -->
+  <!-- Enhanced JavaScript WITHOUT Voice Features -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
     import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-database.js";
@@ -422,93 +548,9 @@
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
     let selectedSeat = null;
-    let speechUtterance = null;
-    let isReading = false;
 
-    // Screen Reader and Accessibility Functions
-    class ScreenReaderHelper {
-      constructor() {
-        this.speechSynthesis = window.speechSynthesis;
-        this.voices = [];
-        this.currentVoice = null;
-        this.speechRate = 1.0;
-        this.speechVolume = 1.0;
-        this.speechPitch = 1.0;
-        
-        this.initializeVoices();
-      }
-
-      initializeVoices() {
-        if (this.speechSynthesis) {
-          this.voices = this.speechSynthesis.getVoices();
-          
-          if (this.voices.length === 0) {
-            this.speechSynthesis.onvoiceschanged = () => {
-              this.voices = this.speechSynthesis.getVoices();
-              this.selectBestVoice();
-            };
-          } else {
-            this.selectBestVoice();
-          }
-        }
-      }
-
-      selectBestVoice() {
-        // Try to find English voices first
-        this.currentVoice = this.voices.find(voice => 
-          voice.lang.startsWith('en') && voice.name.includes('Female')
-        ) || this.voices.find(voice => 
-          voice.lang.startsWith('en')
-        ) || this.voices[0];
-      }
-
-      speak(text, options = {}) {
-        if (!this.speechSynthesis) {
-          console.log('Speech synthesis not supported');
-          return;
-        }
-
-        // Stop any current speech
-        this.stop();
-
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.voice = this.currentVoice;
-        utterance.rate = options.rate || this.speechRate;
-        utterance.volume = options.volume || this.speechVolume;
-        utterance.pitch = options.pitch || this.speechPitch;
-
-        utterance.onstart = () => {
-          isReading = true;
-          document.getElementById('stopSpeechBtn').style.display = 'block';
-          document.getElementById('readPageBtn').textContent = '⏸️ Reading...';
-        };
-
-        utterance.onend = () => {
-          isReading = false;
-          document.getElementById('stopSpeechBtn').style.display = 'none';
-          document.getElementById('readPageBtn').textContent = '📖 Read Page';
-        };
-
-        utterance.onerror = (event) => {
-          console.error('Speech synthesis error:', event);
-          isReading = false;
-          document.getElementById('stopSpeechBtn').style.display = 'none';
-          document.getElementById('readPageBtn').textContent = '📖 Read Page';
-        };
-
-        speechUtterance = utterance;
-        this.speechSynthesis.speak(utterance);
-      }
-
-      stop() {
-        if (this.speechSynthesis) {
-          this.speechSynthesis.cancel();
-          isReading = false;
-          document.getElementById('stopSpeechBtn').style.display = 'none';
-          document.getElementById('readPageBtn').textContent = '📖 Read Page';
-        }
-      }
-
+    // Screen Reader Helper (No Voice Features)
+    class AccessibilityHelper {
       announcePolitely(text) {
         document.getElementById('politeAnnouncement').textContent = text;
         setTimeout(() => {
@@ -522,35 +564,9 @@
           document.getElementById('assertiveAnnouncement').textContent = '';
         }, 100);
       }
-
-      readPageContent() {
-        if (isReading) {
-          this.stop();
-          return;
-        }
-
-        const content = this.extractPageContent();
-        this.speak(content);
-      }
-
-      extractPageContent() {
-        const title = document.querySelector('h1').textContent;
-        const subtitle = document.querySelector('.movie-details h2').textContent;
-        const availableSeats = document.querySelectorAll('.seat:not(.occupied)').length;
-        const totalSeats = document.querySelectorAll('.seat').length;
-        const occupiedSeats = totalSeats - availableSeats;
-
-        let content = `${title}. ${subtitle}. `;
-        content += `There are ${availableSeats} available seats out of ${totalSeats} total seats. `;
-        content += `${occupiedSeats} seats are already occupied. `;
-        content += `To select a seat, use tab or arrow keys to navigate and press enter or space to select. `;
-        content += `After selecting a seat, a booking form will appear for you to complete your reservation.`;
-
-        return content;
-      }
     }
 
-    const screenReader = new ScreenReaderHelper();
+    const accessibilityHelper = new AccessibilityHelper();
 
     document.addEventListener("DOMContentLoaded", () => {
       const seatingChart = document.getElementById("seatingChart");
@@ -558,48 +574,39 @@
       const successMessage = document.getElementById("successMessage");
       const errorMessage = document.getElementById("errorMessage");
       const themeToggle = document.getElementById("themeToggle");
-      const readPageBtn = document.getElementById("readPageBtn");
       const readingModeBtn = document.getElementById("readingModeBtn");
-      const stopSpeechBtn = document.getElementById("stopSpeechBtn");
       const rows = 8;
       const seatsPerRow = 30;
 
-      // Accessibility Controls
+      // Theme Toggle
       themeToggle.addEventListener("click", () => {
         document.body.classList.toggle("light-mode");
         const isLight = document.body.classList.contains("light-mode");
         localStorage.setItem("theme", isLight ? "light" : "dark");
-        themeToggle.textContent = isLight ? "🌙 Dark Mode" : "☀️ Light Mode";
+        themeToggle.textContent = isLight ? "🌙 Dark" : "☀️ Light";
         
-        screenReader.announcePolitely(isLight ? "Switched to light mode" : "Switched to dark mode");
+        accessibilityHelper.announcePolitely(isLight ? "Switched to light mode" : "Switched to dark mode");
       });
 
-      readPageBtn.addEventListener("click", () => {
-        screenReader.readPageContent();
-      });
-
+      // Reading Mode Toggle
       readingModeBtn.addEventListener("click", () => {
         document.body.classList.toggle("reading-mode");
         const isReadingMode = document.body.classList.contains("reading-mode");
-        readingModeBtn.textContent = isReadingMode ? "👓 Normal Mode" : "👓 Reading Mode";
+        readingModeBtn.textContent = isReadingMode ? "👓 Normal" : "👓 Reading";
         
-        screenReader.announcePolitely(isReadingMode ? "Reading mode enabled" : "Reading mode disabled");
-      });
-
-      stopSpeechBtn.addEventListener("click", () => {
-        screenReader.stop();
+        accessibilityHelper.announcePolitely(isReadingMode ? "Reading mode enabled" : "Reading mode disabled");
       });
 
       // System theme auto load
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       if (!localStorage.getItem("theme")) {
         document.body.classList.toggle("light-mode", !prefersDark);
-        themeToggle.textContent = prefersDark ? "☀️ Light Mode" : "🌙 Dark Mode";
+        themeToggle.textContent = prefersDark ? "☀️ Light" : "🌙 Dark";
       }
 
       if (localStorage.getItem("theme") === "light") {
         document.body.classList.add("light-mode");
-        themeToggle.textContent = "🌙 Dark Mode";
+        themeToggle.textContent = "🌙 Dark";
       }
 
       // Load seat data from Firebase
@@ -607,12 +614,6 @@
       onValue(seatStatusRef, (snapshot) => {
         const seatData = snapshot.val() || {};
         seatingChart.innerHTML = "";
-
-        // Add descriptive heading
-        const chartTitle = document.createElement("h2");
-        chartTitle.textContent = "Select Your Seat";
-        chartTitle.className = "sr-only";
-        seatingChart.appendChild(chartTitle);
 
         for (let i = 0; i < rows; i++) {
           if (i === 4) {
@@ -666,8 +667,7 @@
                 document.getElementById("seatNumber").value = seatId;
                 
                 // Announce selection
-                screenReader.announcePolitely(`Seat ${seatId} selected. Booking form is now available.`);
-                screenReader.speak(`You have selected seat ${seatId}. Please fill out the booking form below.`);
+                accessibilityHelper.announcePolitely(`Seat ${seatId} selected. Booking form is now available.`);
                 
                 // Scroll to form on mobile
                 setTimeout(() => {
@@ -685,17 +685,21 @@
               }
             });
 
-            // Add hover speech
-            seat.addEventListener("mouseenter", () => {
-              if (!isOccupied) {
-                screenReader.speak(`Seat ${seatId}`, { rate: 1.5 });
-              }
-            });
-
             seat.addEventListener("focus", () => {
               if (!isOccupied) {
-                screenReader.announcePolitely(`Focused on seat ${seatId}`);
+                accessibilityHelper.announcePolitely(`Focused on seat ${seatId}`);
               }
+            });
+            
+            // Add touch feedback
+            seat.addEventListener("touchstart", () => {
+              if (!seat.classList.contains("occupied")) {
+                seat.style.opacity = "0.7";
+              }
+            });
+            
+            seat.addEventListener("touchend", () => {
+              seat.style.opacity = "1";
             });
             
             row.appendChild(seat);
@@ -708,7 +712,7 @@
         const occupiedCount = Object.keys(seatData).length;
         const availableCount = totalSeats - occupiedCount;
         
-        screenReader.announcePolitely(`Seating chart loaded. ${availableCount} seats available out of ${totalSeats} total seats.`);
+        accessibilityHelper.announcePolitely(`Seating chart loaded. ${availableCount} seats available out of ${totalSeats} total seats.`);
       });
 
       // Form submission with accessibility
@@ -718,7 +722,7 @@
         submitBtn.disabled = true;
         submitBtn.textContent = "Booking...";
         
-        screenReader.announceUrgently("Processing your booking request...");
+        accessibilityHelper.announceUrgently("Processing your booking request...");
         
         const name = document.getElementById("name").value;
         const department = document.getElementById("department").value;
@@ -728,10 +732,9 @@
         const phone = document.getElementById("phone").value;
         const seatNumber = document.getElementById("seatNumber").value;
 
-        // Validation with speech feedback
+        // Validation
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
           showError("Please enter a valid email address.");
-          screenReader.speak("Please enter a valid email address.");
           document.getElementById("email").focus();
           submitBtn.disabled = false;
           submitBtn.textContent = "Book Now";
@@ -739,7 +742,6 @@
         }
         if (!/^\d{10}$/.test(phone)) {
           showError("Please enter a valid 10-digit phone number.");
-          screenReader.speak("Please enter a valid 10-digit phone number.");
           document.getElementById("phone").focus();
           submitBtn.disabled = false;
           submitBtn.textContent = "Book Now";
@@ -762,22 +764,19 @@
           selectedSeat = null;
           successMessage.style.display = "block";
           
-          screenReader.announceUrgently("Booking successful!");
-          screenReader.speak(`Congratulations! Your booking for seat ${seatNumber} has been confirmed. You will receive a confirmation email shortly.`);
+          accessibilityHelper.announceUrgently("Booking successful!");
           
           setTimeout(() => {
             if (snacks === "yes") {
-              screenReader.speak("Redirecting to snack selection form...");
               setTimeout(() => {
                 window.location.href = "https://docs.google.com/forms/d/e/1FAIpQLSfhtN9lejsmBoJ7Ux3UYuwjNyYAEKpQFB1-dVrJCpaY1ZWyEQ/viewform?usp=header";
-              }, 2000);
+              }, 1000);
             } else {
               successMessage.style.display = "none";
             }
           }, 3000);
         }).catch((error) => {
           showError("An error occurred while booking. Please try again.");
-          screenReader.speak("An error occurred while booking. Please try again.");
           console.error("Firebase error:", error);
         }).finally(() => {
           submitBtn.disabled = false;
@@ -788,7 +787,7 @@
       const showError = (msg) => {
         errorMessage.textContent = msg;
         errorMessage.style.display = "block";
-        screenReader.announceUrgently(msg);
+        accessibilityHelper.announceUrgently(msg);
         setTimeout(() => {
           errorMessage.style.display = "none";
         }, 5000);
@@ -797,7 +796,6 @@
       // Keyboard navigation enhancements
       document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") {
-          screenReader.stop();
           if (bookingForm.style.display === "block") {
             bookingForm.style.display = "none";
             if (selectedSeat) {
@@ -806,11 +804,6 @@
           }
         }
       });
-
-      // Welcome message
-      setTimeout(() => {
-        screenReader.speak("Welcome to Interstellar Movie Night booking. Use the Read Page button to hear all available options, or navigate through the seats to make your selection.");
-      }, 1000);
     });
   </script>
 </body>
