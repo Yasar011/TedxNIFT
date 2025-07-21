@@ -25,35 +25,54 @@
     html { scroll-behavior: smooth; font-size: var(--fs-base); }
     body { font-family: 'Poppins', sans-serif; background: var(--clr-bg); color: var(--clr-text); line-height: 1.6; }
 
+    /* Top bar */
     .top-bar {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 0.5rem 1rem; background: #000000cc; backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.75rem 1rem; background: rgba(0, 0, 0, 0.85);
       position: sticky; top: 0; z-index: 100;
     }
     .branding {
-      display: flex; align-items: center; gap: 1rem;
+      display: flex; align-items: center; gap: 0.75rem;
     }
-    .branding img { width: 40px; height: 40px; object-fit: contain; }
+    .branding img {
+      width: 36px; height: 36px; object-fit: contain;
+    }
     .branding .text {
-      display: flex; flex-direction: column; color: var(--clr-text); font-size: 0.85rem;
+      display: none;
     }
-    .branding .college { font-weight: 600; }
-    .branding .club { font-weight: 500; color: var(--clr-text-muted); }
-
-    .top-bar nav { display: flex; gap: 1rem; }
-    .top-bar a { color: var(--clr-text); text-decoration: none; font-size: 0.9rem; }
-    .top-bar a:hover { color: var(--clr-accent); }
-
-    .container { max-width: 480px; margin: 2rem auto 4rem; padding: 0 1rem; }
-    @media(min-width:991px) {
-      .container { display: grid; grid-template-columns: 48% 52%; gap: 2.5rem; max-width: 860px; }
+    /* On larger phones show text beside logos */
+    @media (min-width: 360px) {
+      .branding {
+        gap: 0.5rem;
+      }
+      .branding .text {
+        display: flex; flex-direction: column; font-size: 0.85rem; color: var(--clr-text);
+      }
+      .branding .college { font-weight: 600; }
+      .branding .club { font-weight: 500; color: var(--clr-text-muted); font-size: 0.75rem; }
+    }
+    nav a.admin {
+      color: var(--clr-text); text-decoration: none; font-size: 0.9rem;
+      padding: 0.25rem 0.5rem; border-radius: 0.25rem;
+    }
+    nav a.admin:focus,
+    nav a.admin:hover {
+      background: var(--clr-accent);
     }
 
+    /* Container */
+    .container {
+      max-width: 480px; margin: 1.5rem auto 4rem; padding: 0 1rem;
+    }
+
+    /* Poster & Watch Trailer */
     .poster {
       position: relative; border-radius: var(--radius-lg); overflow: hidden;
       box-shadow: var(--elev-card); margin-bottom: 1.5rem;
     }
-    .poster img { width: 100%; height: auto; display: block; }
+    .poster img {
+      width: 100%; height: auto; display: block;
+    }
     .poster button.watch {
       position: absolute; bottom: 12px; right: 12px;
       background: var(--clr-accent); border: none; color: #fff;
@@ -61,50 +80,65 @@
       font-size: 0.9rem; cursor: pointer; box-shadow: var(--elev-card);
       display: flex; align-items: center; gap: 0.4rem;
     }
-    .poster button.watch:hover { background: var(--clr-accent-dark); }
-
+    .poster button.watch:hover {
+      background: var(--clr-accent-dark);
+    }
     .rating-badge {
       position: absolute; top: 12px; right: 12px;
-      background: #000000cc; padding: 0.25rem 0.6rem;
-      border-radius: var(--radius-sm); display: flex;
-      align-items: center; gap: 0.3rem; font-size: 0.75rem;
+      background: rgba(0,0,0,0.6); padding: 0.25rem 0.6rem;
+      border-radius: var(--radius-sm); display: flex; align-items: center; gap: 0.3rem;
+      font-size: 0.75rem;
     }
     .rating-badge i { color: #ffd700; }
 
+    /* Details */
     .details { margin-bottom: 2rem; }
     .title {
-      font-size: clamp(1.75rem,2.3vw,2.3rem); font-weight: 700;
+      font-size: clamp(1.75rem,2.5vw,2.3rem); font-weight: 700;
       background: linear-gradient(45deg,#fff,var(--clr-accent));
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       margin-bottom: 1rem;
     }
-    .tag-group { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+    .tag-group {
+      display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;
+    }
     .tag {
       background: linear-gradient(45deg,var(--clr-accent),var(--clr-accent-dark));
-      padding: 0.35rem 0.9rem; border-radius: var(--radius-sm); font-size: 0.75rem;
+      padding: 0.35rem 0.9rem; border-radius: var(--radius-sm);
+      font-size: 0.75rem;
     }
-    .meta { display: flex; gap: 0.9rem; font-size: 0.85rem; color: var(--clr-text-muted); margin-bottom: 1rem; }
+    .meta {
+      display: flex; gap: 0.9rem; font-size: 0.85rem; color: var(--clr-text-muted);
+      margin-bottom: 1rem;
+    }
     .meta span { display: flex; align-items: center; gap: 0.3rem; }
-    .synopsis { font-size: 0.9rem; color: var(--clr-text-muted); margin-bottom: 1.5rem; }
+    .synopsis {
+      font-size: 0.9rem; color: var(--clr-text-muted); margin-bottom: 1.5rem;
+    }
 
+    /* Booking Card */
     .booking-card {
       background: var(--clr-card); border: 1px solid var(--clr-border);
       padding: 1.2rem; border-radius: var(--radius-lg); box-shadow: var(--elev-card);
-      display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 1.5rem;
     }
     .booking-card h2 { font-size: 1rem; font-weight: 500; }
-    .booking-card .price { font-size: 1.7rem; font-weight: 700; color: var(--clr-accent); }
+    .booking-card .price {
+      font-size: 1.7rem; font-weight: 700; color: var(--clr-accent);
+    }
     .discount {
       background: linear-gradient(45deg,#ff6b35,#e74c3c);
       padding: 0.3rem 0.7rem; border-radius: var(--radius-sm);
-      font-size: 0.7rem; font-weight: 600; color: #fff; display: flex; align-items: center;
-      gap: 0.3rem;
+      font-size: 0.7rem; font-weight: 600; color: #fff;
+      display: flex; align-items: center; gap: 0.3rem;
     }
 
+    /* CTA */
     .cta {
       display: block; width: 100%; text-align: center;
-      padding: 1rem; font-size: 1rem; font-weight: 600;
-      color: #fff; background: linear-gradient(45deg,var(--clr-accent),var(--clr-accent-dark));
+      padding: 1rem; font-size: 1rem; font-weight: 600; color: #fff;
+      background: linear-gradient(45deg,var(--clr-accent),var(--clr-accent-dark));
       border: none; border-radius: var(--radius-lg); box-shadow: var(--elev-card);
       opacity: 0.6; pointer-events: none; transition: opacity 0.3s;
     }
@@ -122,8 +156,7 @@
       </div>
     </div>
     <nav>
-      <a href="#" aria-label="Go back">&larr; Back</a>
-      <a href="login.html" aria-label="Admin login">Admin</a>
+      <a href="login.html" class="admin" aria-label="Admin login">Admin</a>
     </nav>
   </header>
 
@@ -144,7 +177,9 @@
     <section class="details">
       <h1 class="title">LEO – Bloody Sweet</h1>
       <div class="tag-group" aria-label="Genre tags">
-        <span class="tag">Action</span><span class="tag">Thriller</span><span class="tag">Comedy</span>
+        <span class="tag">Action</span>
+        <span class="tag">Thriller</span>
+        <span class="tag">Comedy</span>
       </div>
       <div class="meta">
         <span><i class="fas fa-clock"></i>2h 45m</span>
@@ -161,9 +196,7 @@
         </div>
         <span class="price" aria-label="Price in Indian Rupees">₹199</span>
       </div>
-      <button id="bookBtn" class="cta" onclick="book()" aria-label="Book tickets">
-        Please wait…
-      </button>
+      <button id="bookBtn" class="cta" onclick="book()">Please wait…</button>
     </section>
   </main>
 
@@ -176,7 +209,7 @@
       }
       window.location.href = 'booking.html';
     }
-    // Enable after 10s
+    // Enable the button after 10 seconds
     setTimeout(() => {
       const btn = document.getElementById('bookBtn');
       btn.textContent = 'Book Now';
