@@ -1,143 +1,176 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
-    <style>
-        /* CSS Styles */
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            color: #333;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Login | Adventure & Photography Club</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --clr-primary: #2575fc;
+      --clr-primary-dark: #1a5bbf;
+      --clr-bg-start: #6a11cb;
+      --clr-bg-end: #2575fc;
+      --clr-white: #ffffff;
+      --clr-muted: #777777;
+      --fs-base: 16px;
+      --radius: 8px;
+      --shadow: 0 8px 24px rgba(0,0,0,0.1);
+      --gap: 1rem;
+    }
 
-        .container {
-            background: #fff;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            width: 350px;
-        }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        .logo img {
-            width: 100px;
-            margin-bottom: 20px;
-        }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, var(--clr-bg-start), var(--clr-bg-end));
+      color: #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: var(--gap);
+    }
 
-        .login-form h2 {
-            margin-bottom: 20px;
-            color: #333;
-        }
+    .container {
+      background: var(--clr-white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      max-width: 360px;
+      width: 100%;
+      padding: calc(var(--gap) * 1.5);
+      text-align: center;
+    }
 
-        .login-form label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #555;
-        }
+    .logo img {
+      width: 80px;
+      height: auto;
+      margin-bottom: var(--gap);
+    }
 
-        .login-form input {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 14px;
-        }
+    .branding {
+      margin-bottom: var(--gap);
+    }
+    .branding .college {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #333;
+    }
+    .branding .club {
+      font-size: 0.85rem;
+      color: var(--clr-muted);
+    }
 
-        .login-form button {
-            width: 100%;
-            padding: 10px;
-            background: #2575fc;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
+    .login-form h2 {
+      margin-bottom: var(--gap);
+      font-weight: 500;
+      color: #333;
+    }
 
-        .login-form button:hover {
-            background: #1a5bbf;
-        }
+    .error-message {
+      display: none;
+      color: #e74c3c;
+      font-size: 0.875rem;
+      margin-bottom: var(--gap);
+    }
 
-        .error-message {
-            color: #ff4d4d;
-            font-size: 14px;
-            margin-bottom: 15px;
-            display: none;
-        }
+    .login-form label {
+      display: block;
+      text-align: left;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+      color: #444;
+    }
 
-        .developer-info {
-            margin-top: 20px;
-            font-size: 0.9em;
-            color: #777;
-        }
+    .login-form input {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: var(--gap);
+      border: 1px solid #ccc;
+      border-radius: var(--radius);
+      font-size: 0.9rem;
+    }
 
-        .developer-info a {
-            color: #2575fc;
-            text-decoration: none;
-        }
+    .login-form input:focus {
+      outline: 2px solid var(--clr-primary);
+      border-color: var(--clr-primary);
+    }
 
-        .developer-info a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    .login-form button {
+      width: 100%;
+      padding: 0.75rem;
+      background: var(--clr-primary);
+      color: var(--clr-white);
+      border: none;
+      border-radius: var(--radius);
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .login-form button:hover {
+      background: var(--clr-primary-dark);
+    }
+
+    .developer-info {
+      margin-top: var(--gap);
+      font-size: 0.8rem;
+      color: var(--clr-muted);
+    }
+    .developer-info a {
+      color: var(--clr-primary);
+      text-decoration: none;
+    }
+    .developer-info a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Logo -->
-        <div class="logo">
-            <img src="adventure and photography club logo-Recovered@0.5x.png" alt="Company Logo">
-        </div>
-
-        <!-- Login Form -->
-        <form id="loginForm" class="login-form">
-            <h2>Login</h2>
-            <div class="error-message" id="errorMessage">Invalid username or password!</div>
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" placeholder="Enter your username" required>
-
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" placeholder="Enter your password" required>
-
-            <button type="submit">Login</button>
-        </form>
-
-        <!-- Developer Info -->
-        <div class="developer-info">
-            <p>Developed by: Yasar C H</p>
-            <p>Contact: <a href="mailto:Yasar.h@nift.in">Yasar.h@nift.in</a></p>
-        </div>
+  <div class="container" role="main">
+    <div class="logo">
+      <img src="adventure-and-photography-club-logo.png" alt="Adventure and Photography Club Logo" />
+    </div>
+    <div class="branding">
+      <div class="college">National Institute of Fashion Technology, Jodhpur</div>
+      <div class="club">Adventure & Photography Club</div>
     </div>
 
-    <script>
-        // JavaScript for Form Validation and Redirection
-        document.getElementById('loginForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent form submission
+    <form id="loginForm" class="login-form" novalidate>
+      <h2>Admin Login</h2>
+      <div class="error-message" id="errorMessage" role="alert">
+        Invalid username or password!
+      </div>
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" placeholder="Enter username" required />
 
-            // Get username and password
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const errorMessage = document.getElementById('errorMessage');
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="Enter password" required />
 
-            // Validation
-            if (username === "Yasar C H" && password === "Yasar@2004") {
-                // Redirect to the specified URL
-                window.location.href = 'admin.html';
-            } else {
-                // Show error message
-                errorMessage.style.display = 'block';
-            }
-        });
-    </script>
+      <button type="submit">Login</button>
+    </form>
+
+    <div class="developer-info">
+      Developed by <a href="mailto:Yasar.h@nift.ac.in">Yasar C H</a>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const user = document.getElementById('username').value.trim();
+      const pass = document.getElementById('password').value;
+      const err = document.getElementById('errorMessage');
+
+      if (user === 'Yasar C H' && pass === 'Yasar@2004') {
+        window.location.href = 'admin.html';
+      } else {
+        err.style.display = 'block';
+      }
+    });
+  </script>
 </body>
 </html>
