@@ -4,17 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LEO – Bloody Sweet | Book Now</title>
-
-  <!-- Google Fonts + FontAwesome -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
   <style>
     :root {
       --clr-accent: #00d4ff;
       --clr-accent-dark: #0099cc;
-      --clr-warn: #ff6b35;
       --clr-bg: #0a0a0a;
       --clr-card: #181818;
       --clr-border: rgba(255, 255, 255, 0.12);
@@ -37,120 +33,89 @@
     .branding {
       display: flex; align-items: center; gap: 1rem;
     }
-    .branding img {
-      width: 48px; height: 48px; object-fit: contain;
-    }
+    .branding img { width: 40px; height: 40px; object-fit: contain; }
     .branding .text {
-      display: flex; flex-direction: column; color: var(--clr-text);
+      display: flex; flex-direction: column; color: var(--clr-text); font-size: 0.85rem;
     }
-    .branding .text .college { font-weight: 600; font-size: 0.9rem; }
-    .branding .text .club { font-weight: 500; font-size: 0.8rem; color: var(--clr-text-muted); }
+    .branding .college { font-weight: 600; }
+    .branding .club { font-weight: 500; color: var(--clr-text-muted); }
 
     .top-bar nav { display: flex; gap: 1rem; }
     .top-bar a { color: var(--clr-text); text-decoration: none; font-size: 0.9rem; }
     .top-bar a:hover { color: var(--clr-accent); }
 
-    .container { max-width: 480px; margin: 0 auto; padding-bottom: 4rem; }
+    .container { max-width: 480px; margin: 2rem auto 4rem; padding: 0 1rem; }
     @media(min-width:991px) {
-      .container { display: grid; grid-template-columns: 48% 52%; max-width: 860px; gap: 2.5rem; padding: 2rem; }
+      .container { display: grid; grid-template-columns: 48% 52%; gap: 2.5rem; max-width: 860px; }
     }
 
-    .poster { position: relative; border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--elev-card); }
-    .poster video { width: 100%; height: 100%; object-fit: cover; }
-    .poster button.play {
-      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      width: 70px; height: 70px; border-radius: 50%; background: #ffffffee; border: none;
-      display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform .2s;
+    .poster {
+      position: relative; border-radius: var(--radius-lg); overflow: hidden;
+      box-shadow: var(--elev-card); margin-bottom: 1.5rem;
     }
-    .poster button.play:hover { transform: translate(-50%, -50%) scale(1.1); }
+    .poster img { width: 100%; height: auto; display: block; }
+    .poster button.watch {
+      position: absolute; bottom: 12px; right: 12px;
+      background: var(--clr-accent); border: none; color: #fff;
+      padding: 0.6rem 1rem; border-radius: var(--radius-sm);
+      font-size: 0.9rem; cursor: pointer; box-shadow: var(--elev-card);
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .poster button.watch:hover { background: var(--clr-accent-dark); }
+
     .rating-badge {
-      position: absolute; top: 12px; right: 12px; background: #000000cc;
-      padding: 0.25rem 0.6rem; border-radius: var(--radius-sm); display: flex;
-      gap: 0.3rem; font-size: 0.75rem; align-items: center;
+      position: absolute; top: 12px; right: 12px;
+      background: #000000cc; padding: 0.25rem 0.6rem;
+      border-radius: var(--radius-sm); display: flex;
+      align-items: center; gap: 0.3rem; font-size: 0.75rem;
     }
     .rating-badge i { color: #ffd700; }
 
-    .details { margin-top: 1.5rem; }
-    @media(min-width:991px) { .details { margin-top: 0; } }
-
+    .details { margin-bottom: 2rem; }
     .title {
-      font-size: clamp(1.75rem, 2.3vw, 2.3rem); font-weight: 700;
-      background: linear-gradient(45deg, #fff, var(--clr-accent));
+      font-size: clamp(1.75rem,2.3vw,2.3rem); font-weight: 700;
+      background: linear-gradient(45deg,#fff,var(--clr-accent));
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
     }
-    .tag-group { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0; }
+    .tag-group { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
     .tag {
-      background: linear-gradient(45deg, var(--clr-accent), var(--clr-accent-dark));
+      background: linear-gradient(45deg,var(--clr-accent),var(--clr-accent-dark));
       padding: 0.35rem 0.9rem; border-radius: var(--radius-sm); font-size: 0.75rem;
     }
-    .meta { display: flex; gap: 0.9rem; font-size: 0.85rem; color: var(--clr-text-muted); }
+    .meta { display: flex; gap: 0.9rem; font-size: 0.85rem; color: var(--clr-text-muted); margin-bottom: 1rem; }
     .meta span { display: flex; align-items: center; gap: 0.3rem; }
-    .synopsis { color: var(--clr-text-muted); margin: 1rem 0 1.4rem; font-size: 0.9rem; }
+    .synopsis { font-size: 0.9rem; color: var(--clr-text-muted); margin-bottom: 1.5rem; }
 
     .booking-card {
       background: var(--clr-card); border: 1px solid var(--clr-border);
       padding: 1.2rem; border-radius: var(--radius-lg); box-shadow: var(--elev-card);
-      display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.7rem;
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;
     }
     .booking-card h2 { font-size: 1rem; font-weight: 500; }
     .booking-card .price { font-size: 1.7rem; font-weight: 700; color: var(--clr-accent); }
     .discount {
-      background: linear-gradient(45deg, var(--clr-warn), #e74c3c);
+      background: linear-gradient(45deg,#ff6b35,#e74c3c);
       padding: 0.3rem 0.7rem; border-radius: var(--radius-sm);
-      font-size: 0.7rem; font-weight: 600; color: #fff; display: flex; align-items: center; gap: 0.3rem;
+      font-size: 0.7rem; font-weight: 600; color: #fff; display: flex; align-items: center;
+      gap: 0.3rem;
     }
 
     .cta {
-      width: 100%; padding: 1rem; border: none; border-radius: var(--radius-lg);
-      font-size: 1rem; font-weight: 600; color: #fff;
-      background: linear-gradient(45deg, var(--clr-accent), var(--clr-accent-dark));
-      box-shadow: var(--elev-card); opacity: 0.6; pointer-events: none;
-      transition: transform .2s;
+      display: block; width: 100%; text-align: center;
+      padding: 1rem; font-size: 1rem; font-weight: 600;
+      color: #fff; background: linear-gradient(45deg,var(--clr-accent),var(--clr-accent-dark));
+      border: none; border-radius: var(--radius-lg); box-shadow: var(--elev-card);
+      opacity: 0.6; pointer-events: none; transition: opacity 0.3s;
     }
     .cta.enabled { opacity: 1; pointer-events: auto; }
-    .cta:hover { transform: translateY(-3px); }
-    .cta:active { transform: translateY(-1px); }
-
-    .toast {
-      position: fixed; top: 80px; left: 50%; transform: translateX(-50%);
-      background: linear-gradient(45deg, #007bff, #0056b3); color: #fff;
-      padding: 0.75rem 1.2rem; border-radius: var(--radius-sm);
-      box-shadow: var(--elev-card); font-size: 0.85rem; animation: toast-in .3s ease;
-      z-index: 200;
-    }
-    @keyframes toast-in { from { opacity: 0; transform: translate(-50%, -20px); } to { opacity: 1; transform: translate(-50%, 0); } }
-    .toast[data-type=success] { background: linear-gradient(45deg, #28a745, #20c997); }
-    .toast[data-type=error]   { background: linear-gradient(45deg, #dc3545, #e74c3c); }
-    .toast button { background: none; border: none; color: #fff; margin-left: 1rem; cursor: pointer; }
-
-    #modal[open] {
-      position: fixed; inset: 0; background: #000000e6;
-      display: grid; place-items: center; z-index: 150;
-    }
-    .dialog-box {
-      background: var(--clr-card); padding: 2rem; border-radius: var(--radius-lg);
-      text-align: center; width: 90%; max-width: 340px; box-shadow: var(--elev-card);
-    }
-    .dialog-box i { font-size: 3rem; color: #28a745; margin-bottom: 1rem; }
-    .dialog-box h3 { font-size: 1.3rem; margin-bottom: 0.5rem; }
-    .dialog-box p { font-size: 0.9rem; color: var(--clr-text-muted); margin-bottom: 1.2rem; }
-    .dialog-box button {
-      padding: 0.6rem 1.4rem; border: none; border-radius: var(--radius-sm);
-      font-weight: 600; background: linear-gradient(45deg, var(--clr-accent), var(--clr-accent-dark));
-      color: #fff; cursor: pointer;
-    }
-
-    @media(min-width:991px) {
-      .poster { height: 420px; }
-      .synopsis { font-size: 1rem; }
-    }
   </style>
 </head>
 <body>
   <header class="top-bar" role="banner">
     <div class="branding">
-      <img src="nift-jodhpur-logo.png" alt="National Institute of Fashion Technology Jodhpur Logo" />
-      <img src="adventure-photo-club-logo.png" alt="Adventure and Photography Club Logo" />
+      <img src="nift-jodhpur-logo.png" alt="NIFT Jodhpur Logo" />
+      <img src="adventure-photo-club-logo.png" alt="Adventure & Photography Club Logo" />
       <div class="text">
         <span class="college">National Institute of Fashion Technology, Jodhpur</span>
         <span class="club">Adventure and Photography Club</span>
@@ -164,15 +129,15 @@
 
   <main class="container">
     <section class="poster" aria-describedby="synopsisText">
-      <video id="trailerVideo" poster="https://cdn.lifehack.org/wp-content/uploads/2014/12/Interstellar-2014-Poster-Wallpaper.jpg" muted autoplay>
-        <source src="leo-trailer.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
-      <button class="play" aria-label="Play/Pause trailer">
-        <i class="fas fa-pause"></i>
+      <img src="https://cdn.lifehack.org/wp-content/uploads/2014/12/Interstellar-2014-Poster-Wallpaper.jpg"
+           alt="LEO – Bloody Sweet poster" />
+      <button class="watch" onclick="alert('Trailer coming soon!')">
+        <i class="fas fa-play"></i> Watch Trailer
       </button>
       <div class="rating-badge" aria-label="Rated 4.5 of 5 stars">
-        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>4.5
+        <i class="fas fa-star"></i><i class="fas fa-star"></i>
+        <i class="fas fa-star"></i><i class="fas fa-star"></i>
+        <i class="fas fa-star-half-alt"></i>4.5
       </div>
     </section>
 
@@ -187,7 +152,7 @@
         <span><i class="fas fa-calendar"></i>2023</span>
       </div>
       <p id="synopsisText" class="synopsis">
-        A gripping tale of action and suspense featuring Vijay in a power-packed performance. When a mild-mannered café owner's past catches up with him, he must embrace his dark side to protect his family.
+        A gripping tale of action and suspense featuring Vijay in a power-packed performance.
       </p>
       <div class="booking-card" aria-label="Ticket price and offer">
         <div>
@@ -196,84 +161,27 @@
         </div>
         <span class="price" aria-label="Price in Indian Rupees">₹199</span>
       </div>
-      <button id="bookBtn" class="cta" aria-label="Book tickets">Please wait…</button>
+      <button id="bookBtn" class="cta" onclick="book()" aria-label="Book tickets">
+        Please wait…
+      </button>
     </section>
   </main>
 
-  <footer class="top-bar" style="justify-content:center; gap:0.4rem; padding:0.7rem 1rem;">
-    Developed by <a href="https://www.instagram.com/_y_asar_">YASAR C H</a> · 
-    <a href="mailto:Yasar.h@nift.ac.in">Yasar.h@nift.ac.in</a>
-  </footer>
-
-  <div id="toastRegion" class="visually-hidden" aria-live="polite"></div>
-
-  <dialog id="modal">
-    <div class="dialog-box">
-      <i class="fas fa-check-circle" aria-hidden="true"></i>
-      <h3>Booking Initiated!</h3>
-      <p>Redirecting to booking page…</p>
-      <button type="button" onclick="app.closeModal()">Continue</button>
-    </div>
-  </dialog>
-
   <script>
-    class BookingApp {
-      constructor() {
-        this.bookBtn = document.getElementById('bookBtn');
-        this.modal = document.getElementById('modal');
-        this.playBtn = document.querySelector('.play');
-        this.video = document.getElementById('trailerVideo');
-
-        // Enable Book Now after 10 seconds
-        setTimeout(() => {
-          this.bookBtn.textContent = 'Book Now';
-          this.bookBtn.classList.add('enabled');
-        }, 10000);
-
-        // Toggle play/pause
-        this.playBtn.addEventListener('click', () => {
-          if (this.video.paused) {
-            this.video.play();
-            this.playBtn.innerHTML = '<i class="fas fa-pause"></i>';
-          } else {
-            this.video.pause();
-            this.playBtn.innerHTML = '<i class="fas fa-play"></i>';
-          }
-        });
-
-        // Booking flow
-        this.bookBtn.addEventListener('click', () => this.book());
+    function book() {
+      const btn = document.getElementById('bookBtn');
+      if (!btn.classList.contains('enabled')) {
+        alert('Please wait…');
+        return;
       }
-
-      book() {
-        if (!this.bookBtn.classList.contains('enabled')) {
-          this.toast('Please wait…', 'info');
-          return;
-        }
-        this.bookBtn.disabled = true;
-        this.bookBtn.textContent = 'Processing…';
-        this.toast('Booking in progress…', 'info');
-        setTimeout(() => {
-          this.modal.showModal();
-          setTimeout(() => location.href = 'booking.html', 3000);
-        }, 2300);
-      }
-
-      closeModal() {
-        this.modal.close();
-      }
-
-      toast(msg, type = 'info') {
-        const node = document.createElement('div');
-        node.className = 'toast';
-        node.dataset.type = type;
-        node.innerHTML = `${msg}<button onclick="this.parentElement.remove()" aria-label="Close notification">&times;</button>`;
-        document.body.append(node);
-        setTimeout(() => node.remove(), 4000);
-      }
+      window.location.href = 'booking.html';
     }
-
-    document.addEventListener('DOMContentLoaded', () => new BookingApp());
+    // Enable after 10s
+    setTimeout(() => {
+      const btn = document.getElementById('bookBtn');
+      btn.textContent = 'Book Now';
+      btn.classList.add('enabled');
+    }, 10000);
   </script>
 </body>
 </html>
