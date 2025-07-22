@@ -2,13 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Admin Panel – Movie Night Booking</title>
-  
-  <!-- CSS files remain in the head as they are needed for the initial render -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/dataTables.bootstrap5.min.css" />
-  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/dataTables.bootstrap5.min.css"/>
   <style>
     :root {
       --bg: #2c2f33;
@@ -28,21 +25,19 @@
     .table-status.paid { background-color: var(--paid); color: black; }
     .table-status.confirmed { background-color: var(--confirmed); color: black; }
     .hidden { display: none; }
-
-    /* Simple spinner for loading state */
-    .loader {
-        width: 1.5rem;
-        height: 1.5rem;
-        border: 2px solid currentColor;
-        border-right-color: transparent;
-        border-radius: 50%;
-        animation: spinner-border .75s linear infinite;
-        margin: auto;
-    }
-    @keyframes spinner-border { to { transform: rotate(360deg); } }
+    /* Inline CSS for loader to load instantly */
+    #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); display: flex; justify-content: center; align-items: center; z-index: 9999; }
+    #loader.hidden { display: none; }
   </style>
 </head>
 <body>
+  <!-- Loading Spinner -->
+  <div id="loader">
+    <div class="spinner-border text-light" role="status" style="width: 3rem; height: 3rem;">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
   <div class="d-flex">
     <nav class="sidebar p-3 d-flex flex-column">
       <h4 class="text-white">🎬 Movie Night</h4>
@@ -59,15 +54,15 @@
       <div id="dashboardSection">
         <h2 class="text-center mb-4" style="color: var(--accent);">Admin Dashboard</h2>
         <div class="row g-3 mb-4">
-          <div class="col-md-3"><div class="stat-card text-center"><h6>Total Seats</h6><h2 id="totalSeatsStat">240</h2></div></div>
-          <div class="col-md-3"><div class="stat-card text-center"><h6>Booked</h6><h2 id="bookedSeatsStat"><div class="loader"></div></h2></div></div>
-          <div class="col-md-3"><div class="stat-card text-center"><h6>Seats Left</h6><h2 id="leftSeatsStat"><div class="loader"></div></h2></div></div>
-          <div class="col-md-3"><div class="stat-card text-center"><h6>Needs Snacks</h6><h2 id="needsSnacksStat"><div class="loader"></div></h2></div></div>
+          <div class="col-md-3"><div class="stat-card text-center"><h6>Total Seats</h6><h2 id="totalSeatsStat">0</h2></div></div>
+          <div class="col-md-3"><div class="stat-card text-center"><h6>Booked</h6><h2 id="bookedSeatsStat" class="text-success">0</h2></div></div>
+          <div class="col-md-3"><div class="stat-card text-center"><h6>Seats Left</h6><h2 id="leftSeatsStat" class="text-warning">0</h2></div></div>
+          <div class="col-md-3"><div class="stat-card text-center"><h6>Needs Snacks</h6><h2 id="needsSnacksStat" style="color: var(--info);">0</h2></div></div>
         </div>
         <div class="row g-4">
-          <div class="col-md-4"><div class="chart-section"><h6>By Status</h6><div class="chart-container d-flex align-items-center"><div class="loader"></div></div><canvas id="statusChart"></canvas></div></div>
-          <div class="col-md-4"><div class="chart-section"><h6>By Department</h6><div class="chart-container d-flex align-items-center"><div class="loader"></div></div><canvas id="deptChart"></canvas></div></div>
-          <div class="col-md-4"><div class="chart-section"><h6>By Semester</h6><div class="chart-container d-flex align-items-center"><div class="loader"></div></div><canvas id="semChart"></canvas></div></div>
+          <div class="col-md-4"><div class="chart-section"><h6>By Status</h6><div class="chart-container"><canvas id="statusChart"></canvas></div></div></div>
+          <div class="col-md-4"><div class="chart-section"><h6>By Department</h6><div class="chart-container"><canvas id="deptChart"></canvas></div></div></div>
+          <div class="col-md-4"><div class="chart-section"><h6>By Semester</h6><div class="chart-container"><canvas id="semChart"></canvas></div></div></div>
         </div>
       </div>
 
@@ -84,9 +79,7 @@
           <thead>
             <tr><th>#</th><th>Seat</th><th>Name</th><th>Phone</th><th>Dept</th><th>Sem</th><th>Snacks</th><th>Status</th><th>Actions</th></tr>
           </thead>
-          <tbody>
-            <tr><td colspan="9" class="text-center"><div class="loader my-3"></div> Loading Bookings...</td></tr>
-          </tbody>
+          <tbody></tbody>
         </table>
       </div>
 
@@ -97,10 +90,36 @@
           <div class="mb-3"><label>Seat Number</label><input type="text" class="form-control" id="seatNumber" required /></div>
           <div class="mb-3"><label>Name</label><input type="text" class="form-control" id="userName" required /></div>
           <div class="mb-3"><label>Phone Number</label><input type="text" class="form-control" id="phoneNumber" required /></div>
-          <div class="mb-3"><label>Department</label><select class="form-select" id="department" required><option value="" disabled selected>Select Department</option><option>BFT</option><option>AD</option><option>FD</option><option>FC</option><option>TD</option><option>MFM</option><option>FACULTY</option><option>STAFF</option><option>OTHER</option></select></div>
-          <div class="mb-3"><label>Semester</label><select class="form-select" id="semester" required><option value="" disabled selected>Select Semester</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>Other</option></select></div>
-          <div class="mb-3"><label>Needs Snacks</label><select class="form-select" id="snacks"><option value="no">No</option><option value="yes">Yes</option></select></div>
-          <div class="mb-3"><label>Status</label><select class="form-select" id="status"><option value="paid">Paid</option><option value="confirmed">Confirmed</option></select></div>
+          <div class="mb-3">
+            <label>Department</label>
+            <select class="form-select" id="department" required>
+              <option value="" disabled selected>Select Department</option>
+              <option>BFT</option><option>AD</option><option>FD</option><option>FC</option><option>TD</option>
+              <option>MFM</option><option>FACULTY</option><option>STAFF</option><option>OTHER</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label>Semester</label>
+            <select class="form-select" id="semester" required>
+              <option value="" disabled selected>Select Semester</option>
+              <option>1</option><option>2</option><option>3</option><option>4</option>
+              <option>5</option><option>6</option><option>7</option><option>8</option><option>Other</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label>Needs Snacks</label>
+            <select class="form-select" id="snacks">
+              <option value="no">No</option>
+              <option value="yes">Yes</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label>Status</label>
+            <select class="form-select" id="status">
+              <option value="paid">Paid</option>
+              <option value="confirmed">Confirmed</option>
+            </select>
+          </div>
           <button type="submit" class="btn btn-primary w-100">Submit Booking</button>
         </form>
       </div>
@@ -108,39 +127,66 @@
   </div>
 
   <!-- Edit Booking Modal -->
-  <div class="modal fade" id="editBookingModal" tabindex="-1">
+  <div class="modal fade" id="editBookingModal" tabindex="-1" aria-labelledby="editBookingModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <form class="modal-content" id="editBookingForm">
-        <div class="modal-header"><h5 class="modal-title">Edit Booking</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-header">
+          <h5 class="modal-title" id="editBookingModalLabel">Edit Booking</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
         <div class="modal-body">
           <input type="hidden" id="editSeatId">
           <div class="mb-3"><label>Name</label><input type="text" class="form-control" id="editUserName" required /></div>
           <div class="mb-3"><label>Phone Number</label><input type="text" class="form-control" id="editPhoneNumber" required /></div>
-          <div class="mb-3"><label>Department</label><select class="form-select" id="editDepartment" required><option>BFT</option><option>AD</option><option>FD</option><option>FC</option><option>TD</option><option>MFM</option><option>FACULTY</option><option>STAFF</option><option>OTHER</option></select></div>
-          <div class="mb-3"><label>Semester</label><select class="form-select" id="editSemester" required><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>Other</option></select></div>
-          <div class="mb-3"><label>Needs Snacks</label><select class="form-select" id="editSnacks"><option value="no">No</option><option value="yes">Yes</option></select></div>
-          <div class="mb-3"><label>Status</label><select class="form-select" id="editStatus"><option value="paid">Paid</option><option value="confirmed">Confirmed</option></select></div>
+          <div class="mb-3">
+            <label>Department</label>
+            <select class="form-select" id="editDepartment" required>
+              <option>BFT</option><option>AD</option><option>FD</option><option>FC</option><option>TD</option>
+              <option>MFM</option><option>FACULTY</option><option>STAFF</option><option>OTHER</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label>Semester</label>
+            <select class="form-select" id="editSemester" required>
+              <option>1</option><option>2</option><option>3</option><option>4</option>
+              <option>5</option><option>6</option><option>7</option><option>8</option><option>Other</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label>Needs Snacks</label>
+            <select class="form-select" id="editSnacks">
+              <option value="no">No</option>
+              <option value="yes">Yes</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label>Status</label>
+            <select class="form-select" id="editStatus">
+              <option value="paid">Paid</option>
+              <option value="confirmed">Confirmed</option>
+            </select>
+          </div>
         </div>
-        <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary">Save Changes</button></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
       </form>
     </div>
   </div>
 
-  <!-- SCRIPTS ARE MOVED HERE AND DEFERRED FOR FASTER PAGE LOAD -->
+  <!-- Scripts (with async/defer for faster loading) -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
   <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js" defer></script>
   <script src="https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" defer></script>
-  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" async></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" async></script>
   <script type="module">
-    // Import only what you need
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
-    import { getDatabase, ref, onValue, update, set, get } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-database.js";
+    import { getDatabase, ref, onValue, update, set } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-database.js";
 
-    // Your Firebase config
-    const firebaseConfig = {
+    const app = initializeApp({
       apiKey: "AIzaSyBpew8ODVHmmGndhZxQ3VK_CEurW0_EQyU",
       authDomain: "nift-movie-nigt-apc.firebaseapp.com",
       databaseURL: "https://nift-movie-nigt-apc-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -148,147 +194,92 @@
       storageBucket: "nift-movie-nigt-apc.appspot.com",
       messagingSenderId: "736122244542",
       appId: "1:736122244542:web:69d88050a26fc8391dbdef"
-    };
+    });
 
-    const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     const seatsRef = ref(db, "seats");
 
     let seatTable = null;
     let statusChart, deptChart, semChart;
     let currentBookingData = {};
-    let editBookingModal;
 
-    // Wait for the DOM to be ready
-    document.addEventListener('DOMContentLoaded', () => {
-        // Cache jQuery selectors
-        const $dashboardSection = $('#dashboardSection');
-        const $bookingSection = $('#bookingSection');
-        const $manualEntrySection = $('#manualEntrySection');
-        const $navLinks = $('.sidebar .nav-link');
-        editBookingModal = new bootstrap.Modal(document.getElementById('editBookingModal'));
+    $(document).ready(() => {
+      seatTable = $("#seatTable").DataTable({ order: [], pageLength: 10 });
 
-        seatTable = $("#seatTable").DataTable({ 
-            order: [], 
-            pageLength: 10,
-            language: { emptyTable: "No bookings found." }
-        });
+      $('#dashboardTab').click(() => toggleTab('#dashboardSection', '#dashboardTab'));
+      $('#bookingsTab').click(() => toggleTab('#bookingSection', '#bookingsTab'));
+      $('#manualEntryTab').click(() => toggleTab('#manualEntrySection', '#manualEntryTab'));
 
-        $('#dashboardTab').click(() => toggleTab($dashboardSection, '#dashboardTab'));
-        $('#bookingsTab').click(() => toggleTab($bookingSection, '#bookingsTab'));
-        $('#manualEntryTab').click(() => toggleTab($manualEntrySection, '#manualEntryTab'));
-
-        onValue(seatsRef, (snapshot) => {
-            const data = snapshot.val() || {};
-            currentBookingData = data;
-            processData(data);
-            $('.loader').parent().removeClass('d-flex align-items-center');
-            $('.loader').hide(); // Hide all loaders once data is processed
-        });
-
-        setupEventListeners();
-    });
-
-    function processData(data) {
-        const totalSeats = 240;
-        const statusStats = {}, deptStats = {}, semStats = {};
-        let booked = 0, needsSnacks = 0;
-        
+      onValue(seatsRef, (snap) => {
+        const data = snap.val() || {};
+        currentBookingData = data;
+        const total = 240, statusStats = {}, deptStats = {}, semStats = {};
+        let booked = 0, snacks = 0;
         seatTable.clear();
 
         Object.entries(data).forEach(([id, s]) => {
-            if (s.status && s.status !== 'available') {
-                booked++;
-                if (s.snacks === "yes") needsSnacks++;
-                statusStats[s.status] = (statusStats[s.status] || 0) + 1;
-                deptStats[s.department] = (deptStats[s.department] || 0) + 1;
-                semStats[s.semester] = (semStats[s.semester] || 0) + 1;
-
-                seatTable.row.add([
-                    null, id, s.name || 'N/A', s.phone || 'N/A', s.department, s.semester,
-                    s.snacks === 'yes' ? "Yes" : "No",
-                    `<span class="badge table-status ${s.status}">${s.status}</span>`,
-                    generateActionButtons(id, s)
-                ]);
-            }
+          if (s.status && s.status !== 'available') {
+            booked++;
+            if (s.snacks === "yes") snacks++;
+            statusStats[s.status] = (statusStats[s.status] || 0) + 1;
+            deptStats[s.department] = (deptStats[s.department] || 0) + 1;
+            semStats[s.semester] = (semStats[s.semester] || 0) + 1;
+            seatTable.row.add([
+              null, id, s.name || 'N/A', s.phone || 'N/A', s.department, s.semester,
+              s.snacks === 'yes' ? "Yes" : "No",
+              s.status,
+              generateActions(id, s)
+            ]);
+          }
         });
-        
-        updateDashboardStats(totalSeats, booked, needsSnacks);
-        updateCharts(statusStats, deptStats, semStats);
-        
-        seatTable.draw(false); // Use false to maintain pagination
-    }
 
-    function updateDashboardStats(total, booked, snacks) {
+        seatTable.order([]).draw(false);
+        $('#totalSeatsStat').text(total);
         $('#bookedSeatsStat').text(booked);
         $('#leftSeatsStat').text(total - booked);
         $('#needsSnacksStat').text(snacks);
-    }
-    
-    function updateCharts(statusData, deptData, semData) {
-        statusChart = createOrUpdatePieChart(statusChart, 'statusChart', statusData);
-        deptChart   = createOrUpdatePieChart(deptChart, 'deptChart', deptData);
-        semChart    = createOrUpdatePieChart(semChart, 'semChart', semData);
-    }
 
-    function setupEventListeners() {
-        // Use event delegation for dynamically created buttons
-        $('#seatTable tbody').on('click', '.action-btn', function() {
-            const btn = $(this);
-            updateBookingStatus(btn.data('seat-id'), btn.data('new-status'), btn);
-        });
+        statusChart = chartPie(statusChart, 'statusChart', statusStats);
+        deptChart   = chartPie(deptChart,   'deptChart', deptStats);
+        semChart    = chartPie(semChart,    'semChart', semStats);
 
-        $('#seatTable tbody').on('click', '.edit-btn', function() {
-            const seatId = $(this).data('seat-id');
-            populateEditModal(seatId);
-        });
-
-        $('#seatTable tbody').on('click', '.cancel-btn', function() {
-            const seatId = $(this).data('seat-id');
-            if (confirm("Cancel this booking? The seat will become available.")) {
-                set(ref(db, `seats/${seatId}`), { status: "available" })
-                    .catch(err => alert("Error cancelling booking: " + err.message));
-            }
-        });
-
-        $('#editBookingForm').on('submit', handleEditFormSubmit);
-        $('#manualEntryForm').on('submit', handleManualEntrySubmit);
-        $('#exportCSV').on('click', exportToCSV);
-        $('#exportXLSX').on('click', exportToXLSX);
-
-        // Auto-numbering for DataTable
-        seatTable.on('order.dt search.dt', () => {
-            seatTable.column(0, { search: 'applied', order: 'applied' }).nodes().each((cell, i) => {
-                cell.innerHTML = i + 1;
-            });
+        seatTable.on('order.dt search.dt', function () {
+          seatTable.column(0, { search: 'applied', order: 'applied' }).nodes().each(function(cell, i) {
+            cell.innerHTML = i + 1;
+          });
         }).draw();
-    }
-    
-    function generateActionButtons(id, seat) {
-        const statusBtn = seat.status === 'confirmed' ? 
-            '<button class="btn btn-success btn-sm ms-1" disabled>Confirmed</button>' :
-            `<button class="btn btn-sm btn-${seat.status === 'paid' ? 'warning' : 'primary'} action-btn ms-1"
-                data-seat-id="${id}" data-new-status="${seat.status === 'paid' ? 'confirmed' : 'paid'}">
-                ${seat.status === 'paid' ? 'Confirm' : 'Mark Paid'}</button>`;
-      
-        return `
-            <button class="btn btn-primary btn-sm edit-btn" data-seat-id="${id}">Edit</button>
-            <button class="btn btn-danger btn-sm cancel-btn ms-1" data-seat-id="${id}">Cancel</button>
-            ${statusBtn}`;
-    }
 
-    function updateBookingStatus(id, newStatus, btn) {
+        // Hide loader once data is loaded
+        document.getElementById('loader').classList.add('hidden');
+      });
+
+      function generateActions(id, s) {
+        return `
+          <button class="btn btn-primary btn-sm edit-btn" data-seat-id="${id}">Edit</button>
+          ${s.status === 'confirmed' ? '<button class="btn btn-success btn-sm ms-1" disabled>Confirmed</button>' :
+          `<button class="btn btn-sm btn-${s.status === 'paid' ? 'warning' : 'primary'} action-btn ms-1"
+            data-seat-id="${id}" data-new-status="${s.status === 'paid' ? 'confirmed' : 'paid'}">
+            ${s.status === 'paid' ? 'Confirm' : 'Mark Paid'}</button>`
+          }
+        `;
+      }
+
+      $('#seatTable tbody').on('click', '.action-btn', function() {
+        const btn = $(this);
+        const id = btn.data('seat-id');
+        const newStatus = btn.data('new-status');
         btn.prop('disabled', true).text("Updating...");
         update(ref(db, `seats/${id}`), { status: newStatus }).catch(err => {
-            alert("Error updating status: " + err.message);
-            // Reset button on error
-            btn.prop('disabled', false).text(newStatus === 'confirmed' ? "Confirm" : "Mark Paid");
+          alert("Error: " + err.message);
+          btn.prop('disabled', false).text(newStatus === 'confirmed' ? "Confirm" : "Mark Paid");
         });
-    }
+      });
 
-    function populateEditModal(id) {
+      // Edit Booking
+      $('#seatTable tbody').on('click', '.edit-btn', function() {
+        const id = $(this).data('seat-id');
         const data = currentBookingData[id];
-        if (!data) return alert("Booking data not found.");
+        if (!data) return alert("Booking not found.");
         $('#editSeatId').val(id);
         $('#editUserName').val(data.name || "");
         $('#editPhoneNumber').val(data.phone || "");
@@ -296,116 +287,110 @@
         $('#editSemester').val(data.semester || "");
         $('#editSnacks').val(data.snacks || "no");
         $('#editStatus').val(data.status || "paid");
-        editBookingModal.show();
-    }
+        $('#editBookingModal').modal('show');
+      });
 
-    function handleEditFormSubmit(e) {
+      $('#editBookingForm').on('submit', function(e) {
         e.preventDefault();
         const id = $('#editSeatId').val();
-        const bookingData = {
-            name: $('#editUserName').val().trim(),
-            phone: $('#editPhoneNumber').val().trim(),
-            department: $('#editDepartment').val(),
-            semester: $('#editSemester').val(),
-            snacks: $('#editSnacks').val(),
-            status: $('#editStatus').val()
+        const value = {
+          name: $('#editUserName').val().trim(),
+          phone: $('#editPhoneNumber').val().trim(),
+          department: $('#editDepartment').val(),
+          semester: $('#editSemester').val(),
+          snacks: $('#editSnacks').val(),
+          status: $('#editStatus').val()
         };
-        update(ref(db, `seats/${id}`), bookingData)
-            .then(() => editBookingModal.hide())
-            .catch(err => alert("Update failed: " + err.message));
-    }
+        update(ref(db, `seats/${id}`), value).then(() => {
+          $('#editBookingModal').modal('hide');
+        }).catch(err => alert("Update failed: " + err.message));
+      });
 
-    async function handleManualEntrySubmit(e) {
+      // Manual Booking Entry
+      document.getElementById('manualEntryForm').addEventListener('submit', (e) => {
         e.preventDefault();
-        const form = e.target;
-        const id = form.seatNumber.value.trim().toUpperCase();
-        const bookingData = {
-            name: form.userName.value.trim(),
-            phone: form.phoneNumber.value.trim(),
-            department: form.department.value,
-            semester: form.semester.value,
-            snacks: form.snacks.value,
-            status: form.status.value
-        };
+        const id = seatNumber.value.trim(), name = userName.value.trim(), phone = phoneNumber.value.trim(),
+              dept = department.value.trim(), sem = semester.value.trim(),
+              snacks = document.getElementById('snacks').value,
+              status = document.getElementById('status').value;
 
-        if (!id || !bookingData.name || !bookingData.phone || !bookingData.department || !bookingData.semester) {
-            return alert("Please fill all required fields.");
-        }
+        if (!id || !name || !dept || !phone || !sem || !status) return alert("All fields required.");
+        const oneSeat = ref(db, `seats/${id}`);
+        onValue(oneSeat, (snap) => {
+          if (snap.exists() && snap.val().status !== 'available') {
+            alert("Seat already booked.");
+          } else {
+            update(oneSeat, { name, phone, department: dept, semester: sem, snacks, status })
+              .then(() => {
+                alert("Booking added.");
+                manualEntryForm.reset();
+                toggleTab('#bookingSection', '#bookingsTab');
+              }).catch(err => alert("Failed: " + err.message));
+          }
+        }, { onlyOnce: true });
+      });
 
-        const seatRef = ref(db, `seats/${id}`);
-        try {
-            const snapshot = await get(seatRef); // Use get() for a one-time read
-            if (snapshot.exists() && snapshot.val().status !== 'available') {
-                alert("This seat is already booked.");
-            } else {
-                await update(seatRef, bookingData);
-                alert("Booking added successfully!");
-                form.reset();
-                toggleTab($('#bookingSection'), '#bookingsTab');
-            }
-        } catch (err) {
-            alert("Failed to add booking: " + err.message);
-        }
-    }
-
-    function toggleTab(sectionToShow, tabToActivate) {
+      function toggleTab(sectionId, tabId) {
         $('#dashboardSection, #bookingSection, #manualEntrySection').hide();
-        $('.sidebar .nav-link').removeClass('active');
-        sectionToShow.show();
-        $(tabToActivate).addClass('active');
-    }
+        $('.nav-link').removeClass('active');
+        $(sectionId).show();
+        $(tabId).addClass('active');
+      }
 
-    function createOrUpdatePieChart(chartInstance, canvasId, data) {
-        if (chartInstance) chartInstance.destroy();
-        const ctx = document.getElementById(canvasId);
-        if (!ctx || Object.keys(data).length === 0) {
-            ctx.style.display = 'none'; // Hide canvas if no data
-            return null;
-        }
-        ctx.style.display = 'block';
-        return new Chart(ctx, {
-            type: "pie",
-            data: {
-                labels: Object.keys(data),
-                datasets: [{ data: Object.values(data), backgroundColor: ['#43b581','#faa61a','#7289da','#e74c3c','#3498db','#f1c40f'] }]
-            },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', labels: { color: '#eee' } } } }
+      function chartPie(chart, id, dataObj) {
+        if (chart) chart.destroy();
+        return new Chart(document.getElementById(id), {
+          type: "pie",
+          data: {
+            labels: Object.keys(dataObj),
+            datasets: [{ data: Object.values(dataObj), backgroundColor: ['#43b581','#faa61a','#7289da','#e74c3c','#3498db','#f1c40f'] }]
+          },
+          options: { responsive: true, plugins: { legend: { position: 'top' }}}
         });
-    }
+      }
 
-    function getExportData() {
+      // Export CSV & Excel
+      function getBookingsForExport() {
         return Object.entries(currentBookingData)
-            .filter(([, val]) => val.status && val.status !== "available")
-            .map(([id, val], i) => ({
-                "#": i + 1, "Seat": id, "Name": val.name || "", "Phone": val.phone || "",
-                "Department": val.department || "", "Semester": val.semester || "",
-                "Snacks": val.snacks === "yes" ? "Yes" : "No", "Status": val.status
-            }));
-    }
+        .filter(([_, val]) => val.status && val.status !== "available")
+        .map(([id, val], i) => ({
+          "#": i+1,
+          "Seat": id,
+          "Name": val.name || "",
+          "Phone": val.phone || "",
+          "Department": val.department || "",
+          "Semester": val.semester || "",
+          "Snacks": val.snacks === "yes" ? "Yes" : "No",
+          "Status": val.status
+        }));
+      }
 
-    function exportToCSV() {
-        const data = getExportData();
+      $('#exportCSV').click(() => {
+        const data = getBookingsForExport();
         if (!data.length) return alert("No bookings to export.");
-        const headers = Object.keys(data[0]).join(",");
-        const rows = data.map(row => Object.values(row).map(val => `"${String(val).replace(/"/g, '""')}"`).join(","));
-        const csvContent = "data:text/csv;charset=utf-8," + [headers, ...rows].join("\n");
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "bookings.csv");
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
+        const cols = Object.keys(data[0]);
+        let csv = cols.join(",") + "\n";
+        data.forEach(row => {
+          csv += cols.map(c => `"${(row[c]+'').replace(/"/g, '""')}"`).join(",") + "\n";
+        });
+        const blob = new Blob([csv], {type: "text/csv"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "bookings.csv";
+        a.click();
+        URL.revokeObjectURL(url);
+      });
 
-    function exportToXLSX() {
-        const data = getExportData();
+      $('#exportXLSX').click(() => {
+        const data = getBookingsForExport();
         if (!data.length) return alert("No bookings to export.");
-        const ws = XLSX.utils.json_to_sheet(data);
         const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.json_to_sheet(data);
         XLSX.utils.book_append_sheet(wb, ws, "Bookings");
         XLSX.writeFile(wb, "bookings.xlsx");
-    }
+      });
+    });
   </script>
 </body>
 </html>
