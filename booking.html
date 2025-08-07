@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Interstellar Movie Night Booking</title>
+  <title>Fresher Movie Night Booking</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -151,14 +151,14 @@
     <button class="btn-help">Help</button>
 
     <div class="header">
-      <h1>Interstellar Movie Night</h1>
+      <h1>Fresher Movie Night</h1>
       <p>NIFT Jodhpur - Adventure & Photography Club</p>
     </div>
 
     <div class="movie-card">
-      <div class="movie-title">Interstellar</div>
-      <div class="movie-time">9:15 PM</div>
-      <div class="movie-price">Rs. 29</div>
+      <div class="movie-title">Bhool Bhulaiya 2007</div>
+      <div class="movie-time">10:00 PM</div>
+      <div class="movie-price">Free</div>
     </div>
 
     <div class="legend">
@@ -352,12 +352,17 @@
           phone: document.getElementById("phone").value.trim(),
           seatNumber: selectedSeat
         };
+
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
           return showError("Invalid email");
         }
         if (!/^\d{10}$/.test(formData.phone)) {
           return showError("Invalid phone");
         }
+
+        const ticketId = `TKT-${formData.seatNumber}-${Date.now().toString().slice(-6)}`;
+        formData.ticketId = ticketId;
+
         try {
           await set(ref(db, `seats/${selectedSeat}`), {
             status: "occupied",
@@ -394,18 +399,12 @@
 
       function generateTicket(data) {
         const { jsPDF } = window.jspdf;
+        // QR code with only name, department, semester, and ticketId
         const ticketInfo = JSON.stringify({
           name: data.name,
-          seat: data.seatNumber,
-          movie: "Interstellar",
-          time: "9:15 PM",
-          date: new Date().toDateString(),
-          venue: "NIFT Jodhpur",
-          price: "Rs. 29",
           department: data.department,
           semester: data.semester,
-          email: data.email,
-          phone: data.phone
+          ticketId: data.ticketId
         });
 
         document.getElementById("hiddenQR").innerHTML = "";
@@ -437,7 +436,7 @@
           doc.setTextColor(255, 255, 255);
           doc.setFontSize(18);
           doc.setFont("helvetica", "bold");
-          doc.text("INTERSTELLAR MOVIE NIGHT", 105, 16, { align: "center" });
+          doc.text("FRESHER MOVIE NIGHT", 105, 16, { align: "center" });
           doc.setFontSize(10);
           doc.setFont("helvetica", "normal");
           doc.text("NIFT Jodhpur - Adventure & Photography Club", 105, 20, { align: "center" });
@@ -449,11 +448,11 @@
           doc.text("EVENT DETAILS", 10, 35);
           doc.setFontSize(11);
           doc.setFont("helvetica", "normal");
-          doc.text("Movie: Interstellar", 10, 44);
-          doc.text("Time: 9:15 PM", 10, 51);
-          doc.text(`Date: ${new Date().toDateString()}`, 10, 58);
+          doc.text("Movie: Bhool Bhulaiya 2007", 10, 44);
+          doc.text("Time: 10:00 PM", 10, 51);
+          doc.text("Date: 9/08/2025", 10, 58);
           doc.text("Venue: NIFT Jodhpur", 10, 65);
-          doc.text("Price: Rs. 29", 10, 72);
+          doc.text("Price: Free", 10, 72);
 
           // Student info single line
           doc.setFontSize(14);
@@ -474,14 +473,13 @@
 
           // Ticket ID
           doc.setFontSize(8);
-          const ticketId = `TKT-${data.seatNumber}-${Date.now().toString().slice(-6)}`;
-          doc.text(`Ticket ID: ${ticketId}`, 10, 96);
+          doc.text(`Ticket ID: ${data.ticketId}`, 10, 96);
 
           const pdfBlob = doc.output("blob");
           const url = URL.createObjectURL(pdfBlob);
           const downloadLink = document.createElement("a");
           downloadLink.href = url;
-          downloadLink.download = `interstellar_ticket_${data.seatNumber}.pdf`;
+          downloadLink.download = `fresher_ticket_${data.seatNumber}.pdf`;
           downloadLink.textContent = "Download Ticket";
           downloadLink.style =
             "display:block;text-align:center;margin-top:10px;color:#2980B9;font-weight:bold;text-decoration:none;padding:8px;background:rgba(41,128,185,0.1);border-radius:4px;";
