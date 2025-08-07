@@ -19,17 +19,32 @@
     .sidebar { background: var(--panel); min-height: 100vh; width: 220px; }
     .sidebar .nav-link.active { background: var(--accent); color: white; }
     .stat-card, .chart-section, .booking-section, .form-section, #verifyTicketsSection {
-      background-color: var(--panel); border-radius: 10px; padding: 20px; margin-bottom: 20px;
+      background-color: var(--panel);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
     }
     .chart-container { height: 280px; }
     .table-status.paid { background-color: var(--paid); color: black; }
     .table-status.confirmed { background-color: var(--confirmed); color: black; }
     .hidden { display: none; }
     /* Inline CSS for loader to load instantly */
-    #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); display: flex; justify-content: center; align-items: center; z-index: 9999; }
+    #loader {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: var(--bg);
+      display: flex; justify-content: center; align-items: center;
+      z-index: 9999;
+    }
     #loader.hidden { display: none; }
+    /* Style to preserve whitespace in ticket details */
+    #ticket-details {
+      white-space: pre-wrap;
+      font-size: 1rem;
+      margin-top: 0.5rem;
+    }
   </style>
-  <!-- QR code scanning library -->
+  <!-- Include QR code scanning library -->
   <script src="https://unpkg.com/html5-qrcode"></script>
 </head>
 <body>
@@ -132,14 +147,14 @@
         <h2 class="text-center mb-4" style="color: var(--accent);">Verify Tickets</h2>
         <div id="qr-reader" style="width: 320px; margin: auto;"></div>
         <div id="scan-result" class="text-center mt-3" style="font-weight: bold;"></div>
-        <div id="ticket-details" class="text-center mt-3" style="font-weight: bold; white-space: pre-wrap;"></div>
+        <div id="ticket-details" class="text-center mt-3" style="font-weight: bold;"></div>
         <button id="confirmCheckinBtn" class="btn btn-success d-block mx-auto mt-3" style="display:none;">Confirm Check-In</button>
         <button id="stopScannerBtn" class="btn btn-danger d-block mx-auto mt-3" style="display:none;">Stop Scanner</button>
       </div>
     </div>
   </div>
 
-  <!-- Edit Booking Modal -->
+  <!-- Edit Booking Modal (unchanged) -->
   <div class="modal fade" id="editBookingModal" tabindex="-1" aria-labelledby="editBookingModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <form class="modal-content" id="editBookingForm">
@@ -188,13 +203,14 @@
     </div>
   </div>
 
-  <!-- Scripts (with async/defer for faster loading) -->
+  <!-- Scripts -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
   <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js" defer></script>
   <script src="https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" async></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js" async></script>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
     import { getDatabase, ref, onValue, update, get } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-database.js";
@@ -216,17 +232,18 @@
     let statusChart, deptChart, semChart;
     let currentBookingData = {};
 
-    // QR Scanner related variables
+    // QR Scanner and ticket verification variables
     let html5QrCode = null;
     const scanResult = document.getElementById("scan-result");
     const ticketDetailsDiv = document.getElementById("ticket-details");
     const confirmCheckinBtn = document.getElementById("confirmCheckinBtn");
     const stopScannerBtn = document.getElementById("stopScannerBtn");
-    let lastScannedTicketId = null;
+    let lastScannedTicketKey = null;
 
     $(document).ready(() => {
       seatTable = $("#seatTable").DataTable({ order: [], pageLength: 10 });
 
+      // Tab switching setup
       $('#dashboardTab').click(() => toggleTab('#dashboardSection', '#dashboardTab'));
       $('#bookingsTab').click(() => toggleTab('#bookingSection', '#bookingsTab'));
       $('#manualEntryTab').click(() => toggleTab('#manualEntrySection', '#manualEntryTab'));
@@ -297,7 +314,6 @@
         });
       });
 
-      // Edit Booking
       $('#seatTable tbody').on('click', '.edit-btn', function() {
         const id = $(this).data('seat-id');
         const data = currentBookingData[id];
@@ -328,7 +344,6 @@
         }).catch(err => alert("Update failed: " + err.message));
       });
 
-      // Manual Booking Entry
       document.getElementById('manualEntryForm').addEventListener('submit', (e) => {
         e.preventDefault();
         const id = seatNumber.value.trim(), name = userName.value.trim(), phone = phoneNumber.value.trim(),
@@ -352,13 +367,13 @@
         });
       });
 
-      // QR Code Scanner Logic for Verify Tickets Tab
+      // QR Code Scanner Logic and ticket verification
       function startQRScanner() {
         scanResult.textContent = "Starting scanner...";
         scanResult.style.color = "white";
         ticketDetailsDiv.textContent = "";
         confirmCheckinBtn.style.display = "none";
-        lastScannedTicketId = null;
+        lastScannedTicketKey = null;
         stopScannerBtn.style.display = "inline-block";
 
         if (html5QrCode) {
@@ -392,39 +407,79 @@
             scanResult.style.color = "white";
             stopScannerBtn.style.display = "none";
             html5QrCode.clear();
-          }).catch(err => console.error("Error stopping scanner", err));
+          }).catch(err => {
+            console.error("Error stopping scanner", err);
+          });
         }
+      }
+
+      function setInvalidScanMessage() {
+        scanResult.textContent = "❌ Invalid or unrecognized ticket.";
+        scanResult.style.color = "red";
+        ticketDetailsDiv.textContent = "";
+        confirmCheckinBtn.style.display = "none";
       }
 
       function onScanSuccess(decodedText, decodedResult) {
         stopQRScanner();
-        lastScannedTicketId = decodedText;
 
-        const seatRef = ref(db, `seats/${decodedText}`);
+        let seatKey = null;
+        let ticketData = null;
+
+        try {
+          ticketData = JSON.parse(decodedText);
+          // The booking app QR encodes JSON with keys like name, department, semester, ticketId, seatNumber
+          // Use seatNumber if present, otherwise fallback to ticketId or null
+          seatKey = ticketData.seatNumber || ticketData.ticketId || null;
+        } catch (e) {
+          // Not JSON – might be plain seatKey?
+          seatKey = decodedText.trim();
+        }
+
+        if (!seatKey) {
+          setInvalidScanMessage();
+          return;
+        }
+
+        lastScannedTicketKey = seatKey;
+
+        const seatRef = ref(db, `seats/${seatKey}`);
+
         get(seatRef).then((snapshot) => {
           if (snapshot.exists()) {
             const data = snapshot.val();
-            if (data.status === 'available' || !data.status) {
+            if (!data.status || data.status === 'available') {
               scanResult.textContent = "❌ Ticket exists but is not booked or available.";
               scanResult.style.color = "red";
               ticketDetailsDiv.textContent = "";
               confirmCheckinBtn.style.display = "none";
-            } else if (data.checkedIn === true) {
+            }
+            else if (data.checkedIn === true) {
               scanResult.textContent = "⚠️ Ticket has already been scanned and checked in.";
               scanResult.style.color = "orange";
-              ticketDetailsDiv.textContent = `Name: ${data.name}\nSeat: ${decodedText}\nStatus: ${data.status}\nDepartment: ${data.department}\nSemester: ${data.semester}\nSnacks: ${data.snacks === 'yes' ? 'Yes' : 'No'}`;
+              ticketDetailsDiv.textContent = `
+Name: ${data.name || "N/A"}
+Seat: ${seatKey}
+Status: ${data.status}
+Department: ${data.department || "N/A"}
+Semester: ${data.semester || "N/A"}
+Snacks: ${data.snacks === 'yes' ? 'Yes' : 'No'}`;
               confirmCheckinBtn.style.display = "none";
-            } else {
+            }
+            else {
               scanResult.textContent = `✅ Ticket valid!`;
               scanResult.style.color = "limegreen";
-              ticketDetailsDiv.textContent = `Name: ${data.name}\nSeat: ${decodedText}\nStatus: ${data.status}\nDepartment: ${data.department}\nSemester: ${data.semester}\nSnacks: ${data.snacks === 'yes' ? 'Yes' : 'No'}`;
+              ticketDetailsDiv.textContent = `
+Name: ${data.name || "N/A"}
+Seat: ${seatKey}
+Status: ${data.status}
+Department: ${data.department || "N/A"}
+Semester: ${data.semester || "N/A"}
+Snacks: ${data.snacks === 'yes' ? 'Yes' : 'No'}`;
               confirmCheckinBtn.style.display = "inline-block";
             }
           } else {
-            scanResult.textContent = "❌ Invalid or unrecognized ticket.";
-            scanResult.style.color = "red";
-            ticketDetailsDiv.textContent = "";
-            confirmCheckinBtn.style.display = "none";
+            setInvalidScanMessage();
           }
         }).catch(() => {
           scanResult.textContent = "❌ Error verifying ticket.";
@@ -435,29 +490,32 @@
       }
 
       function onScanError(errorMessage) {
+        // You can log scan errors if needed or ignore
         // console.warn("QR Scan error:", errorMessage);
       }
 
       confirmCheckinBtn.addEventListener('click', () => {
-        if (!lastScannedTicketId) return;
+        if (!lastScannedTicketKey) return;
 
-        const seatRef = ref(db, `seats/${lastScannedTicketId}`);
+        const seatRef = ref(db, `seats/${lastScannedTicketKey}`);
+
         update(seatRef, { checkedIn: true, checkInTimestamp: Date.now() })
-          .then(() => {
-            alert("Ticket confirmed and checked in successfully!");
-            confirmCheckinBtn.style.display = "none";
-            scanResult.textContent = "✅ Ticket checked in!";
-            scanResult.style.color = "limegreen";
-          })
-          .catch((err) => {
-            alert("Failed to update ticket: " + err.message);
-          });
+        .then(() => {
+          alert("Ticket confirmed and checked in successfully!");
+          confirmCheckinBtn.style.display = "none";
+          scanResult.textContent = "✅ Ticket checked in!";
+          scanResult.style.color = "limegreen";
+        })
+        .catch((err) => {
+          alert("Failed to update ticket: " + err.message);
+        });
       });
 
       stopScannerBtn.addEventListener('click', () => {
         stopQRScanner();
       });
 
+      // Tab toggle helper
       function toggleTab(contentSelector, tabSelector) {
         $('#dashboardSection, #bookingSection, #manualEntrySection, #verifyTicketsSection').hide();
         $('.nav-link').removeClass('active');
@@ -471,22 +529,22 @@
         }
       }
 
+      // By default show dashboard
       toggleTab('#dashboardSection', '#dashboardTab');
 
-      // Export CSV & Excel
       function getBookingsForExport() {
         return Object.entries(currentBookingData)
-          .filter(([_, val]) => val.status && val.status !== "available")
-          .map(([id, val], i) => ({
-            "#": i+1,
-            "Seat": id,
-            "Name": val.name || "",
-            "Phone": val.phone || "",
-            "Department": val.department || "",
-            "Semester": val.semester || "",
-            "Snacks": val.snacks === "yes" ? "Yes" : "No",
-            "Status": val.status
-          }));
+        .filter(([_, val]) => val.status && val.status !== "available")
+        .map(([id, val], i) => ({
+          "#": i+1,
+          "Seat": id,
+          "Name": val.name || "",
+          "Phone": val.phone || "",
+          "Department": val.department || "",
+          "Semester": val.semester || "",
+          "Snacks": val.snacks === "yes" ? "Yes" : "No",
+          "Status": val.status
+        }));
       }
 
       $('#exportCSV').click(() => {
@@ -515,6 +573,7 @@
         XLSX.writeFile(wb, "bookings.xlsx");
       });
 
+      // Chart helper
       function chartPie(chart, id, dataObj) {
         if (chart) chart.destroy();
         return new Chart(document.getElementById(id), {
