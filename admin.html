@@ -95,7 +95,9 @@
         </div>
         <table id="seatTable" class="table table-striped table-hover" style="width:100%">
           <thead>
-            <tr><th>#</th><th>Seat</th><th>Name</th><th>Phone</th><th>Dept</th><th>Sem</th><th>Snacks</th><th>Status</th><th>Actions</th></tr>
+            <tr>
+              <th>#</th><th>Seat</th><th>Name</th><th>Phone</th><th>Dept</th><th>Sem</th><th>Snacks</th><th>Status</th><th>Ticket ID</th><th>Actions</th>
+            </tr>
           </thead>
           <tbody></tbody>
         </table>
@@ -266,9 +268,15 @@
             deptStats[s.department] = (deptStats[s.department] || 0) + 1;
             semStats[s.semester] = (semStats[s.semester] || 0) + 1;
             seatTable.row.add([
-              null, id, s.name || 'N/A', s.phone || 'N/A', s.department, s.semester,
+              null,
+              id,
+              s.name || 'N/A',
+              s.phone || 'N/A',
+              s.department,
+              s.semester,
               s.snacks === 'yes' ? "Yes" : "No",
               s.status,
+              s.ticketId || 'N/A',      // Ticket ID column added here
               generateActions(id, s)
             ]);
           }
@@ -423,70 +431,75 @@
         scanNextBtn.style.display = "inline-block";
       }
 
-      function onScanSuccess(decodedText, decodedResult) {
+      async function onScanSuccess(decodedText, decodedResult) {
         stopQRScanner();
 
-        let seatKey = null;
         let ticketData = null;
-
         try {
           ticketData = JSON.parse(decodedText);
-          seatKey = ticketData.seatNumber || ticketData.ticketId || null;
         } catch (e) {
-          seatKey = decodedText.trim();
-        }
-
-        if (!seatKey) {
           setInvalidScanMessage();
           return;
         }
 
-        lastScannedTicketKey = seatKey;
+        const ticketIdScanned = ticketData.ticketId;
+        if (!ticketIdScanned) {
+          setInvalidScanMessage();
+          return;
+        }
 
-        const seatRef = ref(db, `seats/${seatKey}`);
+        // Search entire seats for matching ticketId
+        const snapshot = await get(seatsRef);
+        if (!snapshot.exists()) { setInvalidScanMessage(); return; }
+        
+        const seats = snapshot.val();
+        let matchingSeatKey = null;
+        let matchingSeatData = null;
 
-        get(seatRef).then((snapshot) => {
-          if (snapshot.exists()) {
-            const data = snapshot.val();
-            // Always show details from database (or QR if available)
-            ticketDetailsDiv.textContent = `
-Name: ${data.name || ticketData?.name || "N/A"}
-Seat: ${seatKey}
-Status: ${data.status || "N/A"}
-Department: ${data.department || ticketData?.department || "N/A"}
-Semester: ${data.semester || ticketData?.semester || "N/A"}
-Snacks: ${data.snacks === 'yes' ? 'Yes' : 'No'}`;
-
-            if (!data.status || data.status === 'available') {
-              scanResult.textContent = "❌ QR exists but seat is not booked or available.";
-              scanResult.style.color = "red";
-              confirmCheckinBtn.style.display = "none";
-              scanNextBtn.style.display = "inline-block";
-            } else if (data.checkedIn === true) {
-              scanResult.textContent = "⚠️ QR already scanned and checked in.";
-              scanResult.style.color = "orange";
-              confirmCheckinBtn.style.display = "none";
-              scanNextBtn.style.display = "inline-block";
-            } else {
-              scanResult.textContent = "✅ Valid QR! Confirm check-in below.";
-              scanResult.style.color = "limegreen";
-              confirmCheckinBtn.style.display = "inline-block";
-              scanNextBtn.style.display = "none";  // Hide until after confirm
-            }
-          } else {
-            setInvalidScanMessage();
+        for (const [seatKey, seatObj] of Object.entries(seats)) {
+          if (seatObj.ticketId === ticketIdScanned) {
+            matchingSeatKey = seatKey;
+            matchingSeatData = seatObj;
+            break;
           }
-        }).catch(() => {
-          scanResult.textContent = "❌ Error verifying QR.";
+        }
+
+        if (!matchingSeatKey || !matchingSeatData) {
+          setInvalidScanMessage();
+          return;
+        }
+
+        lastScannedTicketKey = matchingSeatKey;
+
+        // Display ticket details
+        ticketDetailsDiv.textContent = `
+Name: ${matchingSeatData.name || ticketData.name || "N/A"}
+Seat: ${matchingSeatKey}
+Status: ${matchingSeatData.status || "N/A"}
+Department: ${matchingSeatData.department || ticketData.department || "N/A"}
+Semester: ${matchingSeatData.semester || ticketData.semester || "N/A"}
+Snacks: ${matchingSeatData.snacks === 'yes' ? 'Yes' : 'No'}`;
+
+        if (!matchingSeatData.status || matchingSeatData.status === 'available') {
+          scanResult.textContent = "❌ Ticket exists but is not booked or available.";
           scanResult.style.color = "red";
-          ticketDetailsDiv.textContent = "";
           confirmCheckinBtn.style.display = "none";
           scanNextBtn.style.display = "inline-block";
-        });
+        } else if (matchingSeatData.checkedIn === true) {
+          scanResult.textContent = "⚠️ Ticket has already been scanned and checked in.";
+          scanResult.style.color = "orange";
+          confirmCheckinBtn.style.display = "none";
+          scanNextBtn.style.display = "inline-block";
+        } else {
+          scanResult.textContent = "✅ Valid ticket! Confirm check-in below.";
+          scanResult.style.color = "limegreen";
+          confirmCheckinBtn.style.display = "inline-block";
+          scanNextBtn.style.display = "none";
+        }
       }
 
       function onScanError(errorMessage) {
-        // Ignore or log scan errors
+        // You can log scan errors here or ignore them
       }
 
       confirmCheckinBtn.addEventListener('click', () => {
@@ -547,7 +560,8 @@ Snacks: ${data.snacks === 'yes' ? 'Yes' : 'No'}`;
           "Department": val.department || "",
           "Semester": val.semester || "",
           "Snacks": val.snacks === "yes" ? "Yes" : "No",
-          "Status": val.status
+          "Status": val.status,
+          "Ticket ID": val.ticketId || ""
         }));
       }
 
