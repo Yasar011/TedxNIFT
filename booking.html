@@ -46,6 +46,22 @@
     }
     .btn-login:active { transform: scale(0.95); }
 
+    /* Help button */
+    .btn-help {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      background: #2980B9;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-help:active { transform: scale(0.95); }
+
     /* Header */
     .header {
       text-align: center;
@@ -247,6 +263,9 @@
     <button class="btn-login" onclick="alert('⚙️ Feature under development – booking requires no login')">
       Login
     </button>
+    <a href="https://wa.me/8157980825" class="btn-help" title="Developer: Yasar C H, BFT 27, WhatsApp: 8157980825">
+      Help
+    </a>
 
     <div class="header">
       <h1>Interstellar Movie Night</h1>
@@ -301,14 +320,6 @@
           <option>7</option><option>8</option><option>Other</option>
         </select>
       </div>
-      <div class="form-group">
-        <label for="snacks">Need Snacks?</label>
-        <select id="snacks" required>
-          <option value="">Select Option</option>
-          <option value="yes">Yes, I need snacks</option>
-          <option value="no">No, thank you</option>
-        </select>
-      </div>
       <div class="form-group"><label for="email">Email Address</label><input type="email" id="email" required></div>
       <div class="form-group"><label for="phone">Phone Number</label><input type="tel" id="phone" required></div>
       <div class="form-group"><label for="seatNumber">Selected Seat</label><input type="text" id="seatNumber" readonly></div>
@@ -316,6 +327,7 @@
     </form>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
     import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-database.js";
@@ -394,7 +406,6 @@
           name: document.getElementById("name").value.trim(),
           department: document.getElementById("department").value,
           semester: document.getElementById("semester").value,
-          snacks: document.getElementById("snacks").value,
           email: document.getElementById("email").value.trim(),
           phone: document.getElementById("phone").value.trim(),
           seatNumber: selectedSeat
@@ -406,18 +417,47 @@
           selectedSeatElement.classList.replace("selected","occupied");
           form.reset(); form.style.display = "none";
           selectedSeat = selectedSeatElement = null;
-          showSuccess("Seat booked successfully! 🎉");
-          if (data.snacks === "yes") {
-            setTimeout(() => window.location.href = "https://docs.google.com/forms/d/e/1FAIpQLSfhtN9lejsmBoJ7Ux3UYuwjNyYAEKpQFB1-dVrJCpaY1ZWyEQ/viewform?usp=header", 1500);
-          }
+          showSuccess("Seat booked successfully! 🎉 Download your ticket below.");
+          generateTicket(data);
         } catch {
           showError("Booking failed");
         }
       });
 
+      function generateTicket(data) {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        doc.setFontSize(18);
+        doc.text("Interstellar Movie Ticket", 105, 20, { align: "center" });
+        doc.setFontSize(12);
+        doc.text(`Name: ${data.name}`, 20, 40);
+        doc.text(`Department: ${data.department}`, 20, 50);
+        doc.text(`Semester: ${data.semester}`, 20, 60);
+        doc.text(`Email: ${data.email}`, 20, 70);
+        doc.text(`Phone: ${data.phone}`, 20, 80);
+        doc.text(`Seat: ${data.seatNumber}`, 20, 90);
+        doc.text("Movie: Interstellar", 20, 100);
+        doc.text("Time: 9:15 PM", 20, 110);
+        doc.text("Price: ₹29", 20, 120);
+        doc.text("Thank you for booking!", 105, 140, { align: "center" });
+
+        const pdfBlob = doc.output('blob');
+        const url = URL.createObjectURL(pdfBlob);
+        const downloadBtn = document.createElement('a');
+        downloadBtn.href = url;
+        downloadBtn.download = `ticket_${data.seatNumber}.pdf`;
+        downloadBtn.textContent = 'Download Ticket';
+        downloadBtn.style = 'display: block; text-align: center; margin-top: 10px; color: #2980B9; font-weight: bold;';
+        success.appendChild(downloadBtn);
+
+        // Auto-remove button after 30 seconds
+        setTimeout(() => downloadBtn.remove(), 30000);
+      }
+
       function showSuccess(msg){
-        success.textContent = msg; success.style.display="block";
-        setTimeout(() => success.style.display="none", 3000);
+        success.innerHTML = msg; // Use innerHTML to allow appending button
+        success.style.display="block";
+        setTimeout(() => { success.style.display="none"; success.innerHTML = ""; }, 30000); // Extended timeout for download
       }
       function showError(msg){
         error.textContent = msg; error.style.display="block";
