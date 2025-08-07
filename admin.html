@@ -235,7 +235,6 @@
     let statusChart, deptChart, semChart;
     let currentBookingData = {};
 
-    // QR Scanner and ticket verification variables
     let html5QrCode = null;
     const scanResult = document.getElementById("scan-result");
     const ticketDetailsDiv = document.getElementById("ticket-details");
@@ -247,7 +246,6 @@
     $(document).ready(() => {
       seatTable = $("#seatTable").DataTable({ order: [], pageLength: 10 });
 
-      // Tab switching setup
       $('#dashboardTab').click(() => toggleTab('#dashboardSection', '#dashboardTab'));
       $('#bookingsTab').click(() => toggleTab('#bookingSection', '#bookingsTab'));
       $('#manualEntryTab').click(() => toggleTab('#manualEntrySection', '#manualEntryTab'));
@@ -276,7 +274,7 @@
               s.semester,
               s.snacks === 'yes' ? "Yes" : "No",
               s.status,
-              s.ticketId || 'N/A',      // Ticket ID column added here
+              s.ticketId || 'N/A',
               generateActions(id, s)
             ]);
           }
@@ -298,19 +296,20 @@
           });
         }).draw();
 
-        // Hide loader once data is loaded
         document.getElementById('loader').classList.add('hidden');
       });
 
       function generateActions(id, s) {
-        return `
-          <button class="btn btn-primary btn-sm edit-btn" data-seat-id="${id}">Edit</button>
-          ${s.status === 'confirmed' ? '<button class="btn btn-success btn-sm ms-1" disabled>Confirmed</button>' :
-          `<button class="btn btn-sm btn-${s.status === 'paid' ? 'warning' : 'primary'} action-btn ms-1"
-            data-seat-id="${id}" data-new-status="${s.status === 'paid' ? 'confirmed' : 'paid'}">
-            ${s.status === 'paid' ? 'Confirm' : 'Mark Paid'}</button>`
-          }
-        `;
+        if(s.checkedIn){
+          return `<button class="btn btn-primary btn-sm edit-btn" data-seat-id="${id}">Edit</button>
+                  <button class="btn btn-success btn-sm ms-1" disabled>Checked In</button>`;
+        }
+        return `<button class="btn btn-primary btn-sm edit-btn" data-seat-id="${id}">Edit</button>
+                ${s.status === 'confirmed' ? '<button class="btn btn-success btn-sm ms-1" disabled>Confirmed</button>' :
+                `<button class="btn btn-sm btn-${s.status === 'paid' ? 'warning' : 'primary'} action-btn ms-1"
+                  data-seat-id="${id}" data-new-status="${s.status === 'paid' ? 'confirmed' : 'paid'}">
+                  ${s.status === 'paid' ? 'Confirm' : 'Mark Paid'}</button>`
+                }`;
       }
 
       $('#seatTable tbody').on('click', '.action-btn', function() {
@@ -377,7 +376,6 @@
         });
       });
 
-      // QR Code Scanner Logic and ticket verification
       function startQRScanner() {
         scanResult.textContent = "Starting scanner...";
         scanResult.style.color = "white";
@@ -471,7 +469,6 @@
 
         lastScannedTicketKey = matchingSeatKey;
 
-        // Display ticket details
         ticketDetailsDiv.textContent = `
 Name: ${matchingSeatData.name || ticketData.name || "N/A"}
 Seat: ${matchingSeatKey}
@@ -499,7 +496,7 @@ Snacks: ${matchingSeatData.snacks === 'yes' ? 'Yes' : 'No'}`;
       }
 
       function onScanError(errorMessage) {
-        // You can log scan errors here or ignore them
+        // Optional: log or ignore scan errors
       }
 
       confirmCheckinBtn.addEventListener('click', () => {
@@ -509,6 +506,25 @@ Snacks: ${matchingSeatData.snacks === 'yes' ? 'Yes' : 'No'}`;
 
         update(seatRef, { checkedIn: true, checkInTimestamp: Date.now() })
         .then(() => {
+          if (currentBookingData[lastScannedTicketKey]) {
+            currentBookingData[lastScannedTicketKey].checkedIn = true;
+          }
+
+          // Update booking table row dynamically
+          const rowIndex = seatTable.rows().indexes().filter(i => {
+            const dataRow = seatTable.row(i).data();
+            return dataRow && dataRow[1] === lastScannedTicketKey;
+          })[0];
+
+          if (rowIndex !== undefined) {
+            const rowData = seatTable.row(rowIndex).data();
+            rowData[7] = 'confirmed';
+            rowData[9] = `<button class="btn btn-primary btn-sm edit-btn" data-seat-id="${lastScannedTicketKey}">Edit</button>
+                          <button class="btn btn-success btn-sm ms-1" disabled>Checked In</button>`;
+            seatTable.row(rowIndex).data(rowData).invalidate();
+            seatTable.draw(false);
+          }
+
           scanResult.textContent = "✅ Check-in confirmed! Seat updated.";
           scanResult.style.color = "limegreen";
           confirmCheckinBtn.style.display = "none";
