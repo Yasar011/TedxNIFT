@@ -142,8 +142,6 @@
     }
     .chat-btn { background-color: #27AE60; color: white; }
     .close-btn { background-color: #c0392b; color: white; }
-
-    /* Download Ticket Modal (reuse modal styles) */
   </style>
 </head>
 <body>
@@ -236,16 +234,6 @@
     </div>
   </div>
 
-  <!-- Download Ticket Modal -->
-  <div id="downloadModal" class="modal-overlay" style="display:none;">
-    <div class="modal-content">
-      <h3>Booking Confirmed</h3>
-      <p>Your seat has been successfully booked!</p>
-      <button id="downloadTicketBtn" class="book-btn">Download Your Ticket</button>
-      <button id="closeDownloadModalBtn" class="book-btn" style="background:#c0392b; margin-top:10px;">Close</button>
-    </div>
-  </div>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script type="module">
@@ -268,7 +256,6 @@
 
     let selectedSeat = null;
     let selectedSeatElement = null;
-    let lastGeneratedPdfBlobUrl = null;
 
     document.addEventListener("DOMContentLoaded", () => {
       const seatingChart = document.getElementById("seatingChart");
@@ -373,11 +360,11 @@
           return showError("Invalid phone");
         }
 
-        const ticketId = TKT-${formData.seatNumber}-${Date.now().toString().slice(-6)};
+        const ticketId = `TKT-${formData.seatNumber}-${Date.now().toString().slice(-6)}`;
         formData.ticketId = ticketId;
 
         try {
-          await set(ref(db, seats/${selectedSeat}), {
+          await set(ref(db, `seats/${selectedSeat}`), {
             status: "occupied",
             ...formData,
             timestamp: new Date().toISOString()
@@ -386,15 +373,8 @@
           bookingForm.reset();
           bookingForm.style.display = "none";
           selectedSeat = selectedSeatElement = null;
-
-          const pdfUrl = await generateTicket(formData);
-
-          showSuccess("Seat booked successfully.");
-
-          // Show download modal
-          const downloadModal = document.getElementById("downloadModal");
-          downloadModal.style.display = "flex";
-
+          showSuccess("Seat booked successfully. Download your ticket below.");
+          generateTicket(formData);
         } catch {
           showError("Booking failed");
         }
@@ -417,8 +397,9 @@
         }, 3000);
       }
 
-      async function generateTicket(data) {
+      function generateTicket(data) {
         const { jsPDF } = window.jspdf;
+        // QR code with only name, department, semester, and ticketId
         const ticketInfo = JSON.stringify({
           name: data.name,
           department: data.department,
@@ -436,88 +417,77 @@
           correctLevel: QRCode.CorrectLevel.H
         });
 
-        return new Promise(resolve => {
-          setTimeout(() => {
-            const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: [210, 100] });
-            doc.setFillColor(245, 245, 245);
-            doc.rect(0, 0, 210, 100, "F");
-            doc.setDrawColor(0, 0, 0);
-            doc.setLineWidth(0.8);
-            doc.rect(5, 5, 200, 90);
+        setTimeout(() => {
+          const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: [210, 100] });
+          doc.setFillColor(245, 245, 245);
+          doc.rect(0, 0, 210, 100, "F");
+          doc.setDrawColor(0, 0, 0);
+          doc.setLineWidth(0.8);
+          doc.rect(5, 5, 200, 90);
 
-            doc.setLineDash([2, 2]);
-            doc.setDrawColor(150, 150, 150);
-            doc.line(145, 5, 145, 95);
-            doc.setLineDash([]);
+          doc.setLineDash([2, 2]);
+          doc.setDrawColor(150, 150, 150);
+          doc.line(145, 5, 145, 95);
+          doc.setLineDash([]);
 
-            doc.setFillColor(44, 62, 80);
-            doc.rect(5, 5, 200, 18, "F");
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(18);
-            doc.setFont("helvetica", "bold");
-            doc.text("FRESHER MOVIE NIGHT", 105, 16, { align: "center" });
-            doc.setFontSize(10);
-            doc.setFont("helvetica", "normal");
-            doc.text("NIFT Jodhpur - Adventure & Photography Club", 105, 20, { align: "center" });
+          // Header
+          doc.setFillColor(44, 62, 80);
+          doc.rect(5, 5, 200, 18, "F");
+          doc.setTextColor(255, 255, 255);
+          doc.setFontSize(18);
+          doc.setFont("helvetica", "bold");
+          doc.text("FRESHER MOVIE NIGHT", 105, 16, { align: "center" });
+          doc.setFontSize(10);
+          doc.setFont("helvetica", "normal");
+          doc.text("NIFT Jodhpur - Adventure & Photography Club", 105, 20, { align: "center" });
 
-            doc.setTextColor(0, 0, 0);
-            doc.setFontSize(14);
-            doc.setFont("helvetica", "bold");
-            doc.text("EVENT DETAILS", 10, 35);
-            doc.setFontSize(11);
-            doc.setFont("helvetica", "normal");
-            doc.text("Movie: Bhool Bhulaiya 2007", 10, 44);
-            doc.text("Time: 10:00 PM", 10, 51);
-            doc.text("Date: 9/08/2025", 10, 58);
-            doc.text("Venue: NIFT Jodhpur", 10, 65);
-            doc.text("Price: Free", 10, 72);
+          // Event details
+          doc.setTextColor(0, 0, 0);
+          doc.setFontSize(14);
+          doc.setFont("helvetica", "bold");
+          doc.text("EVENT DETAILS", 10, 35);
+          doc.setFontSize(11);
+          doc.setFont("helvetica", "normal");
+          doc.text("Movie: Bhool Bhulaiya 2007", 10, 44);
+          doc.text("Time: 10:00 PM", 10, 51);
+          doc.text("Date: 9/08/2025", 10, 58);
+          doc.text("Venue: NIFT Jodhpur", 10, 65);
+          doc.text("Price: Free", 10, 72);
 
-            doc.setFontSize(14);
-            doc.setFont("helvetica", "bold");
-            doc.text("STUDENT INFO", 10, 83);
-            doc.setFontSize(10);
-            doc.setFont("helvetica", "normal");
-            const infoLine = Name: ${data.name}   Seat: ${data.seatNumber}   Dept: ${data.department}   Sem: ${data.semester};
-            doc.text(infoLine, 10, 90);
+          // Student info single line
+          doc.setFontSize(14);
+          doc.setFont("helvetica", "bold");
+          doc.text("STUDENT INFO", 10, 83);
+          doc.setFontSize(10);
+          doc.setFont("helvetica", "normal");
+          const infoLine = `Name: ${data.name}   Seat: ${data.seatNumber}   Dept: ${data.department}   Sem: ${data.semester}`;
+          doc.text(infoLine, 10, 90);
 
-            const qrImg = document.querySelector("#hiddenQR img");
-            if (qrImg) {
-              doc.addImage(qrImg.src, "PNG", 155, 30, 40, 40);
-              doc.setFontSize(9);
-              doc.text("Scan for verification", 175, 75, { align: "center" });
-            }
+          // QR code
+          const qrImg = document.querySelector("#hiddenQR img");
+          if (qrImg) {
+            doc.addImage(qrImg.src, "PNG", 155, 30, 40, 40);
+            doc.setFontSize(9);
+            doc.text("Scan for verification", 175, 75, { align: "center" });
+          }
 
-            doc.setFontSize(8);
-            doc.text(Ticket ID: ${data.ticketId}, 10, 96);
+          // Ticket ID
+          doc.setFontSize(8);
+          doc.text(`Ticket ID: ${data.ticketId}`, 10, 96);
 
-            const pdfBlob = doc.output("blob");
-            const url = URL.createObjectURL(pdfBlob);
-
-            lastGeneratedPdfBlobUrl = url;
-
-            resolve(url);
-          }, 1000);
-        });
-      }
-
-      // Download Modal Event Listeners
-      document.getElementById("downloadTicketBtn").addEventListener("click", () => {
-        if (lastGeneratedPdfBlobUrl) {
+          const pdfBlob = doc.output("blob");
+          const url = URL.createObjectURL(pdfBlob);
           const downloadLink = document.createElement("a");
-          downloadLink.href = lastGeneratedPdfBlobUrl;
-          downloadLink.download = "fresher_movie_ticket.pdf";
-          document.body.appendChild(downloadLink);
-          downloadLink.click();
-          downloadLink.remove();
+          downloadLink.href = url;
+          downloadLink.download = `fresher_ticket_${data.seatNumber}.pdf`;
+          downloadLink.textContent = "Download Ticket";
+          downloadLink.style =
+            "display:block;text-align:center;margin-top:10px;color:#2980B9;font-weight:bold;text-decoration:none;padding:8px;background:rgba(41,128,185,0.1);border-radius:4px;";
+          document.getElementById("successMessage").appendChild(downloadLink);
 
-          document.getElementById("downloadModal").style.display = "none";
-        }
-      });
-
-      document.getElementById("closeDownloadModalBtn").addEventListener("click", () => {
-        document.getElementById("downloadModal").style.display = "none";
-      });
-
+          setTimeout(() => downloadLink.remove(), 30000);
+        }, 1000);
+      }
     });
   </script>
 </body>
