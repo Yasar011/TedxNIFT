@@ -142,6 +142,7 @@
     }
     .chat-btn { background-color: #27AE60; color: white; }
     .close-btn { background-color: #c0392b; color: white; }
+    .download-btn { background-color: #2980B9; color: white; }
   </style>
 </head>
 <body>
@@ -234,6 +235,18 @@
     </div>
   </div>
 
+  <!-- Ticket Download Modal HTML -->
+  <div id="downloadModal" class="modal-overlay">
+    <div class="modal-content">
+      <h3>Your Ticket is Ready!</h3>
+      <p>Click below to download your PDF ticket.</p>
+      <div id="downloadLinkContainer" style="margin-top: 15px;"></div>
+      <div class="modal-buttons">
+        <button id="closeDownloadBtn" class="modal-btn close-btn">Close</button>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script type="module">
@@ -285,6 +298,20 @@
       window.addEventListener("click", (event) => {
         if (event.target === helpModal) {
           helpModal.style.display = "none";
+        }
+      });
+
+      // Download Modal Logic
+      const downloadModal = document.getElementById("downloadModal");
+      const closeDownloadBtn = document.getElementById("closeDownloadBtn");
+
+      closeDownloadBtn.addEventListener("click", () => {
+        downloadModal.style.display = "none";
+      });
+
+      window.addEventListener("click", (event) => {
+        if (event.target === downloadModal) {
+          downloadModal.style.display = "none";
         }
       });
 
@@ -360,11 +387,11 @@
           return showError("Invalid phone");
         }
 
-        const ticketId = `TKT-${formData.seatNumber}-${Date.now().toString().slice(-6)}`;
+        const ticketId = TKT-${formData.seatNumber}-${Date.now().toString().slice(-6)};
         formData.ticketId = ticketId;
 
         try {
-          await set(ref(db, `seats/${selectedSeat}`), {
+          await set(ref(db, seats/${selectedSeat}), {
             status: "occupied",
             ...formData,
             timestamp: new Date().toISOString()
@@ -373,7 +400,7 @@
           bookingForm.reset();
           bookingForm.style.display = "none";
           selectedSeat = selectedSeatElement = null;
-          showSuccess("Seat booked successfully. Download your ticket below.");
+          showSuccess("Seat booked successfully!");
           generateTicket(formData);
         } catch {
           showError("Booking failed");
@@ -460,7 +487,7 @@
           doc.text("STUDENT INFO", 10, 83);
           doc.setFontSize(10);
           doc.setFont("helvetica", "normal");
-          const infoLine = `Name: ${data.name}   Seat: ${data.seatNumber}   Dept: ${data.department}   Sem: ${data.semester}`;
+          const infoLine = Name: ${data.name}   Seat: ${data.seatNumber}   Dept: ${data.department}   Sem: ${data.semester};
           doc.text(infoLine, 10, 90);
 
           // QR code
@@ -473,19 +500,22 @@
 
           // Ticket ID
           doc.setFontSize(8);
-          doc.text(`Ticket ID: ${data.ticketId}`, 10, 96);
+          doc.text(Ticket ID: ${data.ticketId}, 10, 96);
 
           const pdfBlob = doc.output("blob");
           const url = URL.createObjectURL(pdfBlob);
           const downloadLink = document.createElement("a");
           downloadLink.href = url;
-          downloadLink.download = `fresher_ticket_${data.seatNumber}.pdf`;
+          downloadLink.download = fresher_ticket_${data.seatNumber}.pdf;
           downloadLink.textContent = "Download Ticket";
-          downloadLink.style =
-            "display:block;text-align:center;margin-top:10px;color:#2980B9;font-weight:bold;text-decoration:none;padding:8px;background:rgba(41,128,185,0.1);border-radius:4px;";
-          document.getElementById("successMessage").appendChild(downloadLink);
+          downloadLink.className = "modal-btn download-btn";
 
-          setTimeout(() => downloadLink.remove(), 30000);
+          const downloadContainer = document.getElementById("downloadLinkContainer");
+          downloadContainer.innerHTML = "";
+          downloadContainer.appendChild(downloadLink);
+
+          // Show the download modal
+          document.getElementById("downloadModal").style.display = "flex";
         }, 1000);
       }
     });
