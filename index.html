@@ -489,10 +489,15 @@
 
         async function handleGoogleSignIn() {
             const provider = new GoogleAuthProvider();
-            try { await signInWithPopup(auth, provider); } 
-            catch (error) {
+            try { 
+                await signInWithPopup(auth, provider); 
+            } catch (error) {
                 console.error("Google Sign-In Error:", error);
-                showMessage(DOMElements.errorMsg, `Google Sign-In Failed: ${error.message}`);
+                let userMessage = `Google Sign-In Failed: ${error.message}`;
+                if (error.code === 'auth/unauthorized-domain') {
+                    userMessage = "Sign-in failed: This website's domain is not authorized. Please add it to the 'Authorized domains' list in your Firebase Authentication settings.";
+                }
+                showMessage(DOMElements.errorMsg, userMessage, 10000);
             }
         }
         
