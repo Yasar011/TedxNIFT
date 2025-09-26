@@ -50,95 +50,14 @@
             opacity: 1;
             transform: translate(0, 0) scale(1);
         }
-
-        /* Ticket Modal Styles */
-        .modal-overlay {
-            transition: opacity 0.3s ease-in-out;
-        }
-        .modal-container {
-            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-        }
-        .modal-enter {
-            opacity: 0;
-        }
-        .modal-enter .modal-container {
-            opacity: 0;
-            transform: translateY(-20px) scale(0.95);
-        }
-        .modal-leave-active {
-            opacity: 0;
-        }
-        .modal-leave-active .modal-container {
-            opacity: 0;
-            transform: translateY(-20px) scale(0.95);
-        }
     </style>
 </head>
 <body class="antialiased overflow-x-hidden">
-
-    <!-- Ticket Modal -->
-    <div id="ticket-modal" class="modal-enter fixed inset-0 z-[100] flex items-center justify-center p-4 hidden">
-        <!-- Overlay -->
-        <div class="modal-overlay fixed inset-0 bg-black bg-opacity-70" id="modal-overlay"></div>
-        
-        <!-- Modal Container -->
-        <div id="modal-container" class="modal-container bg-gray-900 rounded-2xl shadow-xl w-full max-w-4xl mx-auto z-10 p-8 relative transform opacity-0 scale-95">
-            <!-- Close Button -->
-            <button id="close-modal-button" class="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors">
-                <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
-
-            <div class="text-center">
-                <h2 class="text-4xl md:text-5xl font-bold text-white">Get Your Tickets</h2>
-                <p class="mt-4 text-gray-400 max-w-2xl mx-auto">Choose your pass and be part of an unforgettable day of ideas and inspiration.</p>
-            </div>
-            <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8">
-                 <!-- Ticket 1: Early Bird -->
-                <div class="bg-gray-800 rounded-2xl p-8 flex flex-col ring-2 ring-ted-red transform hover:scale-105 transition-transform duration-300">
-                    <h3 class="text-2xl font-bold text-white">Early Bird Pass</h3>
-                    <p class="mt-1 font-semibold text-ted-red">Exclusive for NIFT Students</p>
-                    <div class="mt-6">
-                        <span class="text-5xl font-black text-white">₹199</span>
-                        <span class="text-lg font-medium text-gray-400">+ charges</span>
-                    </div>
-                    <ul class="mt-6 space-y-3 text-gray-300 flex-grow">
-                        <li class="flex items-center"><span class="text-ted-red mr-3">✔</span>Full-Day Event Access</li>
-                        <li class="flex items-center"><span class="text-ted-red mr-3">✔</span>Access to all Speaker Sessions</li>
-                        <li class="flex items-center"><span class="text-ted-red mr-3">✔</span>Food & Beverages Included (Lunch + High Tea)</li>
-                         <li class="flex items-center"><span class="text-ted-red mr-3">✔</span>TEDx Attendee Kit</li>
-                    </ul>
-                    <a href="#" class="mt-8 block w-full text-center px-8 py-3 bg-ted-red bg-opacity-20 text-white font-bold rounded-full hover:bg-opacity-30 transition-colors">
-                        Book Now
-                    </a>
-                </div>
-                <!-- Ticket 2: General Admission -->
-                 <div class="bg-gray-800 rounded-2xl p-8 flex flex-col ring-2 ring-gray-700 transform hover:scale-105 transition-transform duration-300">
-                    <h3 class="text-2xl font-bold text-white">General Admission</h3>
-                    <p class="mt-1 font-semibold text-gray-400">Open for All Idea Enthusiasts</p>
-                    <div class="mt-6">
-                        <span class="text-5xl font-black text-white">₹499</span>
-                        <span class="text-lg font-medium text-gray-400">+ charges</span>
-                    </div>
-                    <ul class="mt-6 space-y-3 text-gray-300 flex-grow">
-                        <li class="flex items-center"><span class="text-ted-red mr-3">✔</span>Full-Day Event Access</li>
-                        <li class="flex items-center"><span class="text-ted-red mr-3">✔</span>Access to all Speaker Sessions</li>
-                        <li class="flex items-center"><span class="text-ted-red mr-3">✔</span>Food & Beverages Included (Lunch + High Tea)</li>
-                        <li class="flex items-center"><span class="text-ted-red mr-3">✔</span>TEDx Attendee Kit</li>
-                    </ul>
-                    <a href="#" class="mt-8 block w-full text-center px-8 py-3 bg-red-gradient text-white font-bold rounded-full hover:opacity-90 transition-opacity">
-                        Book Now
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
     
     <!-- Header -->
     <header class="sticky top-0 z-50 bg-[#111111] bg-opacity-80 backdrop-blur-sm shadow-lg">
         <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center py-4">
-            <a href="#" class="flex items-center space-x-2 flex-shrink-0">
+            <a href="index.html" class="flex items-center space-x-2 flex-shrink-0">
                 <span class="font-black text-2xl text-white">TEDx</span><span class="font-bold text-2xl text-ted-red">NIFTJodhpur</span>
             </a>
             
@@ -152,7 +71,7 @@
             </div>
 
             <div class="flex items-center">
-                <a href="#" class="open-ticket-modal hidden md:block px-6 py-2 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition-colors">
+                <a href="tickets.html" class="hidden md:block px-6 py-2 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition-colors">
                     Get Tickets
                 </a>
 
@@ -173,7 +92,7 @@
                 <a href="#schedule" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Schedule</a>
                  <a href="team.html" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Team</a>
                 <a href="#sponsors" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Sponsors</a>
-                <a href="#" class="open-ticket-modal mobile-nav-link block w-full text-center mt-2 px-3 py-2 rounded-md text-base font-medium text-black bg-white hover:bg-gray-200">Get Tickets</a>
+                <a href="tickets.html" class="mobile-nav-link block w-full text-center mt-2 px-3 py-2 rounded-md text-base font-medium text-black bg-white hover:bg-gray-200">Get Tickets</a>
             </div>
         </div>
     </header>
@@ -244,7 +163,7 @@
                         <div class="mt-10 p-8 bg-gray-800 rounded-xl">
                             <h3 class="text-3xl font-bold text-white">Get Your Tickets Now!</h3>
                             <p class="mt-2 text-gray-400">Join us for a day of brilliant speakers, thought-provoking ideas, and mind-opening conversations.</p>
-                            <a href="#" class="open-ticket-modal mt-6 inline-block px-8 py-3 bg-red-gradient text-white font-bold rounded-full hover:opacity-90 transition-opacity">
+                            <a href="tickets.html" class="mt-6 inline-block px-8 py-3 bg-red-gradient text-white font-bold rounded-full hover:opacity-90 transition-opacity">
                                 Book Your Spot
                             </a>
                         </div>
@@ -394,7 +313,7 @@
                         <div>
                            <h2 class="text-4xl md:text-5xl font-bold text-white">Be Part of the Movement</h2>
                            <p class="mt-4 text-gray-400">Whether you're a speaker, a partner, or an attendee, you have a role to play in spreading great ideas. Join us.</p>
-                            <a href="#" class="open-ticket-modal mt-8 inline-block px-8 py-3 bg-red-gradient text-white font-bold rounded-full hover:opacity-90 transition-opacity">
+                            <a href="tickets.html" class="mt-8 inline-block px-8 py-3 bg-red-gradient text-white font-bold rounded-full hover:opacity-90 transition-opacity">
                                 Get Tickets
                             </a>
                         </div>
@@ -413,7 +332,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div class="md:col-span-1">
-                    <a href="#" class="flex items-center space-x-2">
+                    <a href="index.html" class="flex items-center space-x-2">
                         <span class="font-black text-xl text-white">TEDx</span><span class="font-bold text-xl text-ted-red">NIFTJodhpur</span>
                     </a>
                     <p class="mt-4 text-gray-400 text-sm">This independent TEDx event is operated under license from TED.</p>
@@ -422,9 +341,9 @@
                 <div>
                     <h4 class="font-semibold text-white">Navigation</h4>
                     <ul class="mt-4 space-y-2 text-gray-400">
-                        <li><a href="#about" class="hover:text-white">About Us</a></li>
-                        <li><a href="#speakers" class="hover:text-white">Speakers</a></li>
-                        <li><a href="#schedule" class="hover:text-white">Schedule</a></li>
+                        <li><a href="index.html#about" class="hover:text-white">About Us</a></li>
+                        <li><a href="index.html#speakers" class="hover:text-white">Speakers</a></li>
+                        <li><a href="index.html#schedule" class="hover:text-white">Schedule</a></li>
                         <li><a href="team.html" class="hover:text-white">Our Team</a></li>
                     </ul>
                 </div>
@@ -520,50 +439,7 @@
             }, { threshold: 0.5 });
             statsObserver.observe(statsBox);
         }
-
-        // Ticket Modal Logic
-        const ticketModal = document.getElementById('ticket-modal');
-        const openModalButtons = document.querySelectorAll('.open-ticket-modal');
-        const closeModalButton = document.getElementById('close-modal-button');
-        const modalOverlay = document.getElementById('modal-overlay');
-
-        const openModal = () => {
-            ticketModal.classList.remove('hidden');
-            setTimeout(() => {
-                ticketModal.classList.remove('modal-enter');
-            }, 10);
-        };
-
-        const closeModal = () => {
-            ticketModal.classList.add('modal-leave-active');
-            setTimeout(() => {
-                ticketModal.classList.add('hidden');
-                ticketModal.classList.remove('modal-leave-active');
-                ticketModal.classList.add('modal-enter');
-            }, 300);
-        };
-
-        openModalButtons.forEach(button => {
-            button.addEventListener('click', (e) => {
-                e.preventDefault();
-                openModal();
-            });
-        });
-
-        if(closeModalButton) {
-            closeModalButton.addEventListener('click', closeModal);
-        }
-        if(modalOverlay) {
-            modalOverlay.addEventListener('click', closeModal);
-        }
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && !ticketModal.classList.contains('hidden')) {
-                closeModal();
-            }
-        });
     </script>
 
 </body>
 </html>
-
