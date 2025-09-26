@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TEDxNIFT Jodhpur Booking</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background: #121212;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 16px;
+      color: #e0e0e0;
+    }
+    .booking-container {
+      background: #1e1e1e;
+      border-radius: 12px;
+      padding: 24px;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+      border: 1px solid #333;
+      position: relative;
+    }
+    .btn-help {
+      position: absolute; top: 16px; left: 16px; padding: 6px 12px;
+      border: none; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;
+      background: #333; color: #fff; text-decoration: none;
+    }
+    .header { text-align: center; margin-bottom: 24px; padding-top: 36px; }
+    .header h1 {
+      font-size: 28px; font-weight: 700; color: #fff;
+    }
+    .header h1 span { color: #e62b1e; }
+    .header p { font-size: 14px; color: #888; margin-top: 4px; letter-spacing: 1px; }
+    .event-card {
+      background: #2a2a2a; border-radius: 8px; padding: 12px;
+      margin-bottom: 16px; display: flex; justify-content: space-between;
+      align-items: center; font-size: 14px; border: 1px solid #333;
+    }
+    .legend {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; font-size: 10px; margin-bottom: 12px;
+    }
+    .legend-item { display: flex; align-items: center; gap: 4px; color: #aaa; }
+    .legend-color { width: 10px; height: 10px; border-radius: 2px; }
+    .available { background: #444; }
+    .selected  { background: #2980B9; } /* Blue for selected */
+    .occupied  { background: #e62b1e; } /* Red for occupied */
+    .reserved { background: #f9d71c; } 
+    .seating-area {
+      background: #2a2a2a; border-radius: 8px; padding: 12px;
+      margin-bottom: 16px; display: flex; justify-content: center; border: 1px solid #333;
+    }
+    .auditorium { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+    #seatingChart { width: 100%; max-height: 45vh; overflow-y: auto; padding-right: 5px;}
+    .screen {
+      background: #e62b1e; color: #fff;
+      padding: 6px 12px; border-radius: 4px; text-align: center;
+      font-weight: 600; font-size: 12px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 2px;
+    }
+    .direction { display: flex; justify-content: space-between; font-size: 10px; margin: 4px 0; color: #888; }
+    .direction span {
+      background: #333; color: #e0e0e0; padding: 2px 6px; border-radius: 4px;
+    }
+    .seat-row { display: flex; align-items: center; }
+    .row-label {
+      width: 14px; text-align: right; margin-right: 4px; font-size: 8px; font-weight: 600; color: #888;
+    }
+    .seats { display: flex; flex-wrap: nowrap; }
+    .seat {
+      width: 22px; height: 22px; margin: 1px; border-radius: 3px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 8px; font-weight: 600; cursor: pointer;
+      background: #444; color: #fff; border: 1px solid #555;
+      transition: all 0.15s;
+    }
+    .seat:hover:not(.occupied) { transform: scale(1.1); background: #555; }
+    .seat.selected { background: #2980B9; border-color: #3498db; color: #fff; transform: scale(1.1); }
+    .seat.occupied { background: #e62b1e; border-color: #c0392b; opacity: 0.7; cursor: not-allowed; }
+    .seat.reserved { background: #f39c12; border-color: #d35400; }
+    .aisle-horizontal { height: 6px; }
+    .aisle-vertical   { width: 6px; }
+    @media (max-width: 480px) {
+      .seat { width: 10px; height: 10px; font-size: 6px; }
+      .row-label { font-size: 6px; margin-right: 2px; }
+      .screen { padding: 4px 8px; font-size: 8px; }
+      .direction span { font-size: 6px; padding: 1px 4px; }
+      #seatingChart { max-height: 40vh; }
+    }
+    .message {
+      padding: 8px; border-radius: 6px; margin-bottom: 12px;
+      font-size: 12px; display: none; text-align: center; font-weight: 500;
+    }
+    .success { background: rgba(39,174,96,0.15); border:1px solid rgba(39,174,96,0.3); color:#27AE60; }
+    .error   { background: rgba(230,43,30,0.15); border:1px solid rgba(230,43,30,0.3); color:#e62b1e; }
+    .booking-form {
+      background: #2a2a2a; border-radius: 8px; padding: 16px;
+      display: none; font-size: 12px; border: 1px solid #333;
+    }
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display:block; margin-bottom:6px; opacity:0.9; }
+    .form-group input,
+    .form-group select {
+      width:100%; padding:8px; border-radius:6px; border:1px solid #555;
+      background: #333; color:#e0e0e0; font-size:12px;
+    }
+    .form-group input:focus,
+    .form-group select:focus {
+      outline:none; border-color:#e62b1e; box-shadow:0 0 0 2px rgba(230,43,30,0.2);
+    }
+    .terms-group { font-size: 10px; display: flex; align-items: center; gap: 8px; margin-bottom: 12px; color: #aaa;}
+    .terms-group a { color: #e62b1e; text-decoration: none;}
+    .book-btn {
+      width:100%; padding:10px; background: #e62b1e; color:#fff;
+      border:none; border-radius:6px; font-size:14px; font-weight:600;
+      cursor:pointer; transition:background 0.15s;
+    }
+    .book-btn:hover { background:#c52115; }
+    .book-btn:disabled { background: #555; cursor: not-allowed; }
+    
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px);
+      display: none; justify-content: center; align-items: center; z-index: 1000;
+    }
+    .modal-content {
+      background: #1e1e1e; color: #e0e0e0; padding: 25px;
+      border-radius: 10px; text-align: center; width: 90%; max-width: 320px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3); border: 1px solid #333;
+    }
+    .modal-content h3 { margin-bottom: 15px; font-size: 18px; }
+    .modal-content p { margin-bottom: 8px; font-size: 14px; line-height: 1.5; color: #aaa; }
+    .modal-buttons { margin-top: 20px; display: flex; gap: 10px; flex-direction: column; }
+    .modal-btn {
+      width: 100%; padding: 10px; border-radius: 6px;
+      border: none; font-weight: 600; cursor: pointer;
+    }
+    .payment-qr { width: 150px; height: 150px; margin: 15px auto; border-radius: 8px; }
+    .chat-btn { background-color: #27AE60; color: white; }
+    .close-btn, .cancel-btn { background-color: #c0392b; color: white; }
+    .submit-payment-btn { background-color: #e62b1e; color: white; }
+
+  </style>
+</head>
+<body>
+
+  <div class="booking-container">
+    <button class="btn-help">Help</button>
+
+    <div class="header">
+      <h1>TED<span>x</span>NIFT Jodhpur</h1>
+      <p>Ideas Worth Spreading</p>
+    </div>
+
+    <div class="event-card">
+      <div class="event-theme">Annual Flagship Event</div>
+      <div class="event-time">10:00 AM</div>
+      <div class="event-price">Free</div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-color available"></div><span>Available</span></div>
+      <div class="legend-item"><div class="legend-color reserved"></div><span>Reserved</span></div>
+      <div class="legend-item"><div class="legend-color selected"></div><span>Selected</span></div>
+      <div class="legend-item"><div class="legend-color occupied"></div><span>Occupied</span></div>
+    </div>
+
+    <div class="seating-area">
+      <div class="auditorium">
+        <div class="screen">STAGE</div>
+        <div class="direction"><span>Entrance</span><span>Exit</span></div>
+        <div id="seatingChart"></div>
+      </div>
+    </div>
+
+    <div id="successMessage" class="message success"></div>
+    <div id="errorMessage" class="message error"></div>
+
+    <form id="bookingForm" class="booking-form">
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input id="name" type="text" required>
+      </div>
+      <div class="form-group">
+        <label for="studentId">NIFT Student ID</label>
+        <input id="studentId" type="text" required>
+      </div>
+      <div class="form-group">
+        <label for="department">Department</label>
+        <select id="department" required>
+          <option value="">Select Department</option>
+          <option>AD</option><option>BFT</option><option>FC</option>
+          <option>FD</option><option>MFM</option><option>TD</option>
+          <option>Staff</option><option>Faculty</option><option>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="semester">Semester</label>
+        <select id="semester" required>
+          <option value="">Select Semester</option>
+          <option>1</option><option>2</option><option>3</option>
+          <option>4</option><option>5</option><option>6</option>
+          <option>7</option><option>8</option><option>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input id="email" type="email" placeholder="xxxxxxxxxx@nift.ac.in" required>
+      </div>
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input id="phone" type="tel" required>
+      </div>
+      <div class="form-group">
+        <label for="seatNumber">Selected Seat</label>
+        <input id="seatNumber" type="text" readonly>
+      </div>
+       <div class="terms-group">
+        <input type="checkbox" id="terms" required>
+        <label for="terms">I agree to the <a href="#" onclick="alert('Terms & Conditions: ...')">terms and conditions</a>.</label>
+      </div>
+      <button type="button" id="payBtn" class="book-btn" disabled>Pay Now</button>
+    </form>
+  </div>
+
+  <!-- Help Modal -->
+  <div id="helpModal" class="modal-overlay">
+    <div class="modal-content">
+      <h3>Developer Info</h3>
+      <p><strong>Name:</strong> Yasar C H</p>
+      <p><strong>Department:</strong> BFT</p>
+      <p><strong>Batch:</strong> 27</p>
+      <p><strong>WhatsApp:</strong> 8157980825</p>
+      <div class="modal-buttons">
+        <button id="chatNowBtn" class="modal-btn chat-btn">Chat Now</button>
+        <button id="closeModalBtn" class="modal-btn close-btn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Payment Modal -->
+  <div id="paymentModal" class="modal-overlay">
+    <div class="modal-content">
+      <h3>Complete Your Payment</h3>
+      <p>Scan the QR code below to pay.</p>
+      <img src="https://placehold.co/150x150/ffffff/000000?text=SCAN" alt="Payment QR Code" class="payment-qr">
+      <div class="form-group">
+        <label for="utr">Enter UTR / Transaction ID</label>
+        <input id="utr" type="text" placeholder="Enter payment reference number" required>
+      </div>
+      <div class="modal-buttons">
+        <button id="submitPaymentBtn" class="modal-btn submit-payment-btn">Submit</button>
+        <button id="cancelPaymentBtn" class="modal-btn cancel-btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-database.js";
+
+    const firebaseConfig = {
+      // THIS IS A DEMO KEY AND WILL BE REPLACED
+      apiKey: "AIzaSyBpew8ODVHmmGndhZxQ3VK_CEurW0_EQyU",
+      authDomain: "nift-movie-nigt-apc.firebaseapp.com",
+      databaseURL: "https://nift-movie-nigt-apc-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "nift-movie-nigt-apc",
+      storageBucket: "nift-movie-nigt-apc.appspot.com",
+      messagingSenderId: "736122244542",
+      appId: "1:736122244542:web:69d88050a26fc8391dbdef",
+      measurementId: "G-GL1MBM6DW6"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    let selectedSeat = null;
+    let selectedSeatElement = null;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const seatingChart = document.getElementById("seatingChart");
+      const bookingForm = document.getElementById("bookingForm");
+      const successMsg = document.getElementById("successMessage");
+      const errorMsg = document.getElementById("errorMessage");
+      const payBtn = document.getElementById("payBtn");
+      const termsCheckbox = document.getElementById("terms");
+      
+      // Modals
+      const helpModal = document.getElementById("helpModal");
+      const paymentModal = document.getElementById("paymentModal");
+
+      // Help Modal Logic
+      const helpBtn = document.querySelector(".btn-help");
+      const chatNowBtn = document.getElementById("chatNowBtn");
+      const closeModalBtn = document.getElementById("closeModalBtn");
+      helpBtn.addEventListener("click", () => { helpModal.style.display = "flex"; });
+      closeModalBtn.addEventListener("click", () => { helpModal.style.display = "none"; });
+      chatNowBtn.addEventListener("click", () => {
+        window.open("https://wa.me/8157980825", "_blank");
+        helpModal.style.display = "none";
+      });
+
+      // Payment Modal Logic
+      const submitPaymentBtn = document.getElementById("submitPaymentBtn");
+      const cancelPaymentBtn = document.getElementById("cancelPaymentBtn");
+      payBtn.addEventListener("click", handlePayNow);
+      cancelPaymentBtn.addEventListener("click", () => { paymentModal.style.display = "none"; });
+      submitPaymentBtn.addEventListener("click", handleFormSubmit);
+
+      window.addEventListener("click", (event) => {
+        if (event.target === helpModal) helpModal.style.display = "none";
+        if (event.target === paymentModal) paymentModal.style.display = "none";
+      });
+
+      termsCheckbox.addEventListener("change", () => {
+        payBtn.disabled = !termsCheckbox.checked;
+      });
+
+      onValue(ref(db, "seats/"), snapshot => {
+        renderSeating(snapshot.val() || {});
+      });
+
+      function renderSeating(data) {
+        seatingChart.innerHTML = "";
+        const rows = ['A','B','C','D','E','F','G','H'];
+        rows.forEach((r, ri) => {
+          if (ri === 4) {
+            const aisleH = document.createElement("div");
+            aisleH.className = "aisle-horizontal";
+            seatingChart.appendChild(aisleH);
+          }
+          const rowDiv = document.createElement("div");
+          rowDiv.className = "seat-row";
+          const label = document.createElement("div");
+          label.className = "row-label";
+          label.textContent = r;
+          rowDiv.appendChild(label);
+          const seatsDiv = document.createElement("div");
+          seatsDiv.className = "seats";
+          for (let i = 1; i <= 30; i++) {
+            if (i === 16) {
+              const aisleV = document.createElement("div");
+              aisleV.className = "aisle-vertical";
+              seatsDiv.appendChild(aisleV);
+            }
+            const seatEl = document.createElement("div");
+            seatEl.className = "seat";
+            const seatId = r + i;
+            seatEl.textContent = i;
+            seatEl.dataset.seat = seatId;
+            
+            // Reserve rows A and B
+            if (r === 'A' || r === 'B') {
+                seatEl.classList.add("reserved");
+                seatEl.dataset.reserved = "true";
+            }
+            if (data[seatId]) {
+              seatEl.classList.add("occupied");
+              if (seatEl.classList.contains("reserved")) {
+                seatEl.classList.remove("reserved");
+              }
+            }
+
+            seatEl.addEventListener("click", () => selectSeat(seatEl, seatId));
+            seatsDiv.appendChild(seatEl);
+          }
+          rowDiv.appendChild(seatsDiv);
+          seatingChart.appendChild(rowDiv);
+        });
+      }
+
+      function selectSeat(el, id) {
+        if (el.classList.contains("occupied")) return;
+
+        // Check for reserved seats
+        if (el.dataset.reserved === "true") {
+            const department = document.getElementById("department").value;
+            if (department !== 'Faculty' && department !== 'Staff') {
+                showError("Rows A & B are reserved for Faculty and Staff.");
+                return;
+            }
+        }
+
+        if (selectedSeatElement) {
+          selectedSeatElement.classList.remove("selected");
+        }
+        el.classList.add("selected");
+        selectedSeat = id;
+        selectedSeatElement = el;
+        document.getElementById("seatNumber").value = id;
+        bookingForm.style.display = "block";
+        bookingForm.scrollIntoView({ behavior: "smooth" });
+      }
+      
+      function handlePayNow() {
+        if (validateForm()) {
+          paymentModal.style.display = 'flex';
+        }
+      }
+      
+      function validateForm() {
+        const email = document.getElementById("email").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+
+        if (!/^[^\s@]+@nift\.ac\.in$/.test(email)) {
+          showError("Invalid email. Must be a 'nift.ac.in' address.");
+          return false;
+        }
+        if (!/^\d{10}$/.test(phone)) {
+          showError("Invalid phone number. Must be 10 digits.");
+          return false;
+        }
+         if (!document.getElementById("name").value.trim() || !document.getElementById("studentId").value.trim()) {
+           showError("Please fill all required fields.");
+           return false;
+         }
+        return true;
+      }
+
+      async function handleFormSubmit() {
+        const utr = document.getElementById("utr").value.trim();
+        if (!utr) {
+          showError("Please enter the UTR/Transaction ID.");
+          return;
+        }
+
+        const formData = {
+          name: document.getElementById("name").value.trim(),
+          studentId: document.getElementById("studentId").value.trim(),
+          department: document.getElementById("department").value,
+          semester: document.getElementById("semester").value,
+          email: document.getElementById("email").value.trim(),
+          phone: document.getElementById("phone").value.trim(),
+          seatNumber: selectedSeat,
+          utr: utr
+        };
+
+        const ticketId = `TEDX-${formData.seatNumber}-${Date.now().toString().slice(-6)}`;
+        formData.ticketId = ticketId;
+
+        try {
+          await set(ref(db, `seats/${selectedSeat}`), {
+            status: "occupied",
+            ...formData,
+            timestamp: new Date().toISOString()
+          });
+          selectedSeatElement.classList.remove("selected", "reserved");
+          selectedSeatElement.classList.add("occupied");
+          bookingForm.reset();
+          bookingForm.style.display = "none";
+          paymentModal.style.display = "none";
+          selectedSeat = selectedSeatElement = null;
+          payBtn.disabled = true;
+          termsCheckbox.checked = false;
+          showSuccess("Your seat has been successfully booked!");
+        } catch(err) {
+          showError("Booking failed. Please try again.");
+          console.error(err);
+        }
+      }
+
+      function showSuccess(msg) {
+        successMsg.innerHTML = msg;
+        successMsg.style.display = "block";
+        setTimeout(() => {
+          successMsg.style.display = "none";
+          successMsg.innerHTML = "";
+        }, 5000);
+      }
+
+      function showError(msg) {
+        errorMsg.textContent = msg;
+        errorMsg.style.display = "block";
+        setTimeout(() => {
+          errorMsg.style.display = "none";
+        }, 3000);
+      }
+    });
+  </script>
+</body>
+</html>
+
