@@ -416,7 +416,8 @@
   <div class="modal-content">
     <h3>Complete Your Payment</h3>
     <p class="text-center">Scan the QR code below to pay.</p>
-    <img src="WhatsApp Image 2025-09-29 at 16.54.56_58ed23ac.jpg" alt="Payment QR Code" class="payment-qr">
+    <p id="qrCodeInfo" class="text-center text-sm text-gray-400 mb-2"></p>
+    <img id="paymentQrImage" src="https://placehold.co/150x150/ffffff/000000?text=SCAN" alt="Payment QR Code" class="payment-qr">
     <div class="form-group">
       <label for="utr">Enter UTR / Transaction ID</label>
       <input id="utr" type="text" placeholder="Enter payment reference number" required>
@@ -478,8 +479,17 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
+    const qrCodeUrls = [
+      "https://placehold.co/150x150/ffffff/E62B1E?text=QR+PAY+1",
+      "https://placehold.co/150x150/ffffff/E62B1E?text=QR+PAY+2",
+      "https://placehold.co/150x150/ffffff/E62B1E?text=QR+PAY+3",
+      "https://placehold.co/150x150/ffffff/E62B1E?text=QR+PAY+4",
+      "https://placehold.co/150x150/ffffff/E62B1E?text=QR+PAY+5"
+    ];
+    let qrCodeCounter = 0;
     let selectedSeat = null;
     let selectedSeatElement = null;
+    let lastUsedQrIndex = null; // Variable to track the last shown QR code index
 
     document.addEventListener("DOMContentLoaded", () => {
       const seatingChart = document.getElementById("seatingChart");
@@ -631,6 +641,17 @@
       
       function handlePayNow() {
         if (validateForm()) {
+          // Cycle through QR codes to distribute payments
+          const qrIndex = qrCodeCounter % qrCodeUrls.length;
+          lastUsedQrIndex = qrIndex; // Store the index of the QR code being shown
+          const paymentQrImage = document.getElementById('paymentQrImage');
+          const qrCodeInfo = document.getElementById('qrCodeInfo');
+
+          paymentQrImage.src = qrCodeUrls[qrIndex];
+          qrCodeInfo.textContent = ''; // Remove the informational text
+          
+          qrCodeCounter++; // Increment for the next user
+
           paymentModal.style.display = 'flex';
         }
       }
@@ -640,12 +661,16 @@
         let isValid = true;
         const requiredInputs = bookingForm.querySelectorAll('[required]');
         requiredInputs.forEach(input => {
-            if (!input.value.trim()) {
-                const label = input.previousElementSibling?.textContent || 'A required field';
-                showError(`${label} is empty.`);
-                isValid = false;
+            const parent = input.closest('.hidden');
+            if (!parent) { // Only validate visible fields
+                if (!input.value.trim()) {
+                    const label = input.closest('.form-group').querySelector('label')?.textContent || 'A required field';
+                    showError(`'${label}' is empty.`);
+                    isValid = false;
+                }
             }
         });
+
         if (!isValid) return false;
 
         const email = document.getElementById("email").value.trim();
@@ -659,8 +684,6 @@
           showError("Invalid phone number. Must be 10 digits.");
           return false;
         }
-
-        // Reservation Check - REMOVED as selection is now blocked directly
         
         return true;
       }
@@ -678,7 +701,8 @@
           email: document.getElementById("email").value.trim(),
           phone: document.getElementById("phone").value.trim(),
           seatNumber: selectedSeat,
-          utr: utr
+          utr: utr,
+          paymentQrUsed: lastUsedQrIndex !== null ? `QR ${lastUsedQrIndex + 1}` : 'N/A' // Add which QR was used
         };
 
         let specificData = {};
@@ -695,8 +719,6 @@
                 idNumber: document.getElementById("idNumber").value.trim(),
                 address: document.getElementById("address").value.trim()
             };
-        } else {
-             // Handle cases where user type is neither student nor other, if any.
         }
 
         const formData = { ...commonData, ...specificData };
@@ -752,7 +774,5 @@
   </script>
 </body>
 </html>
-
-
 
 
