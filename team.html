@@ -11,7 +11,7 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #111111;
+            background-color: #000000;
             color: #E0E0E0;
         }
         .text-ted-red {
@@ -20,254 +20,274 @@
         .bg-ted-red {
             background-color: #E62B1E;
         }
-        .bg-red-gradient {
-            background: linear-gradient(90deg, #E62B1E, #B82218);
+        .card {
+            background-color: #111111;
+            border: 1px solid #222;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        /* Scroll Animations */
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
         .scroll-animate {
             opacity: 0;
-            transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            will-change: opacity, transform;
-        }
-        .fade-in-left {
-            transform: translateX(-40px);
-        }
-        .fade-in-right {
-            transform: translateX(40px);
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
         }
         .scroll-animate.in-view {
             opacity: 1;
-            transform: translateX(0);
+            transform: translateY(0);
+        }
+        .glow-effect {
+            position: absolute;
+            top: -20%;
+            right: -20%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(230, 43, 30, 0.15) 0%, rgba(230, 43, 30, 0) 70%);
+            pointer-events: none;
+            z-index: -1;
         }
     </style>
 </head>
 <body class="antialiased overflow-x-hidden">
 
-    <!-- Header -->
-    <header class="sticky top-0 z-50 bg-[#111111] bg-opacity-80 backdrop-blur-sm shadow-lg">
-        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center py-4">
-            <a href="index.html" class="flex items-center space-x-2 flex-shrink-0">
-                <span class="font-black text-2xl text-white">TEDx</span><span class="font-bold text-2xl text-ted-red">NIFTJodhpur</span>
-            </a>
-            
-            <!-- Desktop Nav -->
-            <div class="hidden md:flex items-center space-x-8">
-                <a href="index.html#about" class="text-gray-300 hover:text-white transition-colors font-medium">About</a>
-                <a href="index.html#speakers" class="text-gray-300 hover:text-white transition-colors font-medium">Speakers</a>
-                <a href="index.html#schedule" class="text-gray-300 hover:text-white transition-colors font-medium">Schedule</a>
-                <a href="index.html#sponsors" class="text-gray-300 hover:text-white transition-colors font-medium">Sponsors</a>
-            </div>
+    <div class="relative">
+        <div class="glow-effect"></div>
 
-            <div class="flex items-center">
-                <a href="index.html#tickets" class="hidden md:block px-6 py-2 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition-colors">
-                    Get Tickets
+        <!-- Header -->
+        <header class="sticky top-0 z-50 bg-black bg-opacity-70 backdrop-blur-md">
+            <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center py-4">
+                <a href="index.html" class="flex items-center space-x-2 flex-shrink-0">
+                    <span class="font-black text-2xl text-white">TEDx</span><span class="font-bold text-2xl text-ted-red">NIFTJodhpur</span>
                 </a>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html#about" class="text-gray-300 hover:text-white transition-colors font-medium">About</a>
+                    <a href="index.html#speakers" class="text-gray-300 hover:text-white transition-colors font-medium">Speakers</a>
+                    <a href="index.html#schedule" class="text-gray-300 hover:text-white transition-colors font-medium">Schedule</a>
+                    <a href="index.html#sponsors" class="text-gray-300 hover:text-white transition-colors font-medium">Sponsors</a>
+                </div>
 
-                <!-- Mobile Menu Button -->
-                <button id="mobile-menu-button" class="md:hidden p-2 rounded-md text-gray-300 hover:text-white hover:bg-gray-700">
-                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-                    </svg>
-                </button>
-            </div>
-        </nav>
-
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden">
-            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="index.html#about" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">About</a>
-                <a href="index.html#speakers" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Speakers</a>
-                <a href="index.html#schedule" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Schedule</a>
-                <a href="index.html#sponsors" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Sponsors</a>
-                <a href="index.html#tickets" class="mobile-nav-link block w-full text-center mt-2 px-3 py-2 rounded-md text-base font-medium text-black bg-white hover:bg-gray-200">Get Tickets</a>
-            </div>
-        </div>
-    </header>
-
-    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div class="text-center mb-20">
-            <h1 class="text-5xl sm:text-6xl md:text-7xl font-black text-white leading-tight">Meet the Minds Behind the Magic</h1>
-            <p class="mt-4 text-gray-400 max-w-2xl mx-auto">Our event is brought to life by a dedicated team of students and faculty from NIFT Jodhpur, passionate about spreading powerful ideas.</p>
-        </div>
-
-        <!-- Team Members Container -->
-        <div class="space-y-24">
-
-            <!-- Leadership Section -->
-            <div class="text-center">
-                 <h2 class="text-3xl md:text-4xl font-bold text-white inline-block border-b-2 border-ted-red pb-2">Leadership</h2>
-            </div>
-            
-            <!-- Director -->
-            <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12 scroll-animate fade-in-left">
-                <div class="w-full md:w-2/5">
-                    <img src="https://placehold.co/500x500/1A1A1A/FFFFFF?text=Director" alt="NIFT Jodhpur Director" class="rounded-lg grayscale hover:grayscale-0 transition-all duration-300 w-full">
-                </div>
-                <div class="w-full md:w-3/5 text-center md:text-left">
-                    <h3 class="text-4xl lg:text-5xl font-black text-ted-red leading-tight">Prof. (Dr.) G.H.S. Prasad</h3>
-                    <p class="mt-2 text-xl font-semibold text-gray-300">NIFT Jodhpur Director</p>
-                </div>
-            </div>
-
-            <!-- Joint Director -->
-            <div class="flex flex-col md:flex-row-reverse items-center gap-8 md:gap-12 scroll-animate fade-in-right">
-                <div class="w-full md:w-2/5">
-                    <img src="https://placehold.co/500x500/1A1A1A/FFFFFF?text=JD" alt="NIFT Jodhpur Joint Director" class="rounded-lg grayscale hover:grayscale-0 transition-all duration-300 w-full">
-                </div>
-                <div class="w-full md:w-3/5 text-center md:text-right">
-                    <h3 class="text-4xl lg:text-5xl font-black text-ted-red leading-tight">[Joint Director Name]</h3>
-                    <p class="mt-2 text-xl font-semibold text-gray-300">Joint Director</p>
-                </div>
-            </div>
-
-            <!-- Faculty Mentors Section -->
-            <div class="text-center pt-12">
-                 <h2 class="text-3xl md:text-4xl font-bold text-white inline-block border-b-2 border-ted-red pb-2">Faculty Mentors</h2>
-            </div>
-
-            <!-- Mentor 1 -->
-            <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12 scroll-animate fade-in-left">
-                <div class="w-full md:w-2/5">
-                    <img src="https://placehold.co/500x500/1A1A1A/FFFFFF?text=Mentor" alt="Faculty Mentor 1" class="rounded-lg grayscale hover:grayscale-0 transition-all duration-300 w-full">
-                </div>
-                <div class="w-full md:w-3/5 text-center md:text-left">
-                    <h3 class="text-4xl lg:text-5xl font-black text-ted-red leading-tight">[Faculty Name 1]</h3>
-                    <p class="mt-2 text-xl font-semibold text-gray-300">[Department]</p>
-                </div>
-            </div>
-
-            <!-- Mentor 2 -->
-            <div class="flex flex-col md:flex-row-reverse items-center gap-8 md:gap-12 scroll-animate fade-in-right">
-                <div class="w-full md:w-2/5">
-                    <img src="https://placehold.co/500x500/1A1A1A/FFFFFF?text=Mentor" alt="Faculty Mentor 2" class="rounded-lg grayscale hover:grayscale-0 transition-all duration-300 w-full">
-                </div>
-                <div class="w-full md:w-3/5 text-center md:text-right">
-                    <h3 class="text-4xl lg:text-5xl font-black text-ted-red leading-tight">[Faculty Name 2]</h3>
-                    <p class="mt-2 text-xl font-semibold text-gray-300">[Department]</p>
-                </div>
-            </div>
-            
-            <!-- Organizing Team Section -->
-            <div class="text-center pt-12">
-                 <h2 class="text-3xl md:text-4xl font-bold text-white inline-block border-b-2 border-ted-red pb-2">Organizing Team</h2>
-            </div>
-
-            <!-- Organizer -->
-            <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12 scroll-animate fade-in-left">
-                <div class="w-full md:w-2/5">
-                    <img src="https://placehold.co/500x500/1A1A1A/FFFFFF?text=Tanisha" alt="Organizer" class="rounded-lg grayscale hover:grayscale-0 transition-all duration-300 w-full">
-                </div>
-                <div class="w-full md:w-3/5 text-center md:text-left">
-                    <h3 class="text-4xl lg:text-5xl font-black text-ted-red leading-tight">Tanisha Gupta</h3>
-                    <p class="mt-2 text-xl font-semibold text-gray-300">Organizer</p>
-                </div>
-            </div>
-
-            <!-- Co-organizer -->
-            <div class="flex flex-col md:flex-row-reverse items-center gap-8 md:gap-12 scroll-animate fade-in-right">
-                <div class="w-full md:w-2/5">
-                    <img src="https://placehold.co/500x500/1A1A1A/FFFFFF?text=Shruti" alt="Co-organizer" class="rounded-lg grayscale hover:grayscale-0 transition-all duration-300 w-full">
-                </div>
-                <div class="w-full md:w-3/5 text-center md:text-right">
-                    <h3 class="text-4xl lg:text-5xl font-black text-ted-red leading-tight">Shruti Khinvansara</h3>
-                    <p class="mt-2 text-xl font-semibold text-gray-300">Co-organizer</p>
-                </div>
-            </div>
-
-            <!-- Licensee -->
-            <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12 scroll-animate fade-in-left">
-                <div class="w-full md:w-2/5">
-                    <img src="https://placehold.co/500x500/1A1A1A/FFFFFF?text=Akarshan" alt="Licensee" class="rounded-lg grayscale hover:grayscale-0 transition-all duration-300 w-full">
-                </div>
-                <div class="w-full md:w-3/5 text-center md:text-left">
-                    <h3 class="text-4xl lg:text-5xl font-black text-ted-red leading-tight">Akarshan Agrawal</h3>
-                    <p class="mt-2 text-xl font-semibold text-gray-300">Licensee</p>
-                </div>
-            </div>
-
-            <!-- Department Teams Section -->
-            <div class="text-center pt-12">
-                 <h2 class="text-3xl md:text-4xl font-bold text-white inline-block border-b-2 border-ted-red pb-2">Department Heads</h2>
-            </div>
-            
-            <!-- Web & Registration Head -->
-             <div class="flex flex-col md:flex-row-reverse items-center gap-8 md:gap-12 scroll-animate fade-in-right">
-                <div class="w-full md:w-2/5">
-                    <img src="https://placehold.co/500x500/1A1A1A/FFFFFF?text=Yasar" alt="Web & Registration Head" class="rounded-lg grayscale hover:grayscale-0 transition-all duration-300 w-full">
-                </div>
-                <div class="w-full md:w-3/5 text-center md:text-right">
-                    <h3 class="text-4xl lg:text-5xl font-black text-ted-red leading-tight">Yasar CH</h3>
-                    <p class="mt-2 text-xl font-semibold text-gray-300">Web & Registration Head</p>
-                </div>
-            </div>
-            
-             <!-- Social Media Head -->
-            <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12 scroll-animate fade-in-left">
-                <div class="w-full md:w-2/5">
-                    <img src="https://placehold.co/500x500/1A1A1A/FFFFFF?text=Head" alt="Social Media Head" class="rounded-lg grayscale hover:grayscale-0 transition-all duration-300 w-full">
-                </div>
-                <div class="w-full md:w-3/5 text-center md:text-left">
-                    <h3 class="text-4xl lg:text-5xl font-black text-ted-red leading-tight">[Team Member Name]</h3>
-                    <p class="mt-2 text-xl font-semibold text-gray-300">Social Media Head</p>
-                </div>
-            </div>
-
-            <!-- Graphic Team Head -->
-             <div class="flex flex-col md:flex-row-reverse items-center gap-8 md:gap-12 scroll-animate fade-in-right">
-                <div class="w-full md:w-2/5">
-                    <img src="https://placehold.co/500x500/1A1A1A/FFFFFF?text=Head" alt="Graphic Team Head" class="rounded-lg grayscale hover:grayscale-0 transition-all duration-300 w-full">
-                </div>
-                <div class="w-full md:w-3/5 text-center md:text-right">
-                    <h3 class="text-4xl lg:text-5xl font-black text-ted-red leading-tight">[Team Member Name]</h3>
-                    <p class="mt-2 text-xl font-semibold text-gray-300">Graphic Team Head</p>
-                </div>
-            </div>
-            
-        </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="border-t border-gray-800 py-12 mt-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div class="md:col-span-1">
-                    <a href="index.html" class="flex items-center space-x-2">
-                        <span class="font-black text-xl text-white">TEDx</span><span class="font-bold text-xl text-ted-red">NIFTJodhpur</span>
+                <div class="flex items-center">
+                    <a href="index.html#tickets" class="hidden md:block px-6 py-2 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition-colors">
+                        Get Tickets
                     </a>
-                    <p class="mt-4 text-gray-400 text-sm">This independent TEDx event is operated under license from TED.</p>
-                    <p class="mt-4 text-gray-400 text-sm">© 2025 TEDxNIFTJodhpur. All rights reserved.</p>
+
+                    <button id="mobile-menu-button" class="md:hidden p-2 rounded-md text-gray-300 hover:text-white hover:bg-gray-800">
+                        <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                    </button>
                 </div>
-                <div>
-                    <h4 class="font-semibold text-white">Navigation</h4>
-                    <ul class="mt-4 space-y-2 text-gray-400">
-                        <li><a href="index.html#about" class="hover:text-white">About Us</a></li>
-                        <li><a href="index.html#speakers" class="hover:text-white">Speakers</a></li>
-                        <li><a href="index.html#schedule" class="hover:text-white">Schedule</a></li>
-                        <li><a href="team.html" class="hover:text-white font-bold text-white">Our Team</a></li>
-                    </ul>
-                </div>
-                 <div>
-                    <h4 class="font-semibold text-white">Key Contacts</h4>
-                    <ul class="mt-4 space-y-2 text-gray-400">
-                        <li><a href="mailto:akarshan.agrawal09@gmail.com" class="hover:text-white">Akarshan Agrawal (Licensee)</a></li>
-                        <li><a href="mailto:tanisha.gupta3@nift.ac.in" class="hover:text-white">Tanisha Gupta (Organizer)</a></li>
-                        <li><a href="mailto:shruti.khinvasara@nift.ac.in" class="hover:text-white">Shruti Khinvansara (Co-organizer)</a></li>
-                        <li><a href="mailto:chyasar2004@gmail.com" class="hover:text-white">Yasar CH (Web & Registration)</a></li>
-                        <li class="pt-2"><a href="mailto:tedxnift.jodhpur@nift.ac.in" class="hover:text-white font-semibold">Official Email</a></li>
-                    </ul>
-                </div>
-                 <div>
-                    <h4 class="font-semibold text-white">Legal</h4>
-                    <ul class="mt-4 space-y-2 text-gray-400">
-                        <li><a href="legal.html" class="hover:text-white">Contact Us</a></li>
-                        <li><a href="legal.html" class="hover:text-white">Privacy Policy</a></li>
-                        <li><a href="legal.html" class="hover:text-white">Terms and Conditions</a></li>
-                        <li><a href="legal.html" class="hover:text-white">Refund/Cancellation Policy</a></li>
-                    </ul>
+            </nav>
+
+            <div id="mobile-menu" class="hidden md:hidden">
+                <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                    <a href="index.html#about" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-800">About</a>
+                    <a href="index.html#speakers" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-800">Speakers</a>
+                    <a href="index.html#schedule" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-800">Schedule</a>
+                    <a href="index.html#sponsors" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-800">Sponsors</a>
+                    <a href="index.html#tickets" class="mobile-nav-link block w-full text-center mt-2 px-3 py-2 rounded-md text-base font-medium text-black bg-white hover:bg-gray-200">Get Tickets</a>
                 </div>
             </div>
-        </div>
-    </footer>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+            <div class="text-center mb-16">
+                <h1 class="text-5xl sm:text-6xl md:text-7xl font-black text-white leading-tight">Meet the Team</h1>
+                <p class="mt-4 text-gray-400 max-w-2xl mx-auto">The passionate individuals dedicated to crafting an unforgettable TEDx experience.</p>
+            </div>
+
+            <div class="space-y-24">
+                <!-- Director -->
+                <div class="bg-ted-red rounded-2xl p-8 md:p-12 scroll-animate">
+                    <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+                        <div class="w-full md:w-2/5 flex-shrink-0">
+                            <img src="https://placehold.co/500x500/1A1A1A/FFFFFF?text=Director" alt="NIFT Jodhpur Director" class="rounded-lg w-full">
+                        </div>
+                        <div class="w-full md:w-3/5 text-center md:text-left">
+                            <h3 class="text-4xl lg:text-5xl font-black text-white leading-tight">Prof. (Dr.) G.H.S. Prasad</h3>
+                            <p class="mt-2 text-xl font-semibold text-gray-200">NIFT Jodhpur Director</p>
+                            <p class="mt-4 text-gray-100">
+                                [Placeholder paragraph for the Director's message about TEDxNIFT Jodhpur. This space can be used to share vision, encouragement, and the importance of ideas worth spreading within the NIFT community.]
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Joint Director -->
+                <div class="bg-gray-800 rounded-2xl p-8 md:p-12 scroll-animate">
+                     <div class="flex flex-col md:flex-row-reverse items-center gap-8 md:gap-12">
+                        <div class="w-full md:w-2/5 flex-shrink-0">
+                            <img src="https://placehold.co/500x500/1A1A1A/FFFFFF?text=JD" alt="NIFT Jodhpur Joint Director" class="rounded-lg w-full">
+                        </div>
+                        <div class="w-full md:w-3/5 text-center md:text-right">
+                            <h3 class="text-4xl lg:text-5xl font-black text-white leading-tight">[Joint Director Name]</h3>
+                            <p class="mt-2 text-xl font-semibold text-gray-300">Joint Director</p>
+                            <p class="mt-4 text-gray-400">
+                               [Placeholder paragraph for the Joint Director's message. This can highlight the collaborative effort, student involvement, and the impact of bringing such an event to the campus.]
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Sections -->
+            <div class="space-y-16 mt-24">
+                
+                <!-- Faculty Mentors -->
+                <div>
+                    <h2 class="text-3xl font-bold text-white mb-8 text-center scroll-animate">Faculty Mentors</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="card rounded-2xl overflow-hidden scroll-animate">
+                           <img src="https://placehold.co/500x500/1A1A1A/FFFFFF?text=Mentor" alt="Faculty Mentor" class="w-full h-auto aspect-square object-cover">
+                           <div class="p-4 text-center">
+                                <h3 class="text-xl font-bold text-white">[Faculty Name 1]</h3>
+                                <p class="text-ted-red font-semibold">[Department]</p>
+                           </div>
+                        </div>
+                        <div class="card rounded-2xl overflow-hidden scroll-animate" style="transition-delay: 100ms;">
+                           <img src="https://placehold.co/500x500/1A1A1A/FFFFFF?text=Mentor" alt="Faculty Mentor" class="w-full h-auto aspect-square object-cover">
+                           <div class="p-4 text-center">
+                                <h3 class="text-xl font-bold text-white">[Faculty Name 2]</h3>
+                                <p class="text-ted-red font-semibold">[Department]</p>
+                           </div>
+                        </div>
+                        <div class="card rounded-2xl overflow-hidden scroll-animate" style="transition-delay: 200ms;">
+                           <img src="https://placehold.co/500x500/1A1A1A/FFFFFF?text=Mentor" alt="Faculty Mentor" class="w-full h-auto aspect-square object-cover">
+                           <div class="p-4 text-center">
+                                <h3 class="text-xl font-bold text-white">[Faculty Name 3]</h3>
+                                <p class="text-ted-red font-semibold">[Department]</p>
+                           </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Founders -->
+                <div>
+                    <h2 class="text-3xl font-bold text-white mb-8 text-center scroll-animate">Founders</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+                         <div class="card rounded-2xl overflow-hidden scroll-animate">
+                           <img src="https://placehold.co/500x500/1A1A1A/FFFFFF?text=Akarshan" alt="Founder" class="w-full h-auto aspect-square object-cover">
+                           <div class="p-4 text-center">
+                                <h3 class="text-xl font-bold text-white">Akarshan Agrawal</h3>
+                                <p class="text-ted-red font-semibold">Founder</p>
+                           </div>
+                        </div>
+                         <div class="card rounded-2xl overflow-hidden scroll-animate" style="transition-delay: 100ms;">
+                           <img src="https://placehold.co/500x500/1A1A1A/FFFFFF?text=Neetu" alt="Founder" class="w-full h-auto aspect-square object-cover">
+                           <div class="p-4 text-center">
+                                <h3 class="text-xl font-bold text-white">Neetu Sharma</h3>
+                                <p class="text-ted-red font-semibold">Founder</p>
+                           </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Organiser -->
+                <div>
+                    <h2 class="text-3xl font-bold text-white mb-8 text-center scroll-animate">Organiser</h2>
+                    <div class="flex justify-center">
+                         <div class="card rounded-2xl overflow-hidden scroll-animate w-full max-w-sm">
+                           <img src="https://placehold.co/500x500/1A1A1A/FFFFFF?text=Tanisha" alt="Organiser" class="w-full h-auto aspect-square object-cover">
+                           <div class="p-4 text-center">
+                                <h3 class="text-xl font-bold text-white">Tanisha Gupta</h3>
+                                <p class="text-ted-red font-semibold">Organiser</p>
+                           </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Core Team -->
+                 <div>
+                    <h2 class="text-3xl font-bold text-white mb-8 text-center scroll-animate">Core Team</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                         <div class="card rounded-2xl overflow-hidden scroll-animate">
+                           <img src="https://placehold.co/500x500/1A1A1A/FFFFFF?text=Member" alt="Team Member" class="w-full h-auto aspect-square object-cover">
+                           <div class="p-4 text-center">
+                                <h3 class="text-xl font-bold text-white">[Member Name]</h3>
+                                <p class="text-ted-red font-semibold">Curator</p>
+                           </div>
+                        </div>
+                         <div class="card rounded-2xl overflow-hidden scroll-animate" style="transition-delay: 100ms;">
+                           <img src="https://placehold.co/500x500/1A1A1A/FFFFFF?text=Member" alt="Team Member" class="w-full h-auto aspect-square object-cover">
+                           <div class="p-4 text-center">
+                                <h3 class="text-xl font-bold text-white">[Member Name]</h3>
+                                <p class="text-ted-red font-semibold">Social Media & Digital</p>
+                           </div>
+                        </div>
+                         <div class="card rounded-2xl overflow-hidden scroll-animate" style="transition-delay: 200ms;">
+                           <img src="https://placehold.co/500x500/1A1A1A/FFFFFF?text=Member" alt="Team Member" class="w-full h-auto aspect-square object-cover">
+                           <div class="p-4 text-center">
+                                <h3 class="text-xl font-bold text-white">[Member Name]</h3>
+                                <p class="text-ted-red font-semibold">Website & Registration</p>
+                           </div>
+                        </div>
+                         <div class="card rounded-2xl overflow-hidden scroll-animate" style="transition-delay: 300ms;">
+                           <img src="https://placehold.co/500x500/1A1A1A/FFFFFF?text=Member" alt="Team Member" class="w-full h-auto aspect-square object-cover">
+                           <div class="p-4 text-center">
+                                <h3 class="text-xl font-bold text-white">[Member Name]</h3>
+                                <p class="text-ted-red font-semibold">Sponsorship Team</p>
+                           </div>
+                        </div>
+                        <div class="card rounded-2xl overflow-hidden scroll-animate" style="transition-delay: 0ms;">
+                           <img src="https://placehold.co/500x500/1A1A1A/FFFFFF?text=Member" alt="Team Member" class="w-full h-auto aspect-square object-cover">
+                           <div class="p-4 text-center">
+                                <h3 class="text-xl font-bold text-white">[Member Name]</h3>
+                                <p class="text-ted-red font-semibold">Production</p>
+                           </div>
+                        </div>
+                        <div class="card rounded-2xl overflow-hidden scroll-animate" style="transition-delay: 100ms;">
+                           <img src="https://placehold.co/500x500/1A1A1A/FFFFFF?text=Member" alt="Team Member" class="w-full h-auto aspect-square object-cover">
+                           <div class="p-4 text-center">
+                                <h3 class="text-xl font-bold text-white">[Member Name]</h3>
+                                <p class="text-ted-red font-semibold">Operations</p>
+                           </div>
+                        </div>
+                        <div class="card rounded-2xl overflow-hidden scroll-animate" style="transition-delay: 200ms;">
+                           <img src="https://placehold.co/500x500/1A1A1A/FFFFFF?text=Member" alt="Team Member" class="w-full h-auto aspect-square object-cover">
+                           <div class="p-4 text-center">
+                                <h3 class="text-xl font-bold text-white">[Member Name]</h3>
+                                <p class="text-ted-red font-semibold">Decor Team</p>
+                           </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="border-t border-gray-900 py-12 mt-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-8">
+                    <div class="text-center md:text-left">
+                         <a href="index.html" class="flex items-center justify-center md:justify-start space-x-2">
+                            <span class="font-black text-xl text-white">TEDx</span><span class="font-bold text-xl text-ted-red">NIFTJodhpur</span>
+                        </a>
+                        <p class="mt-2 text-gray-500 text-sm">© 2025 TEDxNIFTJodhpur. All rights reserved.</p>
+                        <p class="text-gray-500 text-sm">This independent TEDx event is operated under license from TED.</p>
+                    </div>
+                    <div class="flex space-x-6">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                           <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd" /></svg>
+                        </a>
+                         <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                           <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.71v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" /></svg>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.024.06 1.378.06 3.808s-.012 2.784-.06 3.808c-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.024.048-1.378.06-3.808.06s-2.784-.013-3.808-.06c-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.048-1.024-.06-1.378-.06-3.808s.012-2.784.06-3.808c.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 016.08 2.465c.636-.247 1.363-.416 2.427-.465C9.53 2.013 9.884 2 12.315 2zM12 7a5 5 0 100 10 5 5 0 000-10zm0-2a7 7 0 110 14 7 7 0 010-14zm4.5-1.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" clip-rule="evenodd" /></svg>
+                        </a>
+                        <a href="admin.html" class="text-gray-400 hover:text-white transition-colors" title="Admin Login">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0012 11z" clip-rule="evenodd" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </div>
 
     <script>
         // Scroll Animations
@@ -276,11 +296,10 @@
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('in-view');
-                    observer.unobserve(entry.target);
                 }
             });
         }, {
-            threshold: 0.15
+            threshold: 0.1
         });
 
         animatedElements.forEach(element => {
