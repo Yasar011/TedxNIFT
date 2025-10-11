@@ -3,21 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Admin Panel – Movie Night Booking</title>
+  <title>Admin Panel – TEDxNIFT Jodhpur</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/dataTables.bootstrap5.min.css"/>
   <style>
     :root {
       --bg: #2c2f33;
       --panel: #23272a;
-      --accent: #7289da;
+      --accent: #e62b1e; /* TEDx Red */
       --paid: #43b581;
-      --confirmed: #faa61a;
+      --confirmed: #2980b9;
+      --pending: #f39c12;
       --info: #3498db;
     }
     body { background-color: var(--bg); color: #eee; }
     .sidebar { background: var(--panel); min-height: 100vh; width: 220px; }
     .sidebar .nav-link.active { background: var(--accent); color: white; }
+    .sidebar .nav-link.disabled { color: #6c757d; cursor: not-allowed; }
     .stat-card, .chart-section, .booking-section, .form-section, #verifyTicketsSection {
       background-color: var(--panel);
       border-radius: 10px;
@@ -25,10 +27,7 @@
       margin-bottom: 20px;
     }
     .chart-container { height: 280px; }
-    .table-status.paid { background-color: var(--paid); color: black; }
-    .table-status.confirmed { background-color: var(--confirmed); color: black; }
     .hidden { display: none; }
-    /* Inline CSS for loader to load instantly */
     #loader {
       position: fixed; top: 0; left: 0;
       width: 100%; height: 100%;
@@ -37,166 +36,247 @@
       z-index: 9999;
     }
     #loader.hidden { display: none; }
-    /* Style to preserve whitespace in ticket details */
     #ticket-details {
       white-space: pre-wrap;
       font-size: 1rem;
       margin-top: 0.5rem;
+      text-align: left;
+      display: inline-block;
     }
+    .modal-body {
+        max-height: 60vh;
+        overflow-y: auto;
+    }
+    .stat-card h2 { font-size: 2rem; }
+    #mainContent { display: none; } /* Hide main content initially */
+    .modal-content { background-color: var(--panel); color: #eee; }
   </style>
-  <!-- Include QR code scanning library -->
   <script src="https://unpkg.com/html5-qrcode"></script>
+  <!-- EmailJS SDK for sending emails -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" defer></script>
 </head>
 <body>
-  <!-- Loading Spinner -->
   <div id="loader">
     <div class="spinner-border text-light" role="status" style="width: 3rem; height: 3rem;">
       <span class="visually-hidden">Loading...</span>
     </div>
   </div>
 
-  <div class="d-flex">
-    <nav class="sidebar p-3 d-flex flex-column">
-      <h4 class="text-white">🎬 Movie Night</h4>
-      <ul class="nav flex-column mt-4">
-        <li><a class="nav-link active" id="dashboardTab" href="#">Dashboard</a></li>
-        <li><a class="nav-link" id="bookingsTab" href="#">Bookings</a></li>
-        <li><a class="nav-link" id="manualEntryTab" href="#">Manual Entry</a></li>
-        <li><a class="nav-link" id="verifyTicketsTab" href="#">Verify Tickets</a></li>
-      </ul>
-      <a href="#" class="btn btn-outline-light mt-auto">Logout</a>
-    </nav>
+  <!-- Main Content - Hidden until login -->
+  <div id="mainContent">
+    <div class="d-flex">
+      <nav class="sidebar p-3 d-flex flex-column">
+        <h4 class="text-white">TEDxNIFT Jodhpur</h4>
+        <ul class="nav flex-column mt-4">
+          <li><a class="nav-link active" id="dashboardTab" href="#">Dashboard</a></li>
+          <li><a class="nav-link" id="bookingsTab" href="#">Bookings</a></li>
+          <li><a class="nav-link disabled" id="manualEntryTab" href="#">Manual Entry</a></li>
+          <li><a class="nav-link" id="verifyTicketsTab" href="#">Verify Tickets</a></li>
+        </ul>
+        <button id="enableEditingBtn" class="btn btn-warning mt-4">Unlock Editing</button>
+        <a href="#" class="btn btn-outline-light mt-auto">Logout</a>
+      </nav>
 
-    <div class="flex-grow-1 p-4">
-      <!-- DASHBOARD -->
-      <div id="dashboardSection">
-        <h2 class="text-center mb-4" style="color: var(--accent);">Admin Dashboard</h2>
-        <div class="row g-3 mb-4">
-          <div class="col-md-3"><div class="stat-card text-center"><h6>Total Seats</h6><h2 id="totalSeatsStat">0</h2></div></div>
-          <div class="col-md-3"><div class="stat-card text-center"><h6>Booked</h6><h2 id="bookedSeatsStat" class="text-success">0</h2></div></div>
-          <div class="col-md-3"><div class="stat-card text-center"><h6>Seats Left</h6><h2 id="leftSeatsStat" class="text-warning">0</h2></div></div>
-          <div class="col-md-3"><div class="stat-card text-center"><h6>Needs Snacks</h6><h2 id="needsSnacksStat" style="color: var(--info);">0</h2></div></div>
-        </div>
-        <div class="row g-4">
-          <div class="col-md-4"><div class="chart-section"><h6>By Status</h6><div class="chart-container"><canvas id="statusChart"></canvas></div></div></div>
-          <div class="col-md-4"><div class="chart-section"><h6>By Department</h6><div class="chart-container"><canvas id="deptChart"></canvas></div></div></div>
-          <div class="col-md-4"><div class="chart-section"><h6>By Semester</h6><div class="chart-container"><canvas id="semChart"></canvas></div></div></div>
-        </div>
-      </div>
-
-      <!-- BOOKINGS -->
-      <div id="bookingSection" class="booking-section hidden">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-          <h2 class="text-center mb-0" style="color: var(--accent);">Bookings Table</h2>
-          <div>
-            <button id="exportCSV" class="btn btn-info btn-sm me-2">Export CSV</button>
-            <button id="exportXLSX" class="btn btn-success btn-sm">Export Excel</button>
+      <div class="flex-grow-1 p-4">
+        <!-- DASHBOARD -->
+        <div id="dashboardSection">
+          <h2 class="text-center mb-4" style="color: var(--accent);">Admin Dashboard</h2>
+          <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 mb-4">
+            <div class="col"><div class="stat-card text-center"><h6>Total Seats</h6><h2 id="totalSeatsStat">0</h2></div></div>
+            <div class="col"><div class="stat-card text-center"><h6>Booked</h6><h2 id="bookedSeatsStat" class="text-success">0</h2></div></div>
+            <div class="col"><div class="stat-card text-center"><h6>Pending</h6><h2 id="pendingStat" style="color: var(--pending);">0</h2></div></div>
+            <div class="col"><div class="stat-card text-center"><h6>Seats Left</h6><h2 id="leftSeatsStat" class="text-warning">0</h2></div></div>
+            <div class="col"><div class="stat-card text-center"><h6>Checked In</h6><h2 id="checkedInStat" style="color: var(--confirmed);">0</h2></div></div>
+            <div class="col"><div class="stat-card text-center"><h6>Students</h6><h2 id="studentCountStat" style="color: var(--info);">0</h2></div></div>
+          </div>
+          <div class="row g-4">
+            <div class="col-md-4"><div class="chart-section"><h6>By Status</h6><div class="chart-container"><canvas id="statusChart"></canvas></div></div></div>
+            <div class="col-md-4"><div class="chart-section"><h6>By Department</h6><div class="chart-container"><canvas id="deptChart"></canvas></div></div></div>
+            <div class="col-md-4"><div class="chart-section"><h6>By User Type</h6><div class="chart-container"><canvas id="userTypeChart"></canvas></div></div></div>
           </div>
         </div>
-        <table id="seatTable" class="table table-striped table-hover" style="width:100%">
-          <thead>
-            <tr>
-              <th>#</th><th>Seat</th><th>Name</th><th>Phone</th><th>Dept</th><th>Sem</th><th>Snacks</th><th>Status</th><th>Ticket ID</th><th>Actions</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
 
-      <!-- MANUAL ENTRY -->
-      <div id="manualEntrySection" class="form-section hidden">
-        <h2 class="text-center mb-4" style="color: var(--accent);">Manual Booking Entry</h2>
-        <form id="manualEntryForm" style="max-width: 600px; margin: auto;">
-          <div class="mb-3"><label>Seat Number</label><input type="text" class="form-control" id="seatNumber" required /></div>
-          <div class="mb-3"><label>Name</label><input type="text" class="form-control" id="userName" required /></div>
-          <div class="mb-3"><label>Phone Number</label><input type="text" class="form-control" id="phoneNumber" required /></div>
-          <div class="mb-3">
-            <label>Department</label>
-            <select class="form-select" id="department" required>
-              <option value="" disabled selected>Select Department</option>
-              <option>BFT</option><option>AD</option><option>FD</option><option>FC</option><option>TD</option>
-              <option>MFM</option><option>FACULTY</option><option>STAFF</option><option>OTHER</option>
-            </select>
+        <!-- BOOKINGS -->
+        <div id="bookingSection" class="booking-section hidden">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h2 class="text-center mb-0" style="color: var(--accent);">Bookings Table</h2>
+            <div>
+              <button id="searchToEditBtn" class="btn btn-warning btn-sm me-2" disabled>Edit by ID</button>
+              <button id="exportCSV" class="btn btn-info btn-sm me-2">Export CSV</button>
+              <button id="exportXLSX" class="btn btn-success btn-sm">Export Excel</button>
+            </div>
           </div>
-          <div class="mb-3">
-            <label>Semester</label>
-            <select class="form-select" id="semester" required>
-              <option value="" disabled selected>Select Semester</option>
-              <option>1</option><option>2</option><option>3</option><option>4</option>
-              <option>5</option><option>6</option><option>7</option><option>8</option><option>Other</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label>Needs Snacks</label>
-            <select class="form-select" id="snacks">
-              <option value="no">No</option>
-              <option value="yes">Yes</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label>Status</label>
-            <select class="form-select" id="status">
-              <option value="paid">Paid</option>
-              <option value="confirmed">Confirmed</option>
-            </select>
-          </div>
-          <button type="submit" class="btn btn-primary w-100">Submit Booking</button>
-        </form>
-      </div>
+          <table id="seatTable" class="table table-striped table-hover" style="width:100%">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Seat</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Department</th>
+                <th>College Name</th>
+                <th>Student ID</th>
+                <th>User Type</th>
+                <th>Status</th>
+                <th>UTR</th>
+                <th>Payment QR</th>
+                <th>Payment QR Used</th>
+                <th>Ticket ID</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
 
-      <!-- VERIFY TICKETS -->
-      <div id="verifyTicketsSection" class="hidden text-white">
-        <h2 class="text-center mb-4" style="color: var(--accent);">Verify Tickets</h2>
-        <div id="qr-reader" style="width: 320px; margin: auto;"></div>
-        <div id="scan-result" class="text-center mt-3" style="font-weight: bold;"></div>
-        <div id="ticket-details" class="text-center mt-3" style="font-weight: bold;"></div>
-        <button id="confirmCheckinBtn" class="btn btn-success d-block mx-auto mt-3" style="display:none;">Confirm Check-In</button>
-        <button id="scanNextBtn" class="btn btn-primary d-block mx-auto mt-3" style="display:none;">Scan Next</button>
-        <button id="stopScannerBtn" class="btn btn-danger d-block mx-auto mt-3" style="display:none;">Stop Scanner</button>
+        <!-- MANUAL ENTRY -->
+        <div id="manualEntrySection" class="form-section hidden">
+          <h2 class="text-center mb-4" style="color: var(--accent);">Manual Booking Entry</h2>
+          <form id="manualEntryForm" style="max-width: 600px; margin: auto;">
+              <div class="row">
+                  <div class="col-md-6 mb-3"><label>Seat Number</label><input type="text" class="form-control" id="seatNumber" required /></div>
+                  <div class="col-md-6 mb-3"><label>Name</label><input type="text" class="form-control" id="userName" required /></div>
+                  <div class="col-md-6 mb-3"><label>Email ID</label><input type="email" class="form-control" id="email" required /></div>
+                  <div class="col-md-6 mb-3"><label>Phone Number</label><input type="text" class="form-control" id="phoneNumber" required /></div>
+                  <div class="col-md-6 mb-3"><label>College Name</label><input type="text" class="form-control" id="collegeName" value="NIFT" required /></div>
+                  <div class="col-md-6 mb-3"><label>Department</label>
+                      <select class="form-select" id="department" required>
+                        <option value="" disabled selected>Select Department</option>
+                        <option>BFT</option><option>AD</option><option>FD</option><option>FC</option><option>TD</option>
+                        <option>MFM</option><option>FACULTY</option><option>STAFF</option><option>OTHER</option>
+                      </select>
+                  </div>
+                  <div class="col-md-6 mb-3"><label>User Type</label>
+                      <select class="form-select" id="userType" required>
+                          <option value="student">Student</option><option value="other">Other</option>
+                      </select>
+                  </div>
+                  <div class="col-md-6 mb-3"><label>Student ID</label><input type="text" class="form-control" id="studentId" placeholder="Optional for 'Other'"/></div>
+                  <div class="col-md-6 mb-3"><label>Passing Year</label><input type="number" class="form-control" id="passingYear" placeholder="Optional for 'Other'" /></div>
+                  <div class="col-md-6 mb-3"><label>Payment UTR</label><input type="text" class="form-control" id="utr" required /></div>
+                  <div class="col-md-6 mb-3"><label>Payment QR Used</label><input type="text" class="form-control" id="paymentQR" required /></div>
+                  <div class="col-md-6 mb-3"><label>Status</label>
+                      <select class="form-select" id="status">
+                        <option value="pending" selected>Pending</option>
+                        <option value="paid">Paid</option>
+                        <option value="confirmed">Confirmed</option>
+                      </select>
+                  </div>
+              </div>
+              <button type="submit" class="btn btn-primary w-100 mt-3">Submit Booking</button>
+          </form>
+        </div>
+
+        <!-- VERIFY TICKETS -->
+        <div id="verifyTicketsSection" class="hidden text-white text-center">
+          <h2 class="text-center mb-4" style="color: var(--accent);">Verify Tickets</h2>
+          <div id="qr-reader" style="width: 320px; margin: auto;"></div>
+          <div id="scan-result" class="mt-3" style="font-weight: bold;"></div>
+          <div id="ticket-details-container" class="mt-3">
+              <pre id="ticket-details" style="font-weight: bold;"></pre>
+          </div>
+          <button id="confirmCheckinBtn" class="btn btn-success d-block mx-auto mt-3" style="display:none;">Confirm Check-In</button>
+          <button id="scanNextBtn" class="btn btn-primary d-block mx-auto mt-3" style="display:none;">Scan Next</button>
+          <button id="stopScannerBtn" class="btn btn-danger d-block mx-auto mt-3" style="display:none;">Stop Scanner</button>
+        </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Page Access Login Modal -->
+  <div class="modal fade" id="loginModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <form class="modal-content" id="loginForm">
+        <div class="modal-header">
+          <h5 class="modal-title" id="loginModalLabel">Admin Panel Access</h5>
+        </div>
+        <div class="modal-body">
+            <div id="loginError" class="alert alert-danger hidden" role="alert">Invalid credentials. Please try again.</div>
+            <div class="mb-3"><label for="loginUsername" class="form-label">Username</label><input type="text" class="form-control" id="loginUsername" required></div>
+            <div class="mb-3"><label for="loginPassword" class="form-label">Password</label><input type="password" class="form-control" id="loginPassword" required></div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary w-100">Login</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Auth Modal -->
+  <div class="modal fade" id="editAuthModal" tabindex="-1" aria-labelledby="editAuthModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <form class="modal-content" id="editAuthForm">
+        <div class="modal-header"><h5 class="modal-title" id="editAuthModalLabel">Unlock Editing Features</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button></div>
+        <div class="modal-body">
+            <div id="editAuthError" class="alert alert-danger hidden" role="alert">Invalid credentials. Editing remains locked.</div>
+            <div class="mb-3"><label for="editAuthUser" class="form-label">Editor UserID</label><input type="text" class="form-control" id="editAuthUser" required></div>
+            <div class="mb-3"><label for="editAuthPass" class="form-label">Editor Password</label><input type="password" class="form-control" id="editAuthPass" required></div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-warning w-100">Unlock</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Search Modal -->
+  <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <form class="modal-content" id="searchForm">
+        <div class="modal-header">
+          <h5 class="modal-title" id="searchModalLabel">Find Booking to Edit</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <label for="searchIdInput" class="form-label">Enter Seat Number or Ticket ID</label>
+            <input type="text" class="form-control" id="searchIdInput" required>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Find Booking</button>
+        </div>
+      </form>
     </div>
   </div>
 
   <!-- Edit Booking Modal -->
   <div class="modal fade" id="editBookingModal" tabindex="-1" aria-labelledby="editBookingModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
       <form class="modal-content" id="editBookingForm">
         <div class="modal-header">
-          <h5 class="modal-title" id="editBookingModalLabel">Edit Booking</h5>
+          <h5 class="modal-title" id="editBookingModalLabel">Edit Booking for Seat: <span id="editingSeatNumber"></span></h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <input type="hidden" id="editSeatId">
-          <div class="mb-3"><label>Name</label><input type="text" class="form-control" id="editUserName" required /></div>
-          <div class="mb-3"><label>Phone Number</label><input type="text" class="form-control" id="editPhoneNumber" required /></div>
-          <div class="mb-3">
-            <label>Department</label>
-            <select class="form-select" id="editDepartment" required>
-              <option>BFT</option><option>AD</option><option>FD</option><option>FC</option><option>TD</option>
-              <option>MFM</option><option>FACULTY</option><option>STAFF</option><option>OTHER</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label>Semester</label>
-            <select class="form-select" id="editSemester" required>
-              <option>1</option><option>2</option><option>3</option><option>4</option>
-              <option>5</option><option>6</option><option>7</option><option>8</option><option>Other</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label>Needs Snacks</label>
-            <select class="form-select" id="editSnacks">
-              <option value="no">No</option>
-              <option value="yes">Yes</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label>Status</label>
-            <select class="form-select" id="editStatus">
-              <option value="paid">Paid</option>
-              <option value="confirmed">Confirmed</option>
-            </select>
-          </div>
+            <input type="hidden" id="editSeatId">
+            <div class="row">
+                <div class="col-md-6 mb-3"><label>Name</label><input type="text" class="form-control" id="editUserName" required /></div>
+                <div class="col-md-6 mb-3"><label>Email ID</label><input type="email" class="form-control" id="editEmail" required /></div>
+                <div class="col-md-6 mb-3"><label>Phone Number</label><input type="text" class="form-control" id="editPhoneNumber" required /></div>
+                <div class="col-md-6 mb-3"><label>College Name</label><input type="text" class="form-control" id="editCollegeName" required /></div>
+                <div class="col-md-6 mb-3"><label>Department</label>
+                    <select class="form-select" id="editDepartment" required>
+                        <option>BFT</option><option>AD</option><option>FD</option><option>FC</option><option>TD</option>
+                        <option>MFM</option><option>FACULTY</option><option>STAFF</option><option>OTHER</option>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3"><label>User Type</label>
+                    <select class="form-select" id="editUserType" required>
+                        <option value="student">Student</option><option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3"><label>Student ID</label><input type="text" class="form-control" id="editStudentId" /></div>
+                <div class="col-md-6 mb-3"><label>Passing Year</label><input type="number" class="form-control" id="editPassingYear" /></div>
+                <div class="col-md-6 mb-3"><label>Payment UTR</label><input type="text" class="form-control" id="editUtr" required /></div>
+                <div class="col-md-6 mb-3"><label>Payment QR Used</label><input type="text" class="form-control" id="editPaymentQR" required /></div>
+                 <div class="col-md-6 mb-3"><label>Status</label>
+                    <select class="form-select" id="editStatus">
+                      <option value="pending">Pending</option>
+                      <option value="paid">Paid</option>
+                      <option value="confirmed">Confirmed</option>
+                    </select>
+                </div>
+            </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -206,7 +286,6 @@
     </div>
   </div>
 
-  <!-- Scripts -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
   <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js" defer></script>
@@ -217,6 +296,10 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
     import { getDatabase, ref, onValue, update, get } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-database.js";
+
+    const EMAILJS_SERVICE_ID = 'service_c2at74o';
+    const EMAILJS_TEMPLATE_ID = 'template_2yp04bf';
+    const EMAILJS_PUBLIC_KEY = 'IeXbkU69tnWgF9UcK';
 
     const app = initializeApp({
       apiKey: "AIzaSyBpew8ODVHmmGndhZxQ3VK_CEurW0_EQyU",
@@ -232,7 +315,7 @@
     const seatsRef = ref(db, "seats");
 
     let seatTable = null;
-    let statusChart, deptChart, semChart;
+    let statusChart, deptChart, userTypeChart;
     let currentBookingData = {};
 
     let html5QrCode = null;
@@ -243,8 +326,64 @@
     const stopScannerBtn = document.getElementById("stopScannerBtn");
     let lastScannedTicketKey = null;
 
-    $(document).ready(() => {
-      seatTable = $("#seatTable").DataTable({ order: [], pageLength: 10 });
+    let loginModal, editAuthModal;
+
+    // Use DOMContentLoaded which is more reliable than jQuery's ready for module scripts.
+    document.addEventListener('DOMContentLoaded', () => {
+      loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+      editAuthModal = new bootstrap.Modal(document.getElementById('editAuthModal'));
+      loginModal.show();
+      // Hide the loader once the DOM is ready and login modal is up.
+      document.getElementById('loader').classList.add('hidden');
+
+      $('#loginForm').on('submit', function(e) {
+        e.preventDefault();
+        const username = $('#loginUsername').val();
+        const password = $('#loginPassword').val();
+        if (username === 'Yasar C H' && password === 'Yasar@2004') {
+          loginModal.hide();
+          $('#mainContent').show();
+          initializeAdminPanel();
+        } else {
+          $('#loginError').removeClass('hidden');
+        }
+      });
+      
+      $('#enableEditingBtn').on('click', () => editAuthModal.show());
+
+      $('#editAuthForm').on('submit', function(e) {
+          e.preventDefault();
+          const user = $('#editAuthUser').val();
+          const pass = $('#editAuthPass').val();
+          if (user === 'Yasar Edite' && pass === 'Admine@123') {
+              $('#manualEntryTab').removeClass('disabled');
+              $('#searchToEditBtn').prop('disabled', false);
+              $('#enableEditingBtn').text('Editing Unlocked').prop('disabled', true).removeClass('btn-warning').addClass('btn-success');
+              editAuthModal.hide();
+          } else {
+              $('#editAuthError').removeClass('hidden');
+          }
+      });
+    });
+
+    function initializeAdminPanel() {
+      if (EMAILJS_PUBLIC_KEY && EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY') {
+        emailjs.init(EMAILJS_PUBLIC_KEY);
+      }
+
+      seatTable = $("#seatTable").DataTable({
+          order: [],
+          pageLength: 10,
+          responsive: true,
+          columnDefs: [ {
+              "targets": [2, 3, 4, 5, 6, 9, 10, 11, 12],
+              "render": function ( data, type, row ) {
+                  return type === 'display' && data && data.length > 15 ?
+                      '<span title="'+data+'">'+data.substr(0, 15) + '...</span>' :
+                      data;
+              }
+          }]
+      });
 
       $('#dashboardTab').click(() => toggleTab('#dashboardSection', '#dashboardTab'));
       $('#bookingsTab').click(() => toggleTab('#bookingSection', '#bookingsTab'));
@@ -254,27 +393,27 @@
       onValue(seatsRef, (snap) => {
         const data = snap.val() || {};
         currentBookingData = data;
-        const total = 240, statusStats = {}, deptStats = {}, semStats = {};
-        let booked = 0, snacks = 0;
+        const total = 240;
+        let booked = 0, studentCount = 0, pendingCount = 0, checkedInCount = 0;
+        let statusStats = {}, deptStats = {}, userTypeStats = {};
+
         seatTable.clear();
 
         Object.entries(data).forEach(([id, s]) => {
           if (s.status && s.status !== 'available') {
             booked++;
-            if (s.snacks === "yes") snacks++;
+            if (s.status === 'pending') pendingCount++;
+            if (s.userType === "student") studentCount++;
+            if (s.checkedIn) checkedInCount++;
+            
             statusStats[s.status] = (statusStats[s.status] || 0) + 1;
             deptStats[s.department] = (deptStats[s.department] || 0) + 1;
-            semStats[s.semester] = (semStats[s.semester] || 0) + 1;
+            userTypeStats[s.userType] = (userTypeStats[s.userType] || 0) + 1;
+
             seatTable.row.add([
-              null,
-              id,
-              s.name || 'N/A',
-              s.phone || 'N/A',
-              s.department,
-              s.semester,
-              s.snacks === 'yes' ? "Yes" : "No",
-              s.status,
-              s.ticketId || 'N/A',
+              null, id, s.name || 'N/A', s.email || 'N/A', s.department || 'N/A',
+              s.collegeName || 'N/A', s.studentId || 'N/A', s.userType || 'N/A',
+              s.status || 'N/A', s.utr || 'N/A', s.paymentQR || 'N/A', s.paymentQrUsed || 'N/A', s.ticketId || 'N/A',
               generateActions(id, s)
             ]);
           }
@@ -283,69 +422,153 @@
         seatTable.order([]).draw(false);
         $('#totalSeatsStat').text(total);
         $('#bookedSeatsStat').text(booked);
+        $('#pendingStat').text(pendingCount);
         $('#leftSeatsStat').text(total - booked);
-        $('#needsSnacksStat').text(snacks);
+        $('#checkedInStat').text(checkedInCount);
+        $('#studentCountStat').text(studentCount);
 
-        statusChart = chartPie(statusChart, 'statusChart', statusStats);
-        deptChart   = chartPie(deptChart,   'deptChart', deptStats);
-        semChart    = chartPie(semChart,    'semChart', semStats);
+        statusChart = chartPie(statusChart, 'statusChart', statusStats, { 'pending': '#f39c12', 'paid': '#43b581', 'confirmed': '#2980b9' });
+        deptChart = chartPie(deptChart, 'deptChart', deptStats);
+        userTypeChart = chartPie(userTypeChart, 'userTypeChart', userTypeStats);
 
-        seatTable.on('order.dt search.dt', function () {
-          seatTable.column(0, { search: 'applied', order: 'applied' }).nodes().each(function(cell, i) {
+        seatTable.on('order.dt search.dt', () => {
+          seatTable.column(0, { search: 'applied', order: 'applied' }).nodes().each((cell, i) => {
             cell.innerHTML = i + 1;
           });
         }).draw();
 
-        document.getElementById('loader').classList.add('hidden');
+        // This was moved to the DOMContentLoaded listener to prevent getting stuck
+        // document.getElementById('loader').classList.add('hidden');
       });
 
       function generateActions(id, s) {
-        if(s.checkedIn){
-          return `<button class="btn btn-primary btn-sm edit-btn" data-seat-id="${id}">Edit</button>
-                  <button class="btn btn-success btn-sm ms-1" disabled>Checked In</button>`;
+        if (s.checkedIn) {
+          return `<button class="btn btn-success btn-sm" disabled>Checked In</button>`;
         }
-        return `<button class="btn btn-primary btn-sm edit-btn" data-seat-id="${id}">Edit</button>
-                ${s.status === 'confirmed' ? '<button class="btn btn-success btn-sm ms-1" disabled>Confirmed</button>' :
-                `<button class="btn btn-sm btn-${s.status === 'paid' ? 'warning' : 'primary'} action-btn ms-1"
-                  data-seat-id="${id}" data-new-status="${s.status === 'paid' ? 'confirmed' : 'paid'}">
-                  ${s.status === 'paid' ? 'Confirm' : 'Mark Paid'}</button>`
-                }`;
+
+        switch(s.status) {
+          case 'pending':
+            return `<button class="btn btn-warning btn-sm action-btn" data-seat-id="${id}" data-new-status="paid">Verify Payment</button>`;
+          case 'paid':
+            return `<button class="btn btn-info btn-sm ms-1 send-email-confirm-btn" 
+                            data-seat-id="${id}" 
+                            data-name="${s.name}" 
+                            data-email="${s.email}" 
+                            data-ticket-id="${s.ticketId}">Send Mail & Confirm</button>`;
+          case 'confirmed':
+            return `<button class="btn btn-primary btn-sm manual-checkin-btn" data-seat-id="${id}">Manual Check-In</button>`;
+          default:
+            return '';
+        }
       }
 
+      // Handles the 'Verify Payment' button
       $('#seatTable tbody').on('click', '.action-btn', function() {
         const btn = $(this);
-        const id = btn.data('seat-id');
-        const newStatus = btn.data('new-status');
-        btn.prop('disabled', true).text("Updating...");
-        update(ref(db, `seats/${id}`), { status: newStatus }).catch(err => {
-          alert("Error: " + err.message);
-          btn.prop('disabled', false).text(newStatus === 'confirmed' ? "Confirm" : "Mark Paid");
-        });
+        update(ref(db, `seats/${btn.data('seat-id')}`), { status: btn.data('new-status') })
+          .catch(err => alert("Error: " + err.message));
       });
 
-      $('#seatTable tbody').on('click', '.edit-btn', function() {
-        const id = $(this).data('seat-id');
-        const data = currentBookingData[id];
-        if (!data) return alert("Booking not found.");
-        $('#editSeatId').val(id);
-        $('#editUserName').val(data.name || "");
-        $('#editPhoneNumber').val(data.phone || "");
-        $('#editDepartment').val(data.department || "");
-        $('#editSemester').val(data.semester || "");
-        $('#editSnacks').val(data.snacks || "no");
-        $('#editStatus').val(data.status || "paid");
-        $('#editBookingModal').modal('show');
+      // Handles the 'Send Mail & Confirm' button
+      $('#seatTable tbody').on('click', '.send-email-confirm-btn', function() {
+        const btn = $(this);
+        const seatId = btn.data('seat-id');
+
+        if (EMAILJS_TEMPLATE_ID === 'YOUR_TEMPLATE_ID' || EMAILJS_PUBLIC_KEY === 'YOUR_PUBLIC_KEY') {
+            alert('EmailJS is not fully configured.');
+            return;
+        }
+
+        const originalText = btn.text();
+        btn.text('Sending...').prop('disabled', true);
+
+        const templateParams = {
+            name: btn.data('name'), email: btn.data('email'),
+            seat_id: seatId, ticket_id: btn.data('ticket-id')
+        };
+
+        emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+            .then(function(response) {
+               update(ref(db, `seats/${seatId}`), { status: 'confirmed' })
+                 .catch(err => {
+                    alert(`Email sent, but failed to update status for seat ${seatId}. Please do it manually. Error: ${err.message}`);
+                 });
+            }, function(error) {
+               btn.text('Failed').prop('disabled', false).removeClass('btn-info').addClass('btn-danger');
+               alert('FAILED TO SEND EMAIL...\n' + JSON.stringify(error));
+               setTimeout(() => btn.text(originalText).removeClass('btn-danger').addClass('btn-info'), 5000);
+            });
+      });
+      
+      // Handles the 'Manual Check-In' button
+      $('#seatTable tbody').on('click', '.manual-checkin-btn', function() {
+        const btn = $(this);
+        const seatId = btn.data('seat-id');
+        btn.text('Checking in...').prop('disabled', true);
+        update(ref(db, `seats/${seatId}`), { checkedIn: true, checkInTimestamp: Date.now() })
+            .catch(err => {
+                alert("Error during check-in: " + err.message);
+                btn.text('Manual Check-In').prop('disabled', false);
+            });
+      });
+
+      function openEditModal(id, data) {
+          if (!data) { alert("Booking data could not be found."); return; }
+          $('#editingSeatNumber').text(id);
+          $('#editSeatId').val(id);
+          $('#editUserName').val(data.name || "");
+          $('#editEmail').val(data.email || "");
+          $('#editPhoneNumber').val(data.phone || "");
+          $('#editCollegeName').val(data.collegeName || "");
+          $('#editDepartment').val(data.department || "");
+          $('#editUserType').val(data.userType || "student");
+          $('#editStudentId').val(data.studentId || "");
+          $('#editPassingYear').val(data.passingYear || "");
+          $('#editUtr').val(data.utr || "");
+          $('#editPaymentQR').val(data.paymentQR || "");
+          $('#editStatus').val(data.status || "pending");
+          $('#editBookingModal').modal('show');
+      }
+
+      $('#searchToEditBtn').on('click', function() {
+        $('#searchIdInput').val('');
+        $('#searchModal').modal('show');
+      });
+
+      $('#searchForm').on('submit', function(e) {
+        e.preventDefault();
+        $('#searchModal').modal('hide');
+
+        const searchId = $('#searchIdInput').val().trim();
+        if (!searchId) return;
+
+        let foundSeatId = null, foundBookingData = null;
+        const seatKeyFound = Object.keys(currentBookingData).find(key => key.toUpperCase() === searchId.toUpperCase());
+        
+        if (seatKeyFound) {
+            foundSeatId = seatKeyFound;
+            foundBookingData = currentBookingData[seatKeyFound];
+        } else {
+            const foundEntry = Object.entries(currentBookingData).find(([_, data]) => data.ticketId && data.ticketId === searchId);
+            if (foundEntry) { [foundSeatId, foundBookingData] = foundEntry; }
+        }
+
+        if (foundSeatId && foundBookingData) {
+            openEditModal(foundSeatId, foundBookingData);
+        } else {
+            alert(`Booking with Seat Number or Ticket ID "${searchId}" could not be found.`);
+        }
       });
 
       $('#editBookingForm').on('submit', function(e) {
         e.preventDefault();
         const id = $('#editSeatId').val();
         const value = {
-          name: $('#editUserName').val().trim(),
-          phone: $('#editPhoneNumber').val().trim(),
-          department: $('#editDepartment').val(),
-          semester: $('#editSemester').val(),
-          snacks: $('#editSnacks').val(),
+          name: $('#editUserName').val().trim(), email: $('#editEmail').val().trim(),
+          phone: $('#editPhoneNumber').val().trim(), collegeName: $('#editCollegeName').val().trim(),
+          department: $('#editDepartment').val(), userType: $('#editUserType').val(),
+          studentId: $('#editStudentId').val().trim(), passingYear: $('#editPassingYear').val().trim(),
+          utr: $('#editUtr').val().trim(), paymentQR: $('#editPaymentQR').val().trim(),
           status: $('#editStatus').val()
         };
         update(ref(db, `seats/${id}`), value).then(() => {
@@ -355,26 +578,104 @@
 
       document.getElementById('manualEntryForm').addEventListener('submit', (e) => {
         e.preventDefault();
-        const id = seatNumber.value.trim(), name = userName.value.trim(), phone = phoneNumber.value.trim(),
-              dept = department.value.trim(), sem = semester.value.trim(),
-              snacks = document.getElementById('snacks').value,
-              status = document.getElementById('status').value;
+        const id = document.getElementById('seatNumber').value.trim();
+        if (!id) return alert("Seat Number is required.");
 
-        if (!id || !name || !dept || !phone || !sem || !status) return alert("All fields required.");
+        const bookingData = {
+          name: document.getElementById('userName').value.trim(), email: document.getElementById('email').value.trim(),
+          phone: document.getElementById('phoneNumber').value.trim(), collegeName: document.getElementById('collegeName').value.trim(),
+          department: document.getElementById('department').value, userType: document.getElementById('userType').value,
+          studentId: document.getElementById('studentId').value.trim(), passingYear: document.getElementById('passingYear').value.trim(),
+          utr: document.getElementById('utr').value.trim(), paymentQR: document.getElementById('paymentQR').value.trim(),
+          status: document.getElementById('status').value, ticketId: 'TEDx-' + Date.now(),
+          timestamp: new Date().toISOString()
+        };
+
         const oneSeat = ref(db, `seats/${id}`);
         get(oneSeat).then((snap) => {
           if (snap.exists() && snap.val().status !== 'available') {
             alert("Seat already booked.");
           } else {
-            update(oneSeat, { name, phone, department: dept, semester: sem, snacks, status })
-              .then(() => {
-                alert("Booking added.");
-                manualEntryForm.reset();
-                toggleTab('#bookingSection', '#bookingsTab');
-              }).catch(err => alert("Failed: " + err.message));
+            update(oneSeat, bookingData).then(() => {
+              alert("Booking added.");
+              manualEntryForm.reset();
+              toggleTab('#bookingSection', '#bookingsTab');
+            }).catch(err => alert("Failed: " + err.message));
           }
         });
       });
+      
+      // --- Restored QR Code Scanner Functions ---
+      function onScanSuccess(decodedText) {
+        stopQRScanner();
+        let ticketData = null;
+        try { ticketData = JSON.parse(decodedText); } catch (e) { setInvalidScanMessage("Invalid QR Code format."); return; }
+
+        const ticketIdScanned = ticketData.ticketId;
+        if (!ticketIdScanned) { setInvalidScanMessage("QR Code does not contain a Ticket ID."); return; }
+        
+        findTicketAndDisplay(ticketIdScanned);
+      }
+
+      async function findTicketAndDisplay(ticketId) {
+        let foundEntry = Object.entries(currentBookingData).find(([_, data]) => data.ticketId && data.ticketId === ticketId);
+
+        if (!foundEntry) { setInvalidScanMessage(`Ticket ID "${ticketId}" not found in database.`); return; }
+
+        const [matchingSeatKey, matchingSeatData] = foundEntry;
+        lastScannedTicketKey = matchingSeatKey;
+
+        ticketDetailsDiv.textContent = `
+Name: ${matchingSeatData.name || "N/A"}
+Seat: ${matchingSeatKey}
+Status: ${matchingSeatData.status || "N/A"}
+Department: ${matchingSeatData.department || "N/A"}
+Email: ${matchingSeatData.email || "N/A"}
+User Type: ${matchingSeatData.userType || "N/A"}`;
+
+        if (matchingSeatData.checkedIn) {
+          scanResult.textContent = "⚠️ Already Checked In!";
+          scanResult.style.color = "orange";
+          confirmCheckinBtn.style.display = "none";
+          scanNextBtn.style.display = "inline-block";
+        } else if (matchingSeatData.status === 'confirmed') {
+          scanResult.textContent = "✅ Valid Ticket! Confirm check-in below.";
+          scanResult.style.color = "limegreen";
+          confirmCheckinBtn.style.display = "inline-block";
+          scanNextBtn.style.display = "none";
+        } else {
+           scanResult.textContent = `❌ Ticket is not confirmed (Status: ${matchingSeatData.status}).`;
+           scanResult.style.color = "red";
+           confirmCheckinBtn.style.display = "none";
+           scanNextBtn.style.display = "inline-block";
+        }
+      }
+      
+      function setInvalidScanMessage(message) {
+        scanResult.textContent = `❌ ${message}`;
+        scanResult.style.color = "red";
+        ticketDetailsDiv.textContent = "";
+        confirmCheckinBtn.style.display = "none";
+        scanNextBtn.style.display = "inline-block";
+      }
+
+      confirmCheckinBtn.addEventListener('click', () => {
+        if (!lastScannedTicketKey) return;
+        const seatRef = ref(db, `seats/${lastScannedTicketKey}`);
+        update(seatRef, { checkedIn: true, checkInTimestamp: Date.now() })
+        .then(() => {
+          scanResult.textContent = "✅ Check-in Confirmed!";
+          scanResult.style.color = "limegreen";
+          confirmCheckinBtn.style.display = "none";
+          scanNextBtn.style.display = "inline-block";
+        })
+        .catch((err) => {
+          setInvalidScanMessage("Failed to update database: " + err.message);
+        });
+      });
+
+      scanNextBtn.addEventListener('click', startQRScanner);
+      stopScannerBtn.addEventListener('click', stopQRScanner);
 
       function startQRScanner() {
         scanResult.textContent = "Starting scanner...";
@@ -385,200 +686,50 @@
         lastScannedTicketKey = null;
         stopScannerBtn.style.display = "inline-block";
 
-        if (html5QrCode) {
-          html5QrCode.start(
-            { facingMode: "environment" },
-            { fps: 10, qrbox: 250 },
-            onScanSuccess,
-            onScanError
-          ).catch(err => {
-            scanResult.textContent = `Camera start failed: ${err}`;
-            scanResult.style.color = "red";
-            scanNextBtn.style.display = "inline-block";
-          });
-        } else {
-          html5QrCode = new Html5Qrcode("qr-reader");
-          html5QrCode.start(
-            { facingMode: "environment" },
-            { fps: 10, qrbox: 250 },
-            onScanSuccess,
-            onScanError
-          ).catch(err => {
-            scanResult.textContent = `Camera start failed: ${err}`;
-            scanResult.style.color = "red";
-            scanNextBtn.style.display = "inline-block";
-          });
+        if (!html5QrCode) {
+            html5QrCode = new Html5Qrcode("qr-reader");
         }
+        
+        html5QrCode.start(
+            { facingMode: "environment" },
+            { fps: 10, qrbox: {width: 250, height: 250} },
+            onScanSuccess,
+            (errorMessage) => { /* ignore errors */ }
+        ).catch(err => {
+            setInvalidScanMessage(`Camera start failed: ${err}`);
+        });
       }
 
       function stopQRScanner() {
-        if (html5QrCode) {
+        if (html5QrCode && html5QrCode.isScanning) {
           html5QrCode.stop().then(() => {
             stopScannerBtn.style.display = "none";
-          }).catch(err => {
-            console.error("Error stopping scanner", err);
-          });
+          }).catch(err => console.error("Error stopping scanner", err));
         }
       }
-
-      function setInvalidScanMessage() {
-        scanResult.textContent = "❌ Invalid or unrecognized QR code.";
-        scanResult.style.color = "red";
-        ticketDetailsDiv.textContent = "";
-        confirmCheckinBtn.style.display = "none";
-        scanNextBtn.style.display = "inline-block";
-      }
-
-      async function onScanSuccess(decodedText, decodedResult) {
-        stopQRScanner();
-
-        let ticketData = null;
-        try {
-          ticketData = JSON.parse(decodedText);
-        } catch (e) {
-          setInvalidScanMessage();
-          return;
-        }
-
-        const ticketIdScanned = ticketData.ticketId;
-        if (!ticketIdScanned) {
-          setInvalidScanMessage();
-          return;
-        }
-
-        // Search entire seats for matching ticketId
-        const snapshot = await get(seatsRef);
-        if (!snapshot.exists()) { setInvalidScanMessage(); return; }
-        
-        const seats = snapshot.val();
-        let matchingSeatKey = null;
-        let matchingSeatData = null;
-
-        for (const [seatKey, seatObj] of Object.entries(seats)) {
-          if (seatObj.ticketId === ticketIdScanned) {
-            matchingSeatKey = seatKey;
-            matchingSeatData = seatObj;
-            break;
-          }
-        }
-
-        if (!matchingSeatKey || !matchingSeatData) {
-          setInvalidScanMessage();
-          return;
-        }
-
-        lastScannedTicketKey = matchingSeatKey;
-
-        ticketDetailsDiv.textContent = `
-Name: ${matchingSeatData.name || ticketData.name || "N/A"}
-Seat: ${matchingSeatKey}
-Status: ${matchingSeatData.status || "N/A"}
-Department: ${matchingSeatData.department || ticketData.department || "N/A"}
-Semester: ${matchingSeatData.semester || ticketData.semester || "N/A"}
-Snacks: ${matchingSeatData.snacks === 'yes' ? 'Yes' : 'No'}`;
-
-        if (!matchingSeatData.status || matchingSeatData.status === 'available') {
-          scanResult.textContent = "❌ Ticket exists but is not booked or available.";
-          scanResult.style.color = "red";
-          confirmCheckinBtn.style.display = "none";
-          scanNextBtn.style.display = "inline-block";
-        } else if (matchingSeatData.checkedIn === true) {
-          scanResult.textContent = "⚠️ Ticket has already been scanned and checked in.";
-          scanResult.style.color = "orange";
-          confirmCheckinBtn.style.display = "none";
-          scanNextBtn.style.display = "inline-block";
-        } else {
-          scanResult.textContent = "✅ Valid ticket! Confirm check-in below.";
-          scanResult.style.color = "limegreen";
-          confirmCheckinBtn.style.display = "inline-block";
-          scanNextBtn.style.display = "none";
-        }
-      }
-
-      function onScanError(errorMessage) {
-        // Optional: log or ignore scan errors
-      }
-
-      confirmCheckinBtn.addEventListener('click', () => {
-        if (!lastScannedTicketKey) return;
-
-        const seatRef = ref(db, `seats/${lastScannedTicketKey}`);
-
-        update(seatRef, { checkedIn: true, checkInTimestamp: Date.now() })
-        .then(() => {
-          if (currentBookingData[lastScannedTicketKey]) {
-            currentBookingData[lastScannedTicketKey].checkedIn = true;
-          }
-
-          // Update booking table row dynamically
-          const rowIndex = seatTable.rows().indexes().filter(i => {
-            const dataRow = seatTable.row(i).data();
-            return dataRow && dataRow[1] === lastScannedTicketKey;
-          })[0];
-
-          if (rowIndex !== undefined) {
-            const rowData = seatTable.row(rowIndex).data();
-            rowData[7] = 'confirmed';
-            rowData[9] = `<button class="btn btn-primary btn-sm edit-btn" data-seat-id="${lastScannedTicketKey}">Edit</button>
-                          <button class="btn btn-success btn-sm ms-1" disabled>Checked In</button>`;
-            seatTable.row(rowIndex).data(rowData).invalidate();
-            seatTable.draw(false);
-          }
-
-          scanResult.textContent = "✅ Check-in confirmed! Seat updated.";
-          scanResult.style.color = "limegreen";
-          confirmCheckinBtn.style.display = "none";
-          scanNextBtn.style.display = "inline-block";
-        })
-        .catch((err) => {
-          scanResult.textContent = "❌ Failed to confirm check-in: " + err.message;
-          scanResult.style.color = "red";
-          scanNextBtn.style.display = "inline-block";
-        });
-      });
-
-      scanNextBtn.addEventListener('click', () => {
-        startQRScanner();
-      });
-
-      stopScannerBtn.addEventListener('click', () => {
-        stopQRScanner();
-        scanResult.textContent = "Scanner stopped.";
-        scanResult.style.color = "white";
-        scanNextBtn.style.display = "none";
-      });
-
-      // Tab toggle helper
+      
       function toggleTab(contentSelector, tabSelector) {
+        if ($(tabSelector).hasClass('disabled')) return;
         $('#dashboardSection, #bookingSection, #manualEntrySection, #verifyTicketsSection').hide();
         $('.nav-link').removeClass('active');
         $(contentSelector).show();
         $(tabSelector).addClass('active');
-
-        if (contentSelector === '#verifyTicketsSection') {
-          startQRScanner();
-        } else {
-          stopQRScanner();
-        }
+        if (contentSelector === '#verifyTicketsSection') { startQRScanner(); } 
+        else { stopQRScanner(); }
       }
 
-      // By default show dashboard
       toggleTab('#dashboardSection', '#dashboardTab');
 
       function getBookingsForExport() {
         return Object.entries(currentBookingData)
-        .filter(([_, val]) => val.status && val.status !== "available")
-        .map(([id, val], i) => ({
-          "#": i+1,
-          "Seat": id,
-          "Name": val.name || "",
-          "Phone": val.phone || "",
-          "Department": val.department || "",
-          "Semester": val.semester || "",
-          "Snacks": val.snacks === "yes" ? "Yes" : "No",
-          "Status": val.status,
-          "Ticket ID": val.ticketId || ""
-        }));
+          .filter(([_, val]) => val.status && val.status !== "available")
+          .map(([id, val], i) => ({
+            "#": i + 1, "Seat Number": id, "Name": val.name || "", "Email ID": val.email || "",
+            "Phone Number": val.phone || "", "College Name": val.collegeName || "", "Department": val.department || "",
+            "User Type": val.userType || "", "Student ID": val.studentId || "", "Passing Year": val.passingYear || "",
+            "Seat Status": val.status, "UTR": val.utr || "", "Payment QR": val.paymentQR || "", "Payment QR Used": val.paymentQrUsed || "",
+            "Ticket ID": val.ticketId || "", "Timestamp": val.timestamp || "", "Checked In": val.checkedIn ? "Yes" : "No"
+          }));
       }
 
       $('#exportCSV').click(() => {
@@ -587,15 +738,17 @@ Snacks: ${matchingSeatData.snacks === 'yes' ? 'Yes' : 'No'}`;
         const cols = Object.keys(data[0]);
         let csv = cols.join(",") + "\n";
         data.forEach(row => {
-          csv += cols.map(c => `"${(row[c]+'').replace(/"/g, '""')}"`).join(",") + "\n";
+          csv += cols.map(c => `"${(row[c] + '').replace(/"/g, '""')}"`).join(",") + "\n";
         });
-        const blob = new Blob([csv], {type: "text/csv"});
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        const link = document.createElement("a");
         const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "bookings.csv";
-        a.click();
-        URL.revokeObjectURL(url);
+        link.setAttribute("href", url);
+        link.setAttribute("download", "bookings.csv");
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       });
 
       $('#exportXLSX').click(() => {
@@ -606,20 +759,27 @@ Snacks: ${matchingSeatData.snacks === 'yes' ? 'Yes' : 'No'}`;
         XLSX.utils.book_append_sheet(wb, ws, "Bookings");
         XLSX.writeFile(wb, "bookings.xlsx");
       });
-
-      // Chart helper
-      function chartPie(chart, id, dataObj) {
+      
+      function chartPie(chart, id, dataObj, colorMap = {}) {
         if (chart) chart.destroy();
+        const labels = Object.keys(dataObj);
+        const defaultColors = ['#43b581','#faa61a','#7289da','#e74c3c','#3498db','#f1c40f', '#9b59b6', '#34495e'];
+        const backgroundColors = labels.map((label, index) => colorMap[label] || defaultColors[index % defaultColors.length]);
+        
         return new Chart(document.getElementById(id), {
           type: "pie",
           data: {
-            labels: Object.keys(dataObj),
-            datasets: [{ data: Object.values(dataObj), backgroundColor: ['#43b581','#faa61a','#7289da','#e74c3c','#3498db','#f1c40f'] }]
+            labels: labels,
+            datasets: [{ data: Object.values(dataObj), backgroundColor: backgroundColors }]
           },
-          options: { responsive: true, plugins: { legend: { position: 'top' }}}
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', labels: { color: '#eee' } } } }
         });
       }
-    });
+    }
   </script>
 </body>
 </html>
+
+
+
+
