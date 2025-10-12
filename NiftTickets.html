@@ -84,7 +84,7 @@
       background: #444; color: #fff; border: 1px solid #555;
       transition: all 0.15s;
     }
-    .seat:hover:not(.occupied) { transform: scale(1.1); background: #555; }
+    .seat:hover:not(.occupied):not(.reserved) { transform: scale(1.1); background: #555; }
     .seat.selected { background: #2980B9; border-color: #3498db; color: #fff; transform: scale(1.1); }
     .seat.occupied { background: #e62b1e; border-color: #c03b2b; opacity: 0.7; cursor: not-allowed; }
     .seat.reserved { background: #f39c12; border-color: #d35400; cursor: not-allowed; opacity: 0.7; }
@@ -228,7 +228,7 @@
         <div class="event-card">
           <div class="event-theme">Annual Flagship Event</div>
           <div class="event-time">10:00 AM</div>
-          <div class="event-price">Free</div>
+          <div class="event-price">₹199 Early Bird</div>
         </div>
 
         <div class="legend">
@@ -463,7 +463,6 @@
       "https://placehold.co/150x150/ffffff/E62B1E?text=QR+PAY+4",
       "https://placehold.co/150x150/ffffff/E62B1E?text=QR+PAY+5"
     ];
-    let qrCodeCounter = 0;
     let selectedSeat = null;
     let selectedSeatElement = null;
     let lastUsedQrIndex = null; // Variable to track the last shown QR code index
@@ -592,14 +591,12 @@
       
       function handlePayNow() {
         if (validateForm()) {
-          // Cycle through QR codes to distribute payments
-          const qrIndex = qrCodeCounter % qrCodeUrls.length;
+          // Show a random QR code to distribute payments and avoid UPI limits
+          const qrIndex = Math.floor(Math.random() * qrCodeUrls.length);
           lastUsedQrIndex = qrIndex; // Store the index of the QR code being shown
           const paymentQrImage = document.getElementById('paymentQrImage');
           
           paymentQrImage.src = qrCodeUrls[qrIndex];
-          
-          qrCodeCounter++; // Increment for the next user
 
           paymentModal.style.display = 'flex';
         }
@@ -645,7 +642,9 @@
           seatNumber: selectedSeat,
           utr: utr,
           paymentQrUsed: lastUsedQrIndex !== null ? `QR ${lastUsedQrIndex + 1}` : 'N/A',
-          userType: "Nift student"
+          userType: "Nift student",
+          collegeName: 'NIFT Jodhpur', // Hardcoded for NIFT only form
+          price: 199 // Added price field
         };
 
         const ticketId = `TEDX-${formData.seatNumber}-${Date.now().toString().slice(-6)}`;
@@ -698,5 +697,6 @@
   </script>
 </body>
 </html>
+
 
 
