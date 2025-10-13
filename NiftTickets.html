@@ -652,12 +652,13 @@
 
         try {
           await set(ref(db, `seats/${selectedSeat}`), {
-            status: "occupied",
+            status: "pending",
             ...formData,
             timestamp: new Date().toISOString()
           });
           selectedSeatElement.classList.remove("selected");
-          selectedSeatElement.classList.add("occupied");
+          // Mark as occupied visually, but status in DB is pending
+          selectedSeatElement.classList.add("occupied"); 
           bookingForm.reset();
           bookingForm.style.display = "none";
           paymentModal.style.display = "none";
@@ -697,6 +698,5 @@
   </script>
 </body>
 </html>
-
 
 
