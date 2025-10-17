@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TEDxNIFT Jodhpur - Venue Details</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111111;
+            color: #E0E0E0;
+        }
+        .text-ted-red {
+            color: #E62B1E;
+        }
+        .bg-ted-red {
+            background-color: #E62B1E;
+        }
+        .seat {
+            width: 1.5rem; /* Made seats smaller */
+            height: 1.5rem; /* Made seats smaller */
+            border-radius: 0.25rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            font-weight: bold;
+            color: white;
+            margin: 1px;
+        }
+        .seat-available { background-color: #6B7280; } /* All seats are now gray */
+        .seat-gap { width: 1.5rem; } /* Adjusted gap for smaller seats */
+    </style>
+</head>
+<body class="antialiased overflow-x-hidden">
+    
+    <!-- Header --><header class="sticky top-0 z-50 bg-[#111111] bg-opacity-80 backdrop-blur-sm shadow-lg">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center py-4">
+            <a href="index.html" class="flex items-center space-x-2 flex-shrink-0">
+                <span class="font-black text-2xl text-white">TEDx</span><span class="font-bold text-2xl text-ted-red">NIFTJodhpur</span>
+            </a>
+            
+            <!-- Desktop Nav --><div class="hidden md:flex items-center space-x-8">
+                <a href="index.html#about" class="text-gray-300 hover:text-white transition-colors font-medium">About</a>
+                <a href="index.html#speakers" class="text-gray-300 hover:text-white transition-colors font-medium">Speakers</a>
+                <a href="venue.html" class="text-white font-semibold transition-colors">Venue</a>
+                <a href="schedule.html" class="text-gray-300 hover:text-white transition-colors font-medium">Schedule</a>
+                <a href="team.html" class="text-gray-300 hover:text-white transition-colors font-medium">Team</a>
+                <a href="index.html#sponsors" class="text-gray-300 hover:text-white transition-colors font-medium">Sponsors</a>
+            </div>
+
+            <div class="flex items-center">
+                <a href="tickets.html" class="hidden md:block px-6 py-2 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition-colors">
+                    Get Tickets
+                </a>
+
+                <!-- Mobile Menu Button --><button id="mobile-menu-button" class="md:hidden p-2 rounded-md text-gray-300 hover:text-white hover:bg-gray-700">
+                      <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Mobile Menu --><div id="mobile-menu" class="hidden md:hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="index.html#about" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">About</a>
+                <a href="index.html#speakers" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Speakers</a>
+                <a href="venue.html" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-white bg-gray-700">Venue</a>
+                <a href="schedule.html" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Schedule</a>
+                 <a href="team.html" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Team</a>
+                <a href="index.html#sponsors" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Sponsors</a>
+                <a href="tickets.html" class="mobile-nav-link block w-full text-center mt-2 px-3 py-2 rounded-md text-base font-medium text-black bg-white hover:bg-gray-200">Get Tickets</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <main>
+            <!-- Venue Section --><section id="venue" class="py-20">
+                <div class="text-center">
+                    <h1 class="text-4xl md:text-5xl font-bold text-white">Our Venue</h1>
+                    <p class="mt-4 text-gray-400 max-w-2xl mx-auto">The state-of-the-art auditorium at NIFT Jodhpur.</p>
+                </div>
+
+                <div class="mt-16 grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                    <!-- Map --><div class="rounded-xl overflow-hidden shadow-2xl">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3575.589882255799!2d72.93043867519985!3d26.33973307699709!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39418c35aaaaaaab%3A0xbd36531eb49a2fa!2sNIFT%20Jodhpur!5e0!3m2!1sen!2sin!4v1729188488345!5m2!1sen!2sin" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+
+                    <!-- Details --><div class="bg-gray-800 p-8 rounded-xl">
+                        <h2 class="text-3xl font-bold text-white">NIFT Jodhpur Auditorium</h2>
+                        <p class="mt-4 text-gray-400">
+                            <strong>Address:</strong><br>
+                            NIFT Campus, Jheepasani Rd, Karwar, Jheepasani, Rajasthan 342037
+                        </p>
+                        <div class="mt-6 border-t border-gray-700 pt-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <h3 class="text-lg font-semibold text-white">Seating Capacity</h3>
+                                <p class="text-ted-red text-2xl font-bold mt-1">240 Guests</p>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-white">Amenities</h3>
+                                <p class="text-gray-300 mt-1">Fully Air-Conditioned</p>
+                            </div>
+                            <div class="sm:col-span-2">
+                                <h3 class="text-lg font-semibold text-white">Arrangement</h3>
+                                <p class="text-gray-300 mt-1">Comfortable seating arranged in 8 rows with a central aisle and walkway.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seating Chart --><div class="mt-20">
+                    <div class="text-center">
+                        <h2 class="text-3xl md:text-4xl font-bold text-white">Seating Arrangement</h2>
+                        <p class="mt-3 text-gray-400 max-w-2xl mx-auto">Find your spot in our comfortable auditorium.</p>
+                    </div>
+                    
+                    <div class="mt-12 p-4 sm:p-8 bg-gray-800 rounded-xl overflow-x-auto">
+                        <div class="w-full text-center mb-6 py-3 bg-gray-700 rounded-lg">
+                            <h3 class="text-2xl font-bold tracking-widest text-white uppercase">STAGE</h3>
+                        </div>
+
+                        <div class="flex flex-col items-center space-y-1">
+                            <!-- Rows --><script>
+                                const allRows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+                                const seatsPerRow = [15, 15]; // Left block, Right block for a total of 30 seats
+                                const horizontalWalkwayAfterRow = 'D'; // Row after which the horizontal walkway appears
+
+                                // Function to generate the HTML for a set of rows
+                                function generateRows() {
+                                    allRows.forEach(row => {
+                                        let rowHtml = `<div class="flex items-center my-1"><span class="seat text-black bg-gray-400">${row}</span><div class="flex flex-1 justify-center">`;
+                                        
+                                        // Left Block with seat numbers 1-15
+                                        for(let i = 1; i <= seatsPerRow[0]; i++) rowHtml += `<div class="seat seat-available">${i}</div>`;
+                                        
+                                        rowHtml += `<div class="seat-gap"></div>`; // Center Aisle
+                                        
+                                        // Right Block with seat numbers 16-30
+                                        for(let i = seatsPerRow[0] + 1; i <= seatsPerRow[0] + seatsPerRow[1]; i++) rowHtml += `<div class="seat seat-available">${i}</div>`;
+
+                                        rowHtml += `</div><span class="seat text-black bg-gray-400">${row}</span></div>`;
+                                        document.write(rowHtml);
+
+                                        // Add horizontal walkway after row D
+                                        if (row === horizontalWalkwayAfterRow) {
+                                            document.write('<div class="h-6 w-full flex items-center justify-center text-gray-500 text-xs font-bold tracking-widest my-2"><p>WALKWAY</p></div>');
+                                        }
+                                    });
+                                }
+                                
+                                generateRows();
+
+                            </script>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Venue Photos Section --><div class="mt-20">
+                    <div class="text-center">
+                        <h2 class="text-3xl md:text-4xl font-bold text-white">Venue Glimpses</h2>
+                        <p class="mt-3 text-gray-400 max-w-2xl mx-auto">Take a look at our beautiful and modern auditorium.</p>
+                    </div>
+                    <div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <!-- Photo 1 --><div class="rounded-xl overflow-hidden shadow-lg bg-gray-800">
+                            <img src="https://via.placeholder.com/600x400?text=Venue+Photo+1" alt="Venue Photo 1" class="w-full h-48 object-cover">
+                            <div class="p-4">
+                                <p class="text-gray-300 text-sm">Auditorium entrance</p>
+                            </div>
+                        </div>
+                        <!-- Photo 2 --><div class="rounded-xl overflow-hidden shadow-lg bg-gray-800">
+                            <img src="https://via.placeholder.com/600x400?text=Venue+Photo+2" alt="Venue Photo 2" class="w-full h-48 object-cover">
+                            <div class="p-4">
+                                <p class="text-gray-300 text-sm">Inside view of the seating area</p>
+                            </div>
+                        </div>
+                        <!-- Photo 3 --><div class="rounded-xl overflow-hidden shadow-lg bg-gray-800">
+                            <img src="https://via.placeholder.com/600x400?text=Venue+Photo+3" alt="Venue Photo 3" class="w-full h-48 object-cover">
+                            <div class="p-4">
+                                <p class="text-gray-300 text-sm">Stage and screen setup</p>
+                            </div>
+                        </div>
+                        <!-- Photo 4 (Optional) --><div class="rounded-xl overflow-hidden shadow-lg bg-gray-800">
+                            <img src="https://via.placeholder.com/600x400?text=Venue+Photo+4" alt="Venue Photo 4" class="w-full h-48 object-cover">
+                            <div class="p-4">
+                                <p class="text-gray-300 text-sm">A different angle of the auditorium</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+        </main>
+    </div>
+
+    <!-- Footer --><footer class="border-t border-gray-800 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="md:col-span-1">
+                    <a href="index.html" class="flex items-center space-x-2">
+                        <span class="font-black text-xl text-white">TEDx</span><span class="font-bold text-xl text-ted-red">NIFTJodhpur</span>
+                    </a>
+                    <p class="mt-4 text-gray-400 text-sm">This independent TEDx event is operated under license from TED.</p>
+                     <div class="mt-4 flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="YouTube"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z" clip-rule="evenodd"></path></svg></a>
+                        <a href="https://www.instagram.com/tedxnift.jodhpur?igsh=bmxyOG9ocnI1d2Vu" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition-colors" aria-label="Instagram"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.85s-.011 3.585-.069 4.85c-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07s-3.585-.012-4.85-.07c-3.252-.148-4.771-1.691-4.919-4.919-.058-1.265-.069-1.645-.069-4.85s.011-3.585.069-4.85c.149-3.225 1.664 4.771 4.919 4.919 1.266-.058 1.644-.07 4.85-.07zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948s.014 3.667.072 4.947c.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072s3.667-.014 4.947-.072c4.358-.2 6.78-2.618 6.98-6.98.059-1.281.073-1.689.073-4.948s-.014-3.667-.072-4.947c-.2-4.358-2.618-6.78-6.98-6.98-1.281-.059-1.689-.073-4.948-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.79 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44 1.441-.645 1.441-1.44-.645-1.44-1.441-1.44z" clip-rule="evenodd"></path></svg></a>
+                    </div>
+                    <p class="mt-4 text-gray-400 text-sm">© 2025 TEDxNIFTJodhpur. All rights reserved.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-white">Navigation</h4>
+                    <ul class="mt-4 space-y-2 text-gray-400">
+                        <li><a href="index.html#about" class="hover:text-white">About Us</a></li>
+                        <li><a href="index.html#speakers" class="hover:text-white">Speakers</a></li>
+                        <li><a href="venue.html" class="hover:text-white">Venue</a></li>
+                        <li><a href="schedule.html" class="hover:text-white">Schedule</a></li>
+                        <li><a href="team.html" class="hover:text-white">Our Team</a></li>
+                    </ul>
+                </div>
+                 <div>
+                    <h4 class="font-semibold text-white">Key Contacts</h4>
+                    <ul class="mt-4 space-y-2 text-gray-400">
+                        <li><a href="mailto:akarshan.agrawal09@gmail.com" class="hover:text-white">Akarshan Agrawal (Licensee)</a></li>
+                        <li><a href="mailto:tanisha.gupta3@nift.ac.in" class="hover:text-white">Tanisha Gupta (Organizer)</a></li>
+                        <li><a href="mailto:shruti.khinvasara@nift.ac.in" class="hover:text-white">Shruti Khinvansara (Co-organizer)</a></li>
+                        <li><a href="mailto:chyasar2004@gmail.com" class="hover:text-white">Yasar CH (Web & Registration)</a></li>
+                        <li class="pt-2"><a href="mailto:tedxnift.jodhpur@nift.ac.in" class="hover:text-white font-semibold">Official Email</a></li>
+                    </ul>
+                </div>
+                 <div>
+                    <h4 class="font-semibold text-white">Legal</h4>
+                    <ul class="mt-4 space-y-2 text-gray-400">
+                        <li><a href="legal.html" class="hover:text-white">Contact Us</a></li>
+                        <li><a href="legal.html" class="hover:text-white">Privacy Policy</a></li>
+                        <li><a href="legal.html" class="hover:text-white">Terms and Conditions</a></li>
+                        <li><a href="legal.html" class="hover:text-white">Refund/Cancellation Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Mobile menu toggle
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            mobileNavLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
+
