@@ -123,6 +123,10 @@
     .form-group textarea:focus {
       outline:none; border-color:#e62b1e; box-shadow:0 0 0 3px rgba(230,43,30,0.2);
     }
+    .form-group input:read-only {
+        background-color: #2d2d2d;
+        cursor: not-allowed;
+    }
     .terms-group { font-size: 12px; display: flex; align-items: center; gap: 8px; margin-bottom: 16px; color: #aaa;}
     .terms-group a { color: #e62b1e; text-decoration: none;}
     .book-btn {
@@ -217,7 +221,7 @@
         <div class="event-card">
           <div class="event-theme">Annual Flagship Event</div>
           <div class="event-time">10:00 AM</div>
-          <div class="event-price">₹399 Early Access</div>
+          <div class="event-price">₹<span id="eventPrice">399</span> Early Access</div>
         </div>
 
         <div class="legend">
@@ -246,7 +250,8 @@
                 <label for="userType">I am a...</label>
                 <select id="userType" required>
                     <option value="" selected disabled>Select your category</option>
-                    <option value="student">Student</option>
+                    <option value="nift_student">NIFT Student</option>
+                    <option value="student">Other Student</option>
                     <option value="other">Other</option>
                 </select>
             </div>
@@ -255,12 +260,52 @@
                 <input id="name" type="text" required>
             </div>
             <div class="form-group">
-                <label for="email">Email Address</label>
+                <label for="email">Email Address (for confirmation)</label>
                 <input id="email" type="email" required>
             </div>
              <div class="form-group">
                 <label for="phone">Phone Number</label>
                 <input id="phone" type="tel" required>
+            </div>
+
+            <!-- NIFT Student-specific Fields -->
+            <div id="niftStudentFields" class="hidden">
+                 <div class="form-group">
+                    <label for="niftEmail">NIFT Email ID</label>
+                    <input id="niftEmail" type="email" placeholder="your.name@nift.ac.in">
+                </div>
+                 <div class="form-group">
+                    <label for="niftStudentId">Student ID</label>
+                    <input id="niftStudentId" type="text">
+                </div>
+                 <div class="form-group">
+                    <label for="niftCollegeName">College Name</label>
+                    <input id="niftCollegeName" type="text" value="NIFT Jodhpur" readonly>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4">
+                    <div class="form-group">
+                        <label for="niftDepartment">Department</label>
+                        <select id="niftDepartment">
+                            <option value="">Select Dept</option>
+                            <option value="AD">AD</option>
+                            <option value="BFT">BFT</option>
+                            <option value="MFM">MFM</option>
+                            <option value="FD">FD</option>
+                            <option value="FC">FC</option>
+                            <option value="TD">TD</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="niftSemester">Semester</label>
+                        <select id="niftSemester">
+                             <option value="">Select Sem</option>
+                             <option value="1">1</option>
+                             <option value="3">3</option>
+                             <option value="5">5</option>
+                             <option value="7">7</option>
+                        </select>
+                    </div>
+                </div>
             </div>
 
             <!-- Student-specific Fields -->
@@ -403,6 +448,7 @@
  <div id="paymentModal" class="modal-overlay">
   <div class="modal-content">
     <h3>Complete Your Payment</h3>
+    <p class="text-center text-lg font-bold text-white mb-2">Amount to Pay: ₹<span id="paymentAmount">399</span></p>
     <p class="text-center">Scan the QR code below to pay.</p>
     <p id="qrCodeInfo" class="text-center text-sm text-gray-400 mb-2"></p>
     <img id="paymentQrImage" src="https://placehold.co/150x150/ffffff/000000?text=SCAN" alt="Payment QR Code" class="payment-qr">
@@ -467,13 +513,20 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    const qrCodeUrls = [
-      "https://placehold.co/150x150/ffffff/E62B1E?text=QR+PAY+1",
-      "https://placehold.co/150x150/ffffff/E62B1E?text=QR+PAY+2",
-      "https://placehold.co/150x150/ffffff/E62B1E?text=QR+PAY+3",
-      "https://placehold.co/150x150/ffffff/E62B1E?text=QR+PAY+4",
-      "https://placehold.co/150x150/ffffff/E62B1E?text=QR+PAY+5"
+    const generalQrCodeUrls = [
+      "https://placehold.co/150x150/ffffff/E62B1E?text=QR+PAY+399+A",
+      "https://placehold.co/150x150/ffffff/E62B1E?text=QR+PAY+399+B",
+      "https://placehold.co/150x150/ffffff/E62B1E?text=QR+PAY+399+C",
+      "https://placehold.co/150x150/ffffff/E62B1E?text=QR+PAY+399+D",
+      "https://placehold.co/150x150/ffffff/E62B1E?text=QR+PAY+399+E"
     ];
+    const niftQrCodeUrls = [
+      "https://placehold.co/150x150/ffffff/E62B1E?text=QR+PAY+199+N1",
+      "https://placehold.co/150x150/ffffff/E62B1E?text=QR+PAY+199+N2",
+      "https://placehold.co/150x150/ffffff/E62B1E?text=QR+PAY+199+N3",
+      "https://placehold.co/150x150/ffffff/E62B1E?text=QR+PAY+199+N4"
+    ];
+
     let selectedSeat = null;
     let selectedSeatElement = null;
     let lastUsedQrIndex = null; // Variable to track the last shown QR code index
@@ -504,6 +557,7 @@
       const userTypeSelect = document.getElementById('userType');
       const studentFields = document.getElementById('studentFields');
       const otherFields = document.getElementById('otherFields');
+      const niftStudentFields = document.getElementById('niftStudentFields'); // New NIFT fields
 
       // 'How to Book' Modal Logic
       howToBookBtn.addEventListener("click", () => { howToBookModal.style.display = "flex"; });
@@ -542,16 +596,26 @@
       // Handle user type change to show/hide fields
       userTypeSelect.addEventListener('change', () => {
         const value = userTypeSelect.value;
+        
+        // Update price display
+        const price = (value === 'nift_student') ? 199 : 399;
+        document.getElementById('eventPrice').textContent = price;
+
         studentFields.classList.toggle('hidden', value !== 'student');
         otherFields.classList.toggle('hidden', value !== 'other');
+        niftStudentFields.classList.toggle('hidden', value !== 'nift_student');
         
         // Toggle required attributes for validation
         toggleRequired(studentFields, value === 'student');
         toggleRequired(otherFields, value === 'other');
+        toggleRequired(niftStudentFields, value === 'nift_student');
       });
 
       function toggleRequired(container, isRequired) {
         container.querySelectorAll('input, select, textarea').forEach(input => {
+            // Do not toggle 'required' for readonly fields
+            if (input.hasAttribute('readonly')) return;
+
             if (isRequired) {
                 input.setAttribute('required', '');
             } else {
@@ -628,14 +692,21 @@
       
       function handlePayNow() {
         if (validateForm()) {
+          const userType = document.getElementById('userType').value;
+          const isNiftStudent = userType === 'nift_student';
+          
+          const amount = isNiftStudent ? 199 : 399;
+          const selectedQrUrls = isNiftStudent ? niftQrCodeUrls : generalQrCodeUrls;
+
           // Show a random QR code to distribute payments
-          const qrIndex = Math.floor(Math.random() * qrCodeUrls.length);
+          const qrIndex = Math.floor(Math.random() * selectedQrUrls.length);
           lastUsedQrIndex = qrIndex; // Store the index of the QR code being shown
           const paymentQrImage = document.getElementById('paymentQrImage');
           const qrCodeInfo = document.getElementById('qrCodeInfo');
-
-          paymentQrImage.src = qrCodeUrls[qrIndex];
-          qrCodeInfo.textContent = `Paying with QR ${qrIndex + 1}`;
+          
+          document.getElementById('paymentAmount').textContent = amount;
+          paymentQrImage.src = selectedQrUrls[qrIndex];
+          qrCodeInfo.textContent = `Paying with QR ${isNiftStudent ? 'NIFT-' : 'GEN-'}${qrIndex + 1}`;
           
           paymentModal.style.display = 'flex';
         }
@@ -645,9 +716,10 @@
          // Check if all required fields visible in the form are filled
         let isValid = true;
         const requiredInputs = bookingForm.querySelectorAll('[required]');
+        
         requiredInputs.forEach(input => {
-            const parent = input.closest('.hidden');
-            if (!parent) { // Only validate visible fields
+            const isHidden = input.closest('.hidden');
+            if (!isHidden) { // Only validate visible fields
                 if (!input.value.trim()) {
                     const label = input.closest('.form-group').querySelector('label')?.textContent || 'A required field';
                     showError(`'${label}' is empty.`);
@@ -668,6 +740,15 @@
         if (!/^\d{10}$/.test(phone)) {
           showError("Invalid phone number. Must be 10 digits.");
           return false;
+        }
+
+        // NIFT Student specific validation
+        if (document.getElementById('userType').value === 'nift_student') {
+            const niftEmail = document.getElementById('niftEmail').value.trim();
+            if (!niftEmail.toLowerCase().endsWith('@nift.ac.in')) {
+                showError("Please use a valid NIFT email ending with '@nift.ac.in'.");
+                return false;
+            }
         }
         
         return true;
@@ -698,6 +779,14 @@
                 department: document.getElementById("department").value.trim(),
                 passingYear: document.getElementById("passingYear").value.trim()
             };
+        } else if (commonData.userType === 'nift_student') {
+            specificData = {
+                niftStudentId: document.getElementById("niftStudentId").value.trim(),
+                niftEmail: document.getElementById("niftEmail").value.trim(),
+                collegeName: "NIFT Jodhpur",
+                department: document.getElementById("niftDepartment").value,
+                semester: document.getElementById("niftSemester").value
+            };
         } else if (commonData.userType === 'other') {
             specificData = {
                 idType: document.getElementById("idType").value,
@@ -710,10 +799,12 @@
         const ticketId = `TEDX-${formData.seatNumber}-${Date.now().toString().slice(-6)}`;
         formData.ticketId = ticketId;
 
+        const price = formData.userType === 'nift_student' ? 199 : 399;
+
         try {
           await set(ref(db, `seats/${selectedSeat}`), {
             status: "pending", // Changed from "occupied" to "pending" to fit admin workflow
-            price: 399, // Added price field
+            price: price, // Use dynamic price
             ...formData,
             timestamp: new Date().toISOString()
           });
@@ -723,6 +814,7 @@
           bookingForm.style.display = "none";
           studentFields.classList.add('hidden');
           otherFields.classList.add('hidden');
+          niftStudentFields.classList.add('hidden');
           paymentModal.style.display = "none";
           selectedSeat = selectedSeatElement = null;
           payBtn.disabled = true;
@@ -760,4 +852,7 @@
   </script>
 </body>
 </html>
+
+
+
 
