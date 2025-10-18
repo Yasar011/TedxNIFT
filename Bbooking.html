@@ -761,14 +761,18 @@
           return;
         }
 
+        const userType = document.getElementById("userType").value;
+        const isNiftStudent = userType === 'nift_student';
+
         const commonData = {
-          userType: document.getElementById("userType").value,
+          userType: userType,
           name: document.getElementById("name").value.trim(),
           email: document.getElementById("email").value.trim(),
           phone: document.getElementById("phone").value.trim(),
           seatNumber: selectedSeat,
           utr: utr,
-          paymentQR: lastUsedQrIndex !== null ? `QR ${lastUsedQrIndex + 1}` : 'N/A' // Add which QR was used
+          // Corrected the paymentQR string to be more descriptive
+          paymentQR: lastUsedQrIndex !== null ? `QR ${isNiftStudent ? 'NIFT-' : 'GEN-'}${lastUsedQrIndex + 1}` : 'N/A'
         };
 
         let specificData = {};
@@ -780,8 +784,9 @@
                 passingYear: document.getElementById("passingYear").value.trim()
             };
         } else if (commonData.userType === 'nift_student') {
+            // This section now correctly gathers NIFT Student specific data, including the Student ID.
             specificData = {
-                niftStudentId: document.getElementById("niftStudentId").value.trim(),
+                studentId: document.getElementById("niftStudentId").value.trim(),
                 niftEmail: document.getElementById("niftEmail").value.trim(),
                 collegeName: "NIFT Jodhpur",
                 department: document.getElementById("niftDepartment").value,
@@ -852,6 +857,8 @@
   </script>
 </body>
 </html>
+
+
 
 
 
