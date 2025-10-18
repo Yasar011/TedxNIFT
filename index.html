@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TEDxNIFT Jodhpur - Ideas Worth Spreading</title>
+    <!-- Favicon: A simple but important touch for branding -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90' fill='%23E62B1E'%3E❌%3C/text%3E%3C/svg%3E">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -54,19 +56,22 @@
 </head>
 <body class="antialiased overflow-x-hidden">
     
-    <!-- Header --><header class="sticky top-0 z-50 bg-[#111111] bg-opacity-80 backdrop-blur-sm shadow-lg">
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-[#111111] bg-opacity-80 backdrop-blur-sm shadow-lg">
         <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center py-4">
             <a href="index.html" class="flex items-center space-x-2 flex-shrink-0">
-                <span class="font-black text-2xl text-white">TEDx</span><span class="font-bold text-2xl text-ted-red">NIFTJodhpur</span>
+                <!-- Color Swap: TEDx is now red, NIFTJodhpur is now white -->
+                <span class="font-black text-2xl text-ted-red">TEDx</span><span class="font-bold text-2xl text-white">NIFTJodhpur</span>
             </a>
             
-            <!-- Desktop Nav --><div class="hidden md:flex items-center space-x-8">
-                <a href="index.html#about" class="text-gray-300 hover:text-white transition-colors font-medium">About</a>
-                <a href="index.html#speakers" class="text-gray-300 hover:text-white transition-colors font-medium">Speakers</a>
+            <!-- Desktop Nav -->
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#about" class="text-gray-300 hover:text-white transition-colors font-medium">About</a>
+                <a href="#speakers" class="text-gray-300 hover:text-white transition-colors font-medium">Speakers</a>
                 <a href="venue.html" class="text-gray-300 hover:text-white transition-colors font-medium">Venue</a>
                 <a href="schedule.html" class="text-gray-300 hover:text-white transition-colors font-medium">Schedule</a>
                 <a href="team.html" class="text-gray-300 hover:text-white transition-colors font-medium">Team</a>
-                <a href="index.html#sponsors" class="text-gray-300 hover:text-white transition-colors font-medium">Sponsors</a>
+                <a href="#sponsors" class="text-gray-300 hover:text-white transition-colors font-medium">Sponsors</a>
             </div>
 
             <div class="flex items-center">
@@ -74,22 +79,24 @@
                     Get Tickets
                 </a>
 
-                <!-- Mobile Menu Button --><button id="mobile-menu-button" class="md:hidden p-2 rounded-md text-gray-300 hover:text-white hover:bg-gray-700">
-                      <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-button" class="md:hidden p-2 rounded-md text-gray-300 hover:text-white hover:bg-gray-700">
+                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
                     </svg>
                 </button>
             </div>
         </nav>
 
-        <!-- Mobile Menu --><div id="mobile-menu" class="hidden md:hidden">
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="index.html#about" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">About</a>
-                <a href="index.html#speakers" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Speakers</a>
+                <a href="#about" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">About</a>
+                <a href="#speakers" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Speakers</a>
                 <a href="venue.html" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Venue</a>
                 <a href="schedule.html" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Schedule</a>
                  <a href="team.html" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Team</a>
-                <a href="index.html#sponsors" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Sponsors</a>
+                <a href="#sponsors" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Sponsors</a>
                 <a href="tickets.html" class="mobile-nav-link block w-full text-center mt-2 px-3 py-2 rounded-md text-base font-medium text-black bg-white hover:bg-gray-200">Get Tickets</a>
             </div>
         </div>
@@ -97,7 +104,8 @@
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <main>
-            <!-- Hero Section --><section class="py-20 md:py-32">
+            <!-- Hero Section -->
+            <section class="py-20 md:py-32">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
                     <div class="text-center md:text-left scroll-animate fade-in-left">
                         <p class="text-ted-red font-semibold mb-4 text-lg">Our Theme:</p>
@@ -108,9 +116,11 @@
                             <span>x = independently organized TED event</span>
                         </div>
                     </div>
-                    <div class="relative scroll-animate fade-in-right">
-                        <img src="logo.jpg" alt="TEDxNIFT Jodhpur Event Theme - Aarohan" class="rounded-xl mx-auto">
-                        <div class="absolute bottom-8 right-8 bg-gray-800 bg-opacity-80 backdrop-blur-sm p-6 rounded-lg shadow-xl text-white w-64 stats-box">
+                    <!-- Layout Change: Image and stats box are now separate to avoid overlap -->
+                    <div class="flex flex-col items-center gap-8">
+                        <!-- Transition Added: Image now zooms in on hover -->
+                        <img src="https://placehold.co/600x400/E62B1E/FFFFFF?text=Aarohan" alt="TEDxNIFT Jodhpur Event Theme - Aarohan" class="rounded-xl mx-auto w-full transform hover:scale-105 transition-transform duration-300 ease-in-out scroll-animate fade-in-right">
+                        <div class="bg-gray-800 bg-opacity-80 backdrop-blur-sm p-6 rounded-lg shadow-xl text-white w-full max-w-md stats-box scroll-animate fade-in-right" style="transition-delay: 0.2s">
                             <h3 class="font-bold text-lg mb-4">Ideas Worth Spreading</h3>
                             <div class="space-y-3">
                                 <div class="flex items-center justify-between">
@@ -131,7 +141,8 @@
                 </div>
             </section>
 
-            <!-- Venue & Date Info Section --><section id="event-info" class="py-20 scroll-animate fade-in-up">
+            <!-- Venue & Date Info Section -->
+            <section id="event-info" class="py-20 scroll-animate fade-in-up">
                 <div class="text-center">
                     <h2 class="text-2xl md:text-3xl font-semibold text-gray-400 tracking-wider uppercase">Enlighten Yourself At:</h2>
                     <p class="mt-4 text-5xl md:text-6xl font-black text-white">NIFT JODHPUR</p>
@@ -149,8 +160,22 @@
                     </div>
                 </div>
             </section>
+            
+            <!-- NEW: Countdown Timer Section -->
+            <section id="countdown" class="pb-20 scroll-animate fade-in-up">
+                <div class="text-center">
+                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-8">Event Starts In</h2>
+                    <div id="timer" class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 max-w-3xl mx-auto text-white">
+                        <div class="bg-gray-800 p-6 rounded-xl"><div id="days" class="text-5xl font-bold text-ted-red">0</div><div class="text-sm text-gray-400">Days</div></div>
+                        <div class="bg-gray-800 p-6 rounded-xl"><div id="hours" class="text-5xl font-bold text-ted-red">0</div><div class="text-sm text-gray-400">Hours</div></div>
+                        <div class="bg-gray-800 p-6 rounded-xl"><div id="minutes" class="text-5xl font-bold text-ted-red">0</div><div class="text-sm text-gray-400">Minutes</div></div>
+                        <div class="bg-gray-800 p-6 rounded-xl"><div id="seconds" class="text-5xl font-bold text-ted-red">0</div><div class="text-sm text-gray-400">Seconds</div></div>
+                    </div>
+                </div>
+            </section>
 
-            <!-- About Section --><section id="about" class="py-20">
+            <!-- About Section -->
+            <section id="about" class="py-20">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                     <div class="scroll-animate fade-in-left">
                         <h2 class="text-4xl md:text-5xl font-bold text-white leading-tight">About TEDxNIFTJodhpur</h2>
@@ -165,43 +190,49 @@
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-4 scroll-animate fade-in-right">
-                        <img src="_MG_0952.JPG" alt="Past Speaker 1" class="rounded-xl object-cover w-full h-full transform hover:scale-105 transition-transform duration-300">
-                        <img src="DDSD.jpg" alt="Event Audience" class="rounded-xl object-cover w-full h-full transform hover:scale-105 transition-transform duration-300 mt-8">
+                        <!-- Replaced local images with placeholders -->
+                        <img src="https://placehold.co/400x500/1A1A1A/FFFFFF?text=Event+Photo+1" alt="Past Speaker 1" class="rounded-xl object-cover w-full h-full transform hover:scale-105 transition-transform duration-300">
+                        <img src="https://placehold.co/400x500/1A1A1A/FFFFFF?text=Audience" alt="Event Audience" class="rounded-xl object-cover w-full h-full transform hover:scale-105 transition-transform duration-300 mt-8">
                         <img src="https://placehold.co/400x500/1A1A1A/FFFFFF?text=Venue" alt="Event Venue" class="rounded-xl object-cover w-full h-full transform hover:scale-105 transition-transform duration-300">
-                        <img src="2N0A9211.JPG" alt="Past Speaker 2" class="rounded-xl object-cover w-full h-full transform hover:scale-105 transition-transform duration-300 mt-8">
+                        <img src="https://placehold.co/400x500/1A1A1A/FFFFFF?text=Event+Photo+2" alt="Past Speaker 2" class="rounded-xl object-cover w-full h-full transform hover:scale-105 transition-transform duration-300 mt-8">
                     </div>
                 </div>
             </section>
 
-            <!-- Speakers Section --><section id="speakers" class="py-20">
+            <!-- Speakers Section -->
+            <section id="speakers" class="py-20">
                 <div class="text-center scroll-animate fade-in-up">
                     <h2 class="text-4xl md:text-5xl font-bold text-white">Meet Our Speakers</h2>
                     <p class="mt-4 text-gray-400 max-w-2xl mx-auto">Prepare to be inspired by a diverse lineup of visionaries, innovators, and storytellers.</p>
                 </div>
                 <div class="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                    <!-- Speaker 1: Mr. Amit Patil --><div class="scroll-animate fade-in-up bg-gray-800 rounded-xl overflow-hidden group transform hover:-translate-y-2 transition-transform duration-300 ease-in-out">
-                        <img src="Mr. Amit Patil.jpg" alt="Mr. Amit Patil" class="w-full h-80 object-cover object-center">
+                    <!-- Speaker 1: Mr. Amit Patil -->
+                    <div class="scroll-animate fade-in-up bg-gray-800 rounded-xl overflow-hidden group transform hover:-translate-y-2 transition-transform duration-300 ease-in-out">
+                        <img src="https://placehold.co/400x400/1A1A1A/FFFFFF?text=Amit+Patil" alt="Mr. Amit Patil" class="w-full h-80 object-cover object-center">
                         <div class="p-6">
                             <h3 class="text-xl font-bold text-white">Mr. Amit Patil</h3>
                             <p class="mt-1 text-ted-red font-semibold">Principal Design Manager at Microsoft</p>
                         </div>
                     </div>
-                    <!-- Speaker 2: Ms. Dolly Jain --><div class="scroll-animate fade-in-up bg-gray-800 rounded-xl overflow-hidden group transform hover:-translate-y-2 transition-transform duration-300 ease-in-out" style="transition-delay: 0.1s">
-                        <img src="Ms. Dolly Jain .jpg" alt="Ms. Dolly Jain" class="w-full h-80 object-cover object-center">
+                    <!-- Speaker 2: Ms. Dolly Jain -->
+                    <div class="scroll-animate fade-in-up bg-gray-800 rounded-xl overflow-hidden group transform hover:-translate-y-2 transition-transform duration-300 ease-in-out" style="transition-delay: 0.1s">
+                        <img src="https://placehold.co/400x400/1A1A1A/FFFFFF?text=Dolly+Jain" alt="Ms. Dolly Jain" class="w-full h-80 object-cover object-center">
                         <div class="p-6">
                             <h3 class="text-xl font-bold text-white">Ms. Dolly Jain</h3>
                             <p class="mt-1 text-ted-red font-semibold">Celebrity saree draper and artist</p>
                         </div>
                     </div>
-                    <!-- Speaker 3: Mr. Narpath Raman --><div class="scroll-animate fade-in-up bg-gray-800 rounded-xl overflow-hidden group transform hover:-translate-y-2 transition-transform duration-300 ease-in-out" style="transition-delay: 0.2s">
-                        <img src="WhatsApp Image 2025-10-11 at 13.10.48_d1e5b302.jpg" alt="Mr. Narpath Raman" class="w-full h-80 object-cover object-center">
+                    <!-- Speaker 3: Mr. Narpath Raman -->
+                    <div class="scroll-animate fade-in-up bg-gray-800 rounded-xl overflow-hidden group transform hover:-translate-y-2 transition-transform duration-300 ease-in-out" style="transition-delay: 0.2s">
+                        <img src="https://placehold.co/400x400/1A1A1A/FFFFFF?text=Narpath+Raman" alt="Mr. Narpath Raman" class="w-full h-80 object-cover object-center">
                         <div class="p-6">
                             <h3 class="text-xl font-bold text-white">Mr. Narpath Raman</h3>
                             <p class="mt-1 text-ted-red font-semibold">Celebrity Mentalist and Human Behaviour Coach</p>
                         </div>
                     </div>
-                    <!-- Speaker 4: Princess Jahnavi Kumari --><div class="scroll-animate fade-in-up bg-gray-800 rounded-xl overflow-hidden group transform hover:-translate-y-2 transition-transform duration-300 ease-in-out" style="transition-delay: 0.3s">
-                        <img src="Princess.jpg" alt="Princess Jahnavi Kumari" class="w-full h-80 object-cover object-center">
+                    <!-- Speaker 4: Princess Jahnavi Kumari -->
+                    <div class="scroll-animate fade-in-up bg-gray-800 rounded-xl overflow-hidden group transform hover:-translate-y-2 transition-transform duration-300 ease-in-out" style="transition-delay: 0.3s">
+                        <img src="https://placehold.co/400x400/1A1A1A/FFFFFF?text=Princess+Jahnavi" alt="Princess Jahnavi Kumari" class="w-full h-80 object-cover object-center">
                         <div class="p-6">
                             <h3 class="text-xl font-bold text-white">Princess Jahnavi Kumari</h3>
                             <p class="mt-1 text-ted-red font-semibold">Hukum Raj Legacy and Portfolio manager</p>
@@ -210,10 +241,11 @@
                 </div>
             </section>
             
-            <!-- Team Section --><section class="py-20">
+            <!-- Team Section -->
+            <section id="team" class="py-20">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                     <div class="grid grid-cols-2 gap-4 scroll-animate fade-in-left">
-                       <img src="https://akm-img-a-in.tosshub.com/sites/events/conclave/2025/sponsor/nift-logo.png" alt="TEDx Team" class="rounded-xl object-cover w-full h-full mt-8">
+                       <img src="https://akm-img-a-in.tosshub.com/sites/events/conclave/2025/sponsor/nift-logo.png" alt="TEDx Team" class="rounded-xl object-contain w-full h-full mt-8 p-4 bg-white">
                        <img src="https://img.studyclap.com/img/institute/college/original/5569/nift-jodhpur-190745cc52.jpg" alt="NIFT Jodhpur Campus" class="rounded-xl object-cover w-full h-full">
                     </div>
                     <div class="scroll-animate fade-in-right" style="transition-delay: 0.2s">
@@ -226,7 +258,8 @@
                 </div>
             </section>
 
-            <!-- Sponsors Section --><section id="sponsors" class="py-20 scroll-animate fade-in-up">
+            <!-- Sponsors Section -->
+            <section id="sponsors" class="py-20 scroll-animate fade-in-up">
                 <div class="text-center">
                     <h2 class="text-4xl md:text-5xl font-bold text-white">Our Valued Sponsors</h2>
                     <p class="mt-4 text-gray-400 max-w-2xl mx-auto">We are grateful for the support of our partners who help make this event possible.</p>
@@ -240,7 +273,8 @@
                 </div>
             </section>
 
-             <!-- CTA Section --><section class="py-20 scroll-animate zoom-in">
+             <!-- CTA Section -->
+             <section class="py-20 scroll-animate zoom-in">
                 <div class="bg-gray-800 rounded-2xl p-10 md:p-16">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                         <div>
@@ -251,7 +285,7 @@
                             </a>
                         </div>
                         <div class="flex justify-center">
-                             <img src="2N0A9238.JPG" alt="Abstract creative image" class="rounded-xl w-full max-w-sm">
+                            <img src="https://placehold.co/400x300/1A1A1A/FFFFFF?text=Join+Us" alt="Abstract creative image" class="rounded-xl w-full max-w-sm">
                         </div>
                     </div>
                 </div>
@@ -260,25 +294,27 @@
         </main>
     </div>
 
-    <!-- Footer --><footer class="border-t border-gray-800 py-12">
+    <!-- Footer -->
+    <footer class="border-t border-gray-800 py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div class="md:col-span-1">
                     <a href="index.html" class="flex items-center space-x-2">
-                        <span class="font-black text-xl text-white">TEDx</span><span class="font-bold text-xl text-ted-red">NIFTJodhpur</span>
+                        <!-- Color Swap: TEDx is now red, NIFTJodhpur is now white -->
+                        <span class="font-black text-xl text-ted-red">TEDx</span><span class="font-bold text-xl text-white">NIFTJodhpur</span>
                     </a>
                     <p class="mt-4 text-gray-400 text-sm">This independent TEDx event is operated under license from TED.</p>
                      <div class="mt-4 flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="YouTube"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z" clip-rule="evenodd"></path></svg></a>
-                        <a href="https://www.instagram.com/tedxnift.jodhpur?igsh=bmxyOG9ocnI1d2Vu" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition-colors" aria-label="Instagram"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.85s-.011 3.585-.069 4.85c-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07s-3.585-.012-4.85-.07c-3.252-.148-4.771-1.691-4.919-4.919-.058-1.265-.069-1.645-.069-4.85s.011-3.585.069-4.85c.149-3.225 1.664 4.771 4.919-4.919 1.266-.058 1.644-.07 4.85-.07zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948s.014 3.667.072 4.947c.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072s3.667-.014 4.947-.072c4.358-.2 6.78-2.618 6.98-6.98.059-1.281.073-1.689.073-4.948s-.014-3.667-.072-4.947c-.2-4.358-2.618-6.78-6.98-6.98-1.281-.059-1.689-.073-4.948-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.79 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44 1.441-.645 1.441-1.44-.645-1.44-1.441-1.44z" clip-rule="evenodd"></path></svg></a>
-                    </div>
+                         <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="YouTube"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z" clip-rule="evenodd"></path></svg></a>
+                         <a href="https://www.instagram.com/tedxnift.jodhpur?igsh=bmxyOG9ocnI1d2Vu" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition-colors" aria-label="Instagram"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.85s-.011 3.585-.069 4.85c-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07s-3.585-.012-4.85-.07c-3.252-.148-4.771-1.691-4.919-4.919-.058-1.265-.069-1.645-.069-4.85s.011-3.585.069-4.85c.149-3.225 1.664 4.771 4.919-4.919 1.266-.058 1.644-.07 4.85-.07zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948s.014 3.667.072 4.947c.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072s3.667-.014 4.947-.072c4.358-.2 6.78-2.618 6.98-6.98.059-1.281.073-1.689.073-4.948s-.014-3.667-.072-4.947c-.2-4.358-2.618-6.78-6.98-6.98-1.281-.059-1.689-.073-4.948-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.79 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44 1.441-.645 1.441-1.44-.645-1.44-1.441-1.44z" clip-rule="evenodd"></path></svg></a>
+                     </div>
                     <p class="mt-4 text-gray-400 text-sm">© 2025 TEDxNIFTJodhpur. All rights reserved.</p>
                 </div>
                 <div>
                     <h4 class="font-semibold text-white">Navigation</h4>
                     <ul class="mt-4 space-y-2 text-gray-400">
-                        <li><a href="index.html#about" class="hover:text-white">About Us</a></li>
-                        <li><a href="index.html#speakers" class="hover:text-white">Speakers</a></li>
+                        <li><a href="#about" class="hover:text-white">About Us</a></li>
+                        <li><a href="#speakers" class="hover:text-white">Speakers</a></li>
                         <li><a href="venue.html" class="hover:text-white">Venue</a></li>
                         <li><a href="schedule.html" class="hover:text-white">Schedule</a></li>
                         <li><a href="team.html" class="hover:text-white">Our Team</a></li>
@@ -376,6 +412,28 @@
                 }, { threshold: 0.5 });
                 statsObserver.observe(statsBox);
             }
+
+            // Countdown Timer Logic
+            const countDownDate = new Date("Nov 9, 2025 09:00:00").getTime();
+            const timerInterval = setInterval(function() {
+                const now = new Date().getTime();
+                const distance = countDownDate - now;
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById("days").innerText = days;
+                document.getElementById("hours").innerText = hours;
+                document.getElementById("minutes").innerText = minutes;
+                document.getElementById("seconds").innerText = seconds;
+
+                if (distance < 0) {
+                    clearInterval(timerInterval);
+                    document.getElementById("timer").innerHTML = '<div class="col-span-4 text-center text-3xl font-bold text-white">The event has started!</div>';
+                }
+            }, 1000);
         });
     </script>
 
