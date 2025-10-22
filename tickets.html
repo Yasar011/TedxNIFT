@@ -88,10 +88,16 @@
                         <span id="student-price-original" class="text-xl font-medium text-gray-400 line-through"></span>
                     </div>
                     <p id="student-offer-deadline" class="mt-2 text-xs font-semibold text-gray-300"></p>
+                    <!-- NEW: Special note for early bird -->
+                    <p id="student-early-bird-note" class="hidden mt-2 text-xs font-semibold text-amber-400 animate-pulse">
+                        Early bird price is valid for the first 20 seats only!
+                    </p>
                 </div>
                 <ul class="mt-6 space-y-3 text-gray-300 flex-grow">
                     <li class="flex items-start"><span class="text-ted-red mr-3 mt-1">✔</span><span>Full-Day Event Access to all sessions</span></li>
                     <li class="flex items-start"><span class="text-ted-red mr-3 mt-1">✔</span><span>Networking opportunities with speakers</span></li>
+                    <!-- NEW: Limited seats message -->
+                    <li class="flex items-start"><span class="text-amber-400 mr-3 mt-1">!</span><span class="text-amber-400 italic">Limited seats available!</span></li>
                 </ul>
                 <a href="Bbooking.html" class="mt-8 block w-full text-center px-8 py-3 bg-white text-black font-bold rounded-full hover:bg-gray-200 transition-colors">
                     Book Now
@@ -104,18 +110,18 @@
                 <h3 class="text-2xl font-bold text-white">General Pass</h3>
                 <p class="mt-1 font-semibold text-ted-red">For students of IIT, NIT, AIIMS &amp; other colleges</p>
                 <div class="mt-6">
-                    <div class="flex items-baseline gap-x-2">
-                         <span id="general-price" class="text-5xl font-black text-white"></span>
-                         <span id="general-price-original" class="text-xl font-medium text-gray-400 line-through"></span>
-                    </div>
-                    <p id="general-offer-deadline" class="mt-2 text-xs font-semibold text-gray-300"></p>
+                    <!-- OLD Price section removed and replaced -->
+                    <p class="text-3xl font-bold text-gray-400 h-20 flex items-center justify-center">Booking Closed</p>
                 </div>
                 <ul class="mt-6 space-y-3 text-gray-300 flex-grow">
                     <li class="flex items-start"><span class="text-ted-red mr-3 mt-1">✔</span><span>Full-Day Event Access to all sessions</span></li>
                     <li class="flex items-start"><span class="text-ted-red mr-3 mt-1">✔</span><span>Networking opportunities with speakers</span></li>
+                    <!-- NEW: Limited seats message -->
+                    <li class="flex items-start"><span class="text-amber-400 mr-3 mt-1">!</span><span class="text-amber-400 italic">Limited seats available!</span></li>
                 </ul>
-                <a href="Bbooking.html" class="mt-8 block w-full text-center px-8 py-3 bg-ted-red text-white font-bold rounded-full hover:bg-red-700 transition-colors">
-                    Book Now
+                <!-- Updated Button -->
+                <a href="#" class="mt-8 block w-full text-center px-8 py-3 bg-gray-700 text-gray-400 cursor-not-allowed opacity-70 hover:bg-gray-700 font-bold rounded-full transition-colors">
+                    Booking Closed
                 </a>
             </div>
             
@@ -206,13 +212,11 @@
             // Get DOM elements
             const studentPriceEl = document.getElementById('student-price');
             const studentPriceOriginalEl = document.getElementById('student-price-original');
-            const studentOfferDeadlineEl = document.getElementById('student-offer-deadline');
             
-            const generalPriceEl = document.getElementById('general-price');
-            const generalPriceOriginalEl = document.getElementById('general-price-original');
-            const generalOfferDeadlineEl = document.getElementById('general-offer-deadline');
-
             const offerExpiredMessageEl = document.getElementById('offer-expired-message');
+
+            // NEW: Get the special early bird note for students
+            const studentEarlyBirdNoteEl = document.getElementById('student-early-bird-note');
 
             const isOfferActive = now < offerEndDate;
 
@@ -220,22 +224,19 @@
                 // Set Student Ticket prices
                 studentPriceEl.textContent = `₹${studentPrices.earlyBird}`;
                 studentPriceOriginalEl.textContent = `₹${studentPrices.standard}`;
-                studentOfferDeadlineEl.textContent = `Offer valid till ${offerEndDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
 
-                // Set General Ticket prices
-                generalPriceEl.textContent = `₹${generalPrices.earlyBird}`;
-                generalPriceOriginalEl.textContent = `₹${generalPrices.standard}`;
-                generalOfferDeadlineEl.textContent = `Offer valid till ${offerEndDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+                // NEW: Show the special note
+                studentEarlyBirdNoteEl.classList.remove('hidden');
+
+                // Set General Ticket prices - REMOVED
 
             } else {
                 // Offer has expired, show standard pricing
                 studentPriceEl.textContent = `₹${studentPrices.standard}`;
                 studentPriceOriginalEl.style.display = 'none'; // Hide strikethrough price
-                studentOfferDeadlineEl.style.display = 'none'; // Hide deadline text
 
-                generalPriceEl.textContent = `₹${generalPrices.standard}`;
-                generalPriceOriginalEl.style.display = 'none'; // Hide strikethrough price
-                generalOfferDeadlineEl.style.display = 'none'; // Hide deadline text
+                // NEW: Make sure the special note is hidden if the offer is over
+                studentEarlyBirdNoteEl.style.display = 'none';
                 
                 // Show the "offer expired" message
                 offerExpiredMessageEl.classList.remove('hidden');
@@ -244,6 +245,4 @@
     </script>
 </body>
 </html>
-
-
 
