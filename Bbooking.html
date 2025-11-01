@@ -17,7 +17,7 @@
     }
     .text-ted-red { color: #E62B1E; }
     .bg-ted-red { background-color: #E62B1E; }
-    
+
     /* Original Booking Styles (adapted) */
     .booking-container {
       background: #1e1e1e;
@@ -66,9 +66,9 @@
     .screen {
       background: #e62b1e; color: #fff;
       padding: 6px 12px; border-radius: 4px; text-align: center;
-      font-weight: 600; font-size: 12px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 2px;
+      font-weight: 600; font-size: 12px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 2px;
     }
-    .direction { display: flex; justify-content: space-between; font-size: 10px; margin-top: 8px; color: #888; }
+    .direction { display: flex; justify-content: space-between; font-size: 10px; margin: 4px 0; color: #888; }
     .direction span {
       background: #333; color: #e0e0e0; padding: 2px 6px; border-radius: 4px;
     }
@@ -76,7 +76,7 @@
     .row-label {
       width: 14px; text-align: right; margin-right: 4px; font-size: 8px; font-weight: 600; color: #888;
     }
-    .seats { display: flex; flex-wrap: nowrap; justify-content: center; }
+    .seats { display: flex; flex-wrap: nowrap; }
     .seat {
       width: 22px; height: 22px; margin: 1px; border-radius: 3px;
       display: flex; align-items: center; justify-content: center;
@@ -128,7 +128,7 @@
         cursor: not-allowed;
     }
     .terms-group { font-size: 12px; display: flex; align-items: center; gap: 8px; margin-bottom: 16px; color: #aaa;}
-    .terms-group a { color: #e62b1e; text-decoration: none; cursor: pointer;}
+    .terms-group a { color: #e62b1e; text-decoration: none;}
     .book-btn {
       width:100%; padding:12px; background: #e62b1e; color:#fff;
       border:none; border-radius:8px; font-size:16px; font-weight:600;
@@ -144,7 +144,7 @@
     }
     .modal-content {
       background: #1e1e1e; color: #e0e0e0; padding: 25px;
-      border-radius: 10px; text-align: left; width: 90%; max-width: 450px;
+      border-radius: 10px; text-align: left; width: 90%; max-width: 400px;
       box-shadow: 0 5px 15px rgba(0,0,0,0.3); border: 1px solid #333;
     }
     .modal-content h3 { margin-bottom: 15px; font-size: 20px; text-align: center; font-weight: 700; color: #fff;}
@@ -161,7 +161,6 @@
     .close-btn, .cancel-btn { background-color: #c0392b; color: white; }
     .submit-payment-btn { background-color: #e62b1e; color: white; }
     .hidden { display: none; }
-    .terms-content { max-height: 300px; overflow-y: auto; padding-right: 15px; }
   </style>
 </head>
 <body class="antialiased">
@@ -220,9 +219,9 @@
         </div>
 
         <div class="event-card">
-          <div class="event-theme">Tedx Event</div>
+          <div class="event-theme">Annual Flagship Event</div>
           <div class="event-time">10:00 AM</div>
-          <div class="event-price">₹<span id="eventPrice">199/299</span> Early Access</div>
+          <div class="event-price">₹<span id="eventPrice">399</span> Early Access</div>
         </div>
 
         <div class="legend">
@@ -235,8 +234,8 @@
         <div class="seating-area">
           <div class="auditorium">
             <div class="screen">STAGE</div>
-            <div id="seatingChart"></div>
             <div class="direction"><span>Entrance</span><span>Exit</span></div>
+            <div id="seatingChart"></div>
           </div>
         </div>
 
@@ -360,7 +359,7 @@
             </div>
             <div class="terms-group">
                 <input type="checkbox" id="terms" required>
-                <label for="terms">I agree to the <a id="termsLink">terms and conditions</a>.</label>
+                <label for="terms">I agree to the <a href="#" onclick="alert('Terms & Conditions: ...')">terms and conditions</a>.</label>
             </div>
             <button type="button" id="payBtn" class="book-btn" disabled>Proceed to Pay</button>
         </form>
@@ -422,7 +421,7 @@
         <li><strong>Proceed to Pay:</strong> Click the "Proceed to Pay" button. A payment pop-up will appear.</li>
         <li><strong>Complete Payment:</strong> Scan the QR code to pay and enter the Transaction ID (UTR) in the provided field.</li>
         <li><strong>Submit & Confirm:</strong> Click "Submit". Your booking details will be submitted for verification.</li>
-        <li><strong>Verification:</strong> We will check your details and send a confirmation email to you within <strong>2-4 hours</strong>. You can show this email at the registration desk on the event day.</li>
+        <li><strong>Verification:</strong> We will check your details and send a confirmation email with your ticket to you within <strong>2-4 hours</strong>.</li>
     </ol>
     <div class="modal-buttons">
       <button id="closeHowToBookBtn" class="modal-btn close-btn">Got It!</button>
@@ -449,7 +448,7 @@
  <div id="paymentModal" class="modal-overlay">
   <div class="modal-content">
     <h3>Complete Your Payment</h3>
-    <p class="text-center text-lg font-bold text-white mb-2">Amount to Pay: ₹<span id="paymentAmount">299</span></p>
+    <p class="text-center text-lg font-bold text-white mb-2">Amount to Pay: ₹<span id="paymentAmount">399</span></p>
     <p class="text-center">Scan the QR code below to pay.</p>
     <p id="qrCodeInfo" class="text-center text-sm text-gray-400 mb-2"></p>
     <img id="paymentQrImage" src="https://placehold.co/150x150/ffffff/000000?text=SCAN" alt="Payment QR Code" class="payment-qr">
@@ -469,27 +468,10 @@
   <div class="modal-content">
     <h3 class="text-green-400">Booking Submitted!</h3>
     <p>Thank you! Your booking details have been received successfully.</p>
-    <p>We will now verify your payment and information. A confirmation email will be sent to your registered email address within <strong>2-4 hours</strong>.</p>
+    <p>We will now verify your payment and information. A final confirmation email with your e-ticket will be sent to your registered email address within <strong>2-4 hours</strong>.</p>
     <p class="mt-4 text-sm text-center">Your Ticket ID is: <strong id="modalTicketId" class="text-white"></strong></p>
     <div class="modal-buttons">
       <button id="closeConfirmationBtn" class="modal-btn submit-payment-btn">OK</button>
-    </div>
-  </div>
-</div>
-
-<!-- Terms Modal -->
-<div id="termsModal" class="modal-overlay">
-  <div class="modal-content">
-    <h3>Terms & Conditions</h3>
-    <div class="terms-content">
-        <p><strong>1. Ticket Purchase:</strong> All ticket sales are final. No refunds or cancellations will be issued once the payment is complete, as per our Refund/Cancellation Policy.</p>
-        <p><strong>2. Admission:</strong> You must present your e-ticket (sent via email) with a valid ID for entry. The organizers reserve the right to refuse admission.</p>
-        <p><strong>3. Conduct:</strong> Attendees are expected to behave respectfully. Any disruptive behavior may result in removal from the event without a refund.</p>
-        <p><strong>4. Photography & Recording:</strong> By attending, you consent to be photographed, filmed, or recorded. These materials may be used for promotional purposes.</p>
-        <p><strong>5. Liability:</strong> TEDxNIFTJodhpur is not liable for any personal injury, loss, or damage to property.</p>
-    </div>
-    <div class="modal-buttons">
-      <button id="closeTermsBtn" class="modal-btn close-btn">Close</button>
     </div>
   </div>
 </div>
@@ -513,8 +495,8 @@
   </script>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-database.js";
 
     const firebaseConfig = {
       // THIS IS A DEMO KEY AND WILL BE REPLACED
@@ -531,23 +513,23 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    const generalQrCodes = [
-        { name: "Thanisha Canara Bank", url: "canara 299 thanisha .jpg" },
-        { name: "Thanisha ICICI Bank", url: "Icicc 299 tanisha .jpg" },
-        { name: "Yasar SBI", url: "sbi 299 yasar .jpg" },
-        { name: "Yasar KGB", url: "Kbg299Yasar.jpg" },
-        { name: "Yasar Slice", url: "slice 299 yasar .jpg" }
+    // Array of UPI accounts to rotate through
+    const upiAccounts = [
+      { upiId: 'tishagupta2403@okhdfcbank', payeeName: 'Tanisha' },
+      { upiId: 'tishagupta2403@okicici', payeeName: 'Tanisha' },
+      { upiId: 'chyasar2004@okaxis', payeeName: 'Yasar' },
+      { upiId: 'chyasar2004-2@oksbi', payeeName: 'Yasar' },
+      { upiId: 'chyasar2004-1@oksbi', payeeName: 'Yasar' }
     ];
-    const niftQrCodes = [
-        { name: "Thanisha Canara Bank NIFT", url: "cnara 199 thsnisha .jpg" },
-        { name: "Thanisha ICICI Bank NIFT", url: "tanisha199icic.jpg" },
-        { name: "Yasar SBI NIFT", url: "yasar 199 kgb.jpg" },
-        { name: "Yasar KGB NIFT", url: "Yasar199sbi.jpg" }
-    ];
+    
+    // Remove the old placeholder QR code URL arrays
+    // const generalQrCodeUrls = [ ... ];
+    // const niftQrCodeUrls = [ ... ];
 
     let selectedSeat = null;
     let selectedSeatElement = null;
-    let lastUsedQrIndex = null; // Variable to track the last shown QR code index
+    let lastUsedUpiId = null; // Variable to track the last used UPI ID
+    let lastUsedPayeeName = null; // Variable to track the last used Payee Name
 
     document.addEventListener("DOMContentLoaded", () => {
       const seatingChart = document.getElementById("seatingChart");
@@ -562,17 +544,14 @@
       const paymentModal = document.getElementById("paymentModal");
       const howToBookModal = document.getElementById("howToBookModal");
       const confirmationModal = document.getElementById("confirmationModal");
-      const termsModal = document.getElementById("termsModal");
 
-      // Modal Buttons & Links
+      // Modal Buttons
       const helpBtn = document.querySelector(".btn-help");
       const howToBookBtn = document.querySelector(".btn-how-to-book");
       const chatNowBtn = document.getElementById("chatNowBtn");
       const closeHelpModalBtn = document.getElementById("closeHelpModalBtn");
       const closeHowToBookBtn = document.getElementById("closeHowToBookBtn");
       const closeConfirmationBtn = document.getElementById("closeConfirmationBtn");
-      const termsLink = document.getElementById("termsLink");
-      const closeTermsBtn = document.getElementById("closeTermsBtn");
 
       // Dynamic Form Fields
       const userTypeSelect = document.getElementById('userType');
@@ -592,13 +571,6 @@
         helpModal.style.display = "none";
       });
 
-      // Terms Modal Logic
-      termsLink.addEventListener("click", (e) => { 
-        e.preventDefault();
-        termsModal.style.display = "flex"; 
-      });
-      closeTermsBtn.addEventListener("click", () => { termsModal.style.display = "none"; });
-
       // Confirmation Modal Logic
       closeConfirmationBtn.addEventListener("click", () => { confirmationModal.style.display = "none"; });
 
@@ -615,7 +587,6 @@
         if (event.target === paymentModal) paymentModal.style.display = "none";
         if (event.target === howToBookModal) howToBookModal.style.display = "none";
         if (event.target === confirmationModal) confirmationModal.style.display = "none";
-        if (event.target === termsModal) termsModal.style.display = "none";
       });
 
       termsCheckbox.addEventListener("change", () => {
@@ -627,7 +598,7 @@
         const value = userTypeSelect.value;
         
         // Update price display
-        const price = (value === 'nift_student') ? 199 : 299;
+        const price = (value === 'nift_student') ? 299 : 399;
         document.getElementById('eventPrice').textContent = price;
 
         studentFields.classList.toggle('hidden', value !== 'student');
@@ -724,18 +695,30 @@
           const userType = document.getElementById('userType').value;
           const isNiftStudent = userType === 'nift_student';
           
-          const amount = isNiftStudent ? 199 : 299;
-          const selectedQrCodes = isNiftStudent ? niftQrCodes : generalQrCodes;
+          const amount = isNiftStudent ? 299 : 399;
 
-          // Show a random QR code to distribute payments
-          const qrIndex = Math.floor(Math.random() * selectedQrCodes.length);
-          lastUsedQrIndex = qrIndex; // Store the index of the QR code being shown
+          // Select a random UPI account from the list
+          const accountIndex = Math.floor(Math.random() * upiAccounts.length);
+          const selectedAccount = upiAccounts[accountIndex];
+          lastUsedUpiId = selectedAccount.upiId; // Store the UPI ID used
+          lastUsedPayeeName = selectedAccount.payeeName; // Store the Payee Name used
+
           const paymentQrImage = document.getElementById('paymentQrImage');
           const qrCodeInfo = document.getElementById('qrCodeInfo');
           
+          // Generate the UPI QR code string
+          // pa = Payee Address (UPI ID)
+          // pn = Payee Name
+          // am = Amount
+          // cu = Currency (INR)
+          const upiString = `upi://pay?pa=${selectedAccount.upiId}&pn=${encodeURIComponent(selectedAccount.payeeName)}&am=${amount}.00&cu=INR`;
+          
+          // Use a QR code generation API
+          const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(upiString)}`;
+          
           document.getElementById('paymentAmount').textContent = amount;
-          paymentQrImage.src = selectedQrCodes[qrIndex].url;
-          qrCodeInfo.textContent = selectedQrCodes[qrIndex].name;
+          paymentQrImage.src = qrApiUrl; // Set the source to the generated QR code
+          qrCodeInfo.textContent = `Pay to: ${selectedAccount.payeeName} (${selectedAccount.upiId})`;
           
           paymentModal.style.display = 'flex';
         }
@@ -800,8 +783,9 @@
           phone: document.getElementById("phone").value.trim(),
           seatNumber: selectedSeat,
           utr: utr,
-          // Corrected the paymentQR string to be more descriptive
-          paymentQR: lastUsedQrIndex !== null ? (isNiftStudent ? niftQrCodes[lastUsedQrIndex].name : generalQrCodes[lastUsedQrIndex].name) : 'N/A'
+          // Store the actual UPI ID that was used for payment
+          paymentUpiId: lastUsedUpiId || 'N/A',
+          paymentQR: lastUsedPayeeName || 'N/A' // Store the Payee Name
         };
 
         let specificData = {};
@@ -833,7 +817,7 @@
         const ticketId = `TEDX-${formData.seatNumber}-${Date.now().toString().slice(-6)}`;
         formData.ticketId = ticketId;
 
-        const price = formData.userType === 'nift_student' ? 199 : 299;
+        const price = formData.userType === 'nift_student' ? 299 : 399;
 
         try {
           await set(ref(db, `seats/${selectedSeat}`), {
@@ -886,4 +870,13 @@
   </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
 
