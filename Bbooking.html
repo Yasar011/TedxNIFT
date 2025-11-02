@@ -137,6 +137,18 @@
     .book-btn:hover { background:#c52115; }
     .book-btn:disabled { background: #555; cursor: not-allowed; }
     
+    .form-group input#finalPrice {
+      background-color: #1a1a1a;
+      border-color: #444;
+      color: #27AE60; /* Green color for price */
+      font-weight: 700;
+      font-size: 18px;
+      text-align: center;
+      cursor: default;
+    }
+    #promoStatus.success { color: #27AE60; }
+    #promoStatus.error { color: #e62b1e; }
+    
     .modal-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px);
@@ -354,6 +366,20 @@
             </div>
 
             <div class="form-group">
+                <label for="promoCodeInput">Promo Code (Optional)</label>
+                <div class="flex gap-2">
+                    <input id="promoCodeInput" type="text" class="flex-grow" placeholder="Enter code" oninput="this.value = this.value.toUpperCase()">
+                    <button type="button" id="applyPromoBtn" class="px-4 py-2 bg-gray-600 text-white rounded-md text-sm font-medium hover:bg-gray-500">Apply</button>
+                </div>
+                <p id="promoStatus" class="text-xs mt-2 hidden"></p>
+            </div>
+    
+            <div class="form-group">
+                <label for="finalPrice">Final Price</label>
+                <input id="finalPrice" type="text" value="₹399" readonly class="text-lg font-bold">
+            </div>
+
+            <div class="form-group">
                 <label for="seatNumber">Selected Seat</label>
                 <input id="seatNumber" type="text" readonly required>
             </div>
@@ -530,6 +556,10 @@
     let selectedSeatElement = null;
     let lastUsedUpiId = null; // Variable to track the last used UPI ID
     let lastUsedPayeeName = null; // Variable to track the last used Payee Name
+    
+    let currentBasePrice = 399;
+    let currentFinalPrice = 399;
+    let appliedPromo = { code: null, discountAmount: 0 };
 
     document.addEventListener("DOMContentLoaded", () => {
       const seatingChart = document.getElementById("seatingChart");
@@ -559,6 +589,12 @@
       const otherFields = document.getElementById('otherFields');
       const niftStudentFields = document.getElementById('niftStudentFields'); // New NIFT fields
 
+      // Promo Code Elements
+      const promoCodeInput = document.getElementById('promoCodeInput');
+      const applyPromoBtn = document.getElementById('applyPromoBtn');
+      const promoStatus = document.getElementById('promoStatus');
+      const finalPriceInput = document.getElementById('finalPrice');
+
       // 'How to Book' Modal Logic
       howToBookBtn.addEventListener("click", () => { howToBookModal.style.display = "flex"; });
       closeHowToBookBtn.addEventListener("click", () => { howToBookModal.style.display = "none"; });
@@ -580,6 +616,7 @@
       payBtn.addEventListener("click", handlePayNow);
       cancelPaymentBtn.addEventListener("click", () => { paymentModal.style.display = "none"; });
       submitPaymentBtn.addEventListener("click", handleFormSubmit);
+      applyPromoBtn.addEventListener("click", handlePromoApply); // Add listener for promo button
 
       // Close modals on overlay click
       window.addEventListener("click", (event) => {
@@ -600,6 +637,7 @@
         // Update price display
         const price = (value === 'nift_student') ? 299 : 399;
         document.getElementById('eventPrice').textContent = price;
+        updatePrice(price); // Update and reset promo codes
 
         studentFields.classList.toggle('hidden', value !== 'student');
         otherFields.classList.toggle('hidden', value !== 'other');
@@ -623,6 +661,8 @@
             }
         });
       }
+
+      // DELETED duplicate toggleRequired function that was causing the syntax error
 
       onValue(ref(db, "seats/"), snapshot => {
         renderSeating(snapshot.val() || {});
@@ -676,6 +716,7 @@
         });
       }
 
+      // ADDED back the missing selectSeat function
       function selectSeat(el, id) {
         if (el.classList.contains("occupied") || el.classList.contains("reserved")) return;
 
@@ -687,15 +728,108 @@
         selectedSeatElement = el;
         document.getElementById("seatNumber").value = id;
         bookingForm.style.display = "block";
+
+        // Reset price and promo when a new seat is selected
+        const userType = userTypeSelect.value;
+        const price = (userType === 'nift_student') ? 299 : 399;
+        updatePrice(userType ? price : 399); // Use 399 as default if no type selected
+        
         bookingForm.scrollIntoView({ behavior: "smooth", block: "start" });
       }
+
+      // New Helper Function to update price and reset promo
+      function updatePrice(basePrice) {
+            currentBasePrice = basePrice;
+            currentFinalPrice = basePrice;
+            appliedPromo = { code: null, discountAmount: 0 }; // Reset promo
+            
+            finalPriceInput.value = `₹${currentFinalPrice}`;
+            promoCodeInput.value = "";
+            promoCodeInput.disabled = false;
+            applyPromoBtn.disabled = false;
+            promoStatus.textContent = "";
+            promoStatus.className = "";
+            promoStatus.classList.add('hidden');
+      }
+
+      // FIXED the onValue listener to only render the chart
+      // The seat selection logic was moved to the selectSeat function
+      onValue(ref(db, "seats/"), snapshot => {
+        renderSeating(snapshot.val() || {});
+      });
       
+      // New Function to handle Promo Code logic
+      function handlePromoApply() {
+            const code = promoCodeInput.value.trim().toUpperCase();
+            const userType = userTypeSelect.value;
+
+            if (appliedPromo.code) return; // Already applied
+
+            if (!userType) {
+                showPromoStatus("Please select your category first.", "error");
+                return;
+            }
+
+            let discountAmount = 0;
+            let promoCodeName = null;
+            let isValid = false;
+
+            if (code === 'TED10NIFTJ') {
+                if (userType === 'nift_student' || userType === 'student') {
+                    discountAmount = Math.round(currentBasePrice * 0.10);
+                    promoCodeName = code;
+                    isValid = true;
+                } else {
+                    showPromoStatus("This code is only for students.", "error");
+                    return;
+                }
+            } else if (code === 'TEDX100') {
+                discountAmount = 100;
+                promoCodeName = code;
+                isValid = true;
+            } else if (code === 'IIT15TEDX') {
+                discountAmount = Math.round(currentBasePrice * 0.15);
+                promoCodeName = code;
+                isValid = true;
+            } else if (code === 'IIT10TEDX') {
+                discountAmount = Math.round(currentBasePrice * 0.10);
+                promoCodeName = code;
+                isValid = true;
+            } else {
+                showPromoStatus("Invalid promo code.", "error");
+                return;
+            }
+
+            if (isValid) {
+                if (discountAmount > currentBasePrice) {
+                    discountAmount = currentBasePrice; // Cannot discount more than the price
+                }
+                
+                appliedPromo.code = promoCodeName;
+                appliedPromo.discountAmount = discountAmount;
+                currentFinalPrice = currentBasePrice - discountAmount;
+                
+                finalPriceInput.value = `₹${currentFinalPrice} (Saved ₹${discountAmount})`;
+                showPromoStatus(`'${promoCodeName}' applied! You saved ₹${discountAmount}.`, "success");
+                
+                promoCodeInput.disabled = true;
+                applyPromoBtn.disabled = true;
+            }
+        }
+
+      // New Helper Function to show promo status
+      function showPromoStatus(message, type) {
+            promoStatus.textContent = message;
+            promoStatus.className = type; // 'success' or 'error'
+            promoStatus.classList.remove('hidden');
+      }
+
       function handlePayNow() {
         if (validateForm()) {
-          const userType = document.getElementById('userType').value;
-          const isNiftStudent = userType === 'nift_student';
+          // const userType = document.getElementById('userType').value; // No longer needed
+          // const isNiftStudent = userType === 'nift_student'; // No longer needed
           
-          const amount = isNiftStudent ? 299 : 399;
+          const amount = currentFinalPrice; // Use the final calculated price
 
           // Select a random UPI account from the list
           const accountIndex = Math.floor(Math.random() * upiAccounts.length);
@@ -817,18 +951,24 @@
         const ticketId = `TEDX-${formData.seatNumber}-${Date.now().toString().slice(-6)}`;
         formData.ticketId = ticketId;
 
-        const price = formData.userType === 'nift_student' ? 299 : 399;
+        // const price = formData.userType === 'nift_student' ? 299 : 399; // Old price logic
 
         try {
           await set(ref(db, `seats/${selectedSeat}`), {
             status: "pending", // Changed from "occupied" to "pending" to fit admin workflow
-            price: price, // Use dynamic price
+            basePrice: currentBasePrice,
+            appliedPromoCode: appliedPromo.code,
+            discountAmount: appliedPromo.discountAmount,
+            price: currentFinalPrice, // This is the final price paid
             ...formData,
             timestamp: new Date().toISOString()
           });
           selectedSeatElement.classList.remove("selected");
           selectedSeatElement.classList.add("occupied");
           bookingForm.reset();
+          userTypeSelect.value = ""; // Reset dropdown
+          updatePrice(399); // Reset price logic and promo fields
+          document.getElementById('eventPrice').textContent = "399"; // Reset card price
           bookingForm.style.display = "none";
           studentFields.classList.add('hidden');
           otherFields.classList.add('hidden');
@@ -870,6 +1010,9 @@
   </script>
 </body>
 </html>
+
+
+
 
 
 
