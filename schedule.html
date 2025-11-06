@@ -20,20 +20,118 @@
         .bg-ted-red {
             background-color: #E62B1E;
         }
+        
+        /* NEW Zig-Zag Timeline Styles */
+        .timeline-container {
+            position: relative;
+        }
+        
+        /* The central line (desktop only) */
+        @media (min-width: 768px) {
+            .timeline-container::after {
+                content: '';
+                position: absolute;
+                width: 3px;
+                background-color: #374151; /* gray-700 */
+                top: 0;
+                bottom: 0;
+                left: 50%;
+                margin-left: -1.5px;
+                z-index: 0;
+            }
+        }
+
+        .timeline-item {
+            padding: 1rem 0;
+            position: relative;
+            width: 100%; /* Full width on mobile */
+        }
+
+        /* Desktop layout */
+        @media (min-width: 768px) {
+             .timeline-item {
+                width: 50%; /* Half width on desktop */
+                padding-bottom: 2rem;
+             }
+             
+             /* Odd items (1, 3, 5...) on the left */
+             .timeline-item:nth-child(odd) {
+                left: 0;
+                padding-right: 2.5rem; /* space from line */
+                text-align: right;
+             }
+             
+             /* Even items (2, 4, 6...) on the right */
+             .timeline-item:nth-child(even) {
+                left: 50%;
+                padding-left: 2.5rem; /* space from line */
+                text-align: left;
+             }
+             
+             /* The dot */
+             .timeline-item::after {
+                content: '';
+                position: absolute;
+                width: 1rem;
+                height: 1rem;
+                right: -0.5rem; /* (1rem/2) */
+                background-color: #E62B1E; /* ted-red */
+                border: 2px solid #111111;
+                top: 1.25rem; /* align with text */
+                border-radius: 50%;
+                z-index: 10;
+             }
+             
+             /* Dot for even items (on the left side of the item) */
+             .timeline-item:nth-child(even)::after {
+                left: -0.5rem; /* (1rem/2) */
+             }
+        }
+         
+        /* Mobile layout adjustments */
+        @media (max-width: 767px) {
+            .timeline-item {
+                padding-left: 1.5rem; /* Space for a simpler line/dot */
+                border-left: 3px solid #374151; /* gray-700 */
+                padding-bottom: 2rem;
+            }
+            .timeline-item:last-child {
+                border-left-color: transparent;
+                padding-bottom: 0;
+            }
+            .timeline-item::after {
+                content: '';
+                position: absolute;
+                width: 1rem;
+                height: 1rem;
+                left: -0.6rem; /* (1rem/2) + (line-width/2) */
+                background-color: #E62B1E; /* ted-red */
+                border: 2px solid #111111;
+                top: 1.25rem; /* align with text */
+                border-radius: 50%;
+                z-index: 10;
+            }
+            .timeline-item:last-child::after {
+                background-color: #374151;
+            }
+        }
+
     </style>
 </head>
 <body class="antialiased overflow-x-hidden">
     
-    <!-- Header --><header class="sticky top-0 z-50 bg-[#111111] bg-opacity-80 backdrop-blur-sm shadow-lg">
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-[#111111] bg-opacity-80 backdrop-blur-sm shadow-lg">
         <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center py-4">
             <a href="index.html" class="flex items-center space-x-2 flex-shrink-0">
                 <span class="font-black text-2xl text-white">TEDx</span><span class="font-bold text-2xl text-ted-red">NIFTJodhpur</span>
             </a>
             
-            <!-- Desktop Nav --><div class="hidden md:flex items-center space-x-8">
+            <!-- Desktop Nav -->
+            <div class="hidden md:flex items-center space-x-8">
                 <a href="index.html#about" class="text-gray-300 hover:text-white transition-colors font-medium">About</a>
                 <a href="index.html#speakers" class="text-gray-300 hover:text-white transition-colors font-medium">Speakers</a>
-                <a href="schedule.html" class="text-gray-300 hover:text-white transition-colors font-medium">Schedule</a>
+                <a href="schedule.html" class="text-white hover:text-white transition-colors font-semibold">Schedule</a>
                 <a href="team.html" class="text-gray-300 hover:text-white transition-colors font-medium">Team</a>
                 <a href="index.html#sponsors" class="text-gray-300 hover:text-white transition-colors font-medium">Sponsors</a>
             </div>
@@ -43,20 +141,22 @@
                     Get Tickets
                 </a>
 
-                <!-- Mobile Menu Button --><button id="mobile-menu-button" class="md:hidden p-2 rounded-md text-gray-300 hover:text-white hover:bg-gray-700">
-                      <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-button" class="md:hidden p-2 rounded-md text-gray-300 hover:text-white hover:bg-gray-700">
+                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
                     </svg>
                 </button>
             </div>
         </nav>
 
-        <!-- Mobile Menu --><div id="mobile-menu" class="hidden md:hidden">
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                 <a href="index.html#about" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">About</a>
                 <a href="index.html#speakers" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Speakers</a>
-                <a href="schedule.html" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Schedule</a>
-                 <a href="team.html" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Team</a>
+                <a href="schedule.html" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-white bg-gray-700">Schedule</a>
+                <a href="team.html" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Team</a>
                 <a href="index.html#sponsors" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Sponsors</a>
                 <a href="tickets.html" class="mobile-nav-link block w-full text-center mt-2 px-3 py-2 rounded-md text-base font-medium text-black bg-white hover:bg-gray-200">Get Tickets</a>
             </div>
@@ -65,22 +165,158 @@
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <main>
-            <!-- Schedule Section --><section id="schedule" class="py-20 min-h-[50vh] flex flex-col justify-center">
+            <!-- Schedule Section -->
+            <section id="schedule" class="py-20 min-h-[50vh] flex flex-col justify-center">
                 <div class="text-center">
                     <h1 class="text-4xl md:text-5xl font-bold text-white">Event Schedule</h1>
-                    <p class="mt-4 text-gray-400 max-w-2xl mx-auto">A day packed with inspiration, learning, and connection.</p>
+                    <p class="mt-4 text-lg text-gray-400 max-w-2xl mx-auto">9th November</p>
                 </div>
-                <!-- UPDATED SCHEDULE MESSAGE -->
-                <div class="mt-16 text-center">
-                    <p class="text-2xl font-semibold text-white bg-gray-800/50 rounded-lg py-6 px-4 max-w-lg mx-auto">
-                        Will be updated on 03 November 2025
-                    </p>
+                
+                <!-- NEW ZIG-ZAG SCHEDULE DESIGN -->
+                <div class="mt-16 max-w-5xl mx-auto w-full">
+                    <div class="bg-gray-900/50 backdrop-blur-sm rounded-lg shadow-xl p-6 md:p-10">
+                        <!-- List of schedule items -->
+                        <div class="relative timeline-container">
+                            
+                            <!-- Item 1 (Odd) -->
+                            <div class="timeline-item">
+                                <h3 class="text-2xl font-bold text-ted-red mt-1">THE START</h3>
+                            </div>
+
+                            <!-- Item 2 (Even) -->
+                            <div class="timeline-item">
+                                <time class="text-lg font-semibold text-ted-red">09:30 AM onwards</time>
+                                <h3 class="text-xl font-semibold text-white mt-1">Registration</h3>
+                            </div>
+
+                            <!-- Item 3 (Odd) -->
+                            <div class="timeline-item">
+                                <time class="text-lg font-semibold text-ted-red">10:30 AM</time>
+                                <h3 class="text-xl font-semibold text-white mt-1">Welcome of Speakers</h3>
+                            </div>
+                            
+                            <!-- Item 3 (Odd) -->
+                            <div class="timeline-item">
+                                <time class="text-lg font-semibold text-ted-red">11:00 AM - 11:30 AM</time>
+                                <h3 class="text-xl font-semibold text-white mt-1">Inaugural Ceremony</h3>
+                            </div>
+
+                            <!-- Item 4 (Even) -->
+                            <div class="timeline-item">
+                                <time class="text-lg font-semibold text-ted-red">11:30 AM - 11:40 AM</time>
+                                <h3 class="text-xl font-semibold text-white mt-1">Welcome Address by Director Sir</h3>
+                            </div>
+
+                            <!-- Item 5 (Odd) -->
+                            <div class="timeline-item">
+                                <time class="text-lg font-semibold text-ted-red">11:40 AM - 11:45 AM</time>
+                                <h3 class="text-xl font-semibold text-white mt-1">Dance Performance</h3>
+                            </div>
+
+                            <!-- Item 6 (Even) -->
+                            <div class="timeline-item">
+                                <time class="text-lg font-semibold text-ted-red">11:45 AM - 12:30 PM</time>
+                                <h3 class="text-xl font-semibold text-white mt-1">Talk by Princess Jahnavi Kumari</h3>
+                            </div>
+
+                            <!-- Item 7 (Odd) -->
+                            <div class="timeline-item">
+                                <time class="text-lg font-semibold text-ted-red">12:30 PM - 01:30 PM</time>
+                                <h3 class="text-xl font-semibold text-white mt-1">Talk by Mr. Amit Patil</h3>
+                                <p class="text-gray-300 mt-1">Microsoft Design Lead</p>
+                            </div>
+
+                            <!-- Item 8 (Even) -->
+                            <div class="timeline-item">
+                                <time class="text-lg font-semibold text-ted-red">01:30 PM - 02:30 PM</time>
+                                <h3 class="text-xl font-semibold text-white mt-1">Lunch Break</h3>
+                            </div>
+
+                            <!-- Item 9 (Odd) -->
+                            <div class="timeline-item">
+                                <time class="text-lg font-semibold text-ted-red">02:30 PM - 02:35 PM</time>
+                                <h3 class="text-xl font-semibold text-white mt-1">Dance Performance</h3>
+                            </div>
+
+                            <!-- Item 10 (Even) -->
+                            <div class="timeline-item">
+                                <time class="text-lg font-semibold text-ted-red">02:35 PM - 03:15 PM</time>
+                                <h3 class="text-xl font-semibold text-white mt-1">Interactive Talk by Mr. Narpath Raman</h3>
+                                <p class="text-gray-300 mt-1">Mind Reading</p>
+                            </div>
+
+                            <!-- Item 11 (Odd) -->
+                            <div class="timeline-item">
+                                <time class="text-lg font-semibold text-ted-red">03:15 PM - 04:00 PM</time>
+                                <h3 class="text-xl font-semibold text-white mt-1">Talk by Ms. Anmol Dua</h3>
+                                <p class="text-gray-300 mt-1">Fashion & Beauty Influencer</p>
+                            </div>
+
+                            <!-- Item 12 (Even) -->
+                            <div class="timeline-item">
+                                <time class="text-lg font-semibold text-ted-red">04:00 PM - 04:45 PM</time>
+                                <h3 class="text-xl font-semibold text-white mt-1">Talk by Ms. Mahima Mahajan</h3>
+                                <p class="text-gray-300 mt-1">Celebrity Fashion Designer</p>
+                            </div>
+
+                            <!-- Item 13 (Odd) -->
+                            <div class="timeline-item">
+                                <time class="text-lg font-semibold text-ted-red">04:45 PM - 04:50 PM</time>
+                                <h3 class="text-xl font-semibold text-white mt-1">Dance Performance</h3>
+                            </div>
+
+                            <!-- Item 14 (Even) -->
+                            <div class="timeline-item">
+                                <time class="text-lg font-semibold text-ted-red">04:50 PM - 05:30 PM</time>
+                                <h3 class="text-xl font-semibold text-white mt-1">Talk by Ms. Anwesha Datta Gupta</h3>
+                                <p class="text-gray-300 mt-1">Indian Singer & Composer</p>
+                            </div>
+
+                            <!-- Item 15 (Odd) -->
+                            <div class="timeline-item">
+                                <time class="text-lg font-semibold text-ted-red">05:30 PM - 05:40 PM</time>
+                                <h3 class="text-xl font-semibold text-white mt-1">Felicitation of Speakers</h3>
+                            </div>
+
+                            <!-- Item 16 (Even) -->
+                            <div class="timeline-item">
+                                <time class="text-lg font-semibold text-ted-red">05:40 PM - 05:45 PM</time>
+                                <h3 class="text-xl font-semibold text-white mt-1">Felicitation of Sponsors</h3>
+                            </div>
+
+                            <!-- Item 17 (Odd) -->
+                            <div class="timeline-item">
+                                <time class="text-lg font-semibold text-ted-red">05:45 PM - 05:55 PM</time>
+                                <h3 class="text-xl font-semibold text-white mt-1">Felicitation of Core Team</h3>
+                            </div>
+
+                            <!-- Item 18 (Even) -->
+                            <div class="timeline-item">
+                                <time class="text-lg font-semibold text-ted-red">05:55 PM - 06:00 PM</time>
+                                <h3 class="text-xl font-semibold text-white mt-1">Vote of Thanks</h3>
+                            </div>
+
+                            <!-- Item 19 (Odd) -->
+                            <div class="timeline-item">
+                                <time class="text-lg font-semibold text-ted-red">06:00 PM onwards</time>
+                                <h3 class="text-xl font-semibold text-white mt-1">High Tea</h3>
+                                <p class="text-gray-300 mt-1">Connect with speakers and attendees.</p>
+                            </div>
+
+                            <!-- Item 20 (Even) -->
+                            <div class="timeline-item">
+                                <h3 class="text-2xl font-bold text-ted-red mt-1">THE END</h3>
+                            </div>
+
+                        </div>
+                    </div>
                 </div>
             </section>
         </main>
     </div>
 
-    <!-- Footer --><footer class="border-t border-gray-800 py-12">
+    <!-- Footer -->
+    <footer class="border-t border-gray-800 py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div class="md:col-span-1">
@@ -90,7 +326,7 @@
                     <p class="mt-4 text-gray-400 text-sm">This independent TEDx event is operated under license from TED.</p>
                      <div class="mt-4 flex space-x-4">
                         <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="YouTube"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z" clip-rule="evenodd"></path></svg></a>
-                        <a href="https://www.instagram.com/tedxnift.jodhpur?igsh=bmxyOG9ocnI1d2Vu" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition-colors" aria-label="Instagram"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.85s-.011 3.585-.069 4.85c-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07s-3.585-.012-4.85-.07c-3.252-.148-4.771-1.691-4.919-4.919-.058-1.265-.069-1.645-.069-4.85s.011-3.585.069-4.85c.149-3.225 1.664 4.771 4.919-4.919 1.266-.058 1.644-.07 4.85-.07zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948s.014 3.667.072 4.947c.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072s3.667-.014 4.947-.072c4.358-.2 6.78-2.618 6.98-6.98.059-1.281.073-1.689.073-4.948s-.014-3.667-.072-4.947c-.2-4.358-2.618-6.78-6.98-6.98-1.281-.059-1.689-.073-4.948-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.79 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44 1.441-.645 1.441-1.44-.645-1.44-1.441-1.44z" clip-rule="evenodd"></path></svg></a>
+                        <a href="https://www.instagram.com/tedxnift.jodhpur?igsh=bmxyOG9ocnI1d2Vu" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white transition-colors" aria-label="Instagram"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.85s-.011 3.585-.069 4.85c-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07s-3.585-.012-4.85-.07c-3.252-.148-4.771-1.691-4.919-4.919-.058-1.265-.069-1.645-.069-4.85s.011-3.585.069 4.85c.149-3.225 1.664 4.771 4.919 4.919 1.266-.058 1.644-.07 4.85-.07zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948s.014 3.667.072 4.947c.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072s3.667-.014 4.947-.072c4.358-.2 6.78-2.618 6.98-6.98.059-1.281.073-1.689-.073-4.948s-.014-3.667-.072-4.947c-.2-4.358-2.618-6.78-6.98-6.98-1.281-.059-1.689-.073-4.948-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.79 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44 1.441-.645 1.441-1.44-.645-1.44-1.441-1.44z" clip-rule="evenodd"></path></svg></a>
                     </div>
                     <p class="mt-4 text-gray-400 text-sm">© 2025 TEDxNIFTJodhpur. All rights reserved.</p>
                 </div>
@@ -146,5 +382,3 @@
     </script>
 </body>
 </html>
-
-
